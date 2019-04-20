@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "789785197992",
+    "firebase_url": "https://carrepair-16710.firebaseio.com",
+    "project_id": "carrepair-16710",
+    "storage_bucket": "carrepair-16710.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789785197992:android:2a1a64a971672b1f",
+        "android_client_info": {
+          "package_name": "com.cndota2.car_repair"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789785197992-4an65d385if1dh4qtghkv1s6o9smdvvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuQvu5QVWrevMRxk56zrwj6GnSlzNiIWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789785197992-4an65d385if1dh4qtghkv1s6o9smdvvm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
