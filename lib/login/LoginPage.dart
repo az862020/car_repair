@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final String RemberSet = 'rember';
@@ -88,7 +90,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
               ),
             ),
             Container(
-              height: 20.0,
+              height: 1.0,
             ),
             CheckboxListTile(
               title: Text('Rember your account.'),
@@ -100,7 +102,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
               },
             ),
             Container(
-              height: 20.0,
+              height: 1.0,
             ),
             RaisedButton(
               child: Align(
@@ -118,7 +120,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                           height: 12.0,
                           child: CircularProgressIndicator(
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.red),
+                            AlwaysStoppedAnimation<Color>(Colors.red),
                             strokeWidth: 2.0,
                           ),
                         ),
@@ -145,7 +147,20 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 }
               },
               color: Colors.blue[400],
-            )
+            ),
+            RaisedButton(
+              child: Text('Register'),
+
+            ),
+            GestureDetector(
+              onTap: () {
+                print('tap');
+                login();
+              },
+              child: Image.asset(
+                'assets/images/signin_google.png', height: 40.0,),
+            ),
+
           ],
         ),
       ),
@@ -156,22 +171,50 @@ class _LoginPageFormState extends State<LoginPageForm> {
   void falseHttp() {
     setState(() {
       isLoading = true;
+      print('tap');
     });
-    Timer(Duration(seconds: 3), () {
-      //when login success....
-      setState(() {
-        isLoading = false;
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Logined!')));
-        setRemberSet();
-      });
+    login().then((user){
+      //when success.
+      print(user);
+      isLoading = false;
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Logined!')));
+      setRemberSet();
+
+
+    }).catchError((e){
+      print(e);
+      //when failed.
+
     });
+//    Timer(Duration(seconds: 3), () {
+//      //when login success....
+//      setState(() {
+//        isLoading = false;
+//        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Logined!')));
+//        setRemberSet();
+//      });
+//    });
+  }
+
+  Future<FirebaseUser> login() async {
+//    Dialog();
+    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser
+        .authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+
+    final FirebaseUser user = await FirebaseAuth.instance.signInWithCredential(credential);
+    print('signed in '+ user.displayName);
+    return user;
   }
 
   //获取是否记住账号密码.
   void getRemberSet() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     rember = sharedPreferences.getBool(RemberSet) ?? false;
-    if(rember){
+    if (rember) {
       username = sharedPreferences.getString(UsernameSet) ?? '';
       password = sharedPreferences.getString(password) ?? '';
       usernameController.text = username;
@@ -183,7 +226,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
   void setRemberSet() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     await sp.setBool(RemberSet, rember);
-    if(rember){
+    if (rember) {
       await sp.setString(UsernameSet, usernameController.text);
       await sp.setString(PasswordSet, passwordController.text);
     }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'login/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main(){
-//  final GoogleSignIn _gooleSingIn = GoogleSignIn();
+  final GoogleSignIn _gooleSingIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   runApp(LoginPage());
 }
