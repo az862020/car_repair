@@ -6,6 +6,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:car_repair/home.dart';
+import 'package:car_repair/register/RegisterPage.dart';
+
 final String RemberSet = 'rember';
 final String UsernameSet = 'rember_username';
 final String PasswordSet = 'rember_password';
@@ -139,6 +142,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
                   if (!isLoading) {
                     falseHttp();
                   } else {
+                    //may be here should add a tips
+                    // to tell user don't click when requesting.
+
 //                    Scaffold.of(context).showSnackBar(SnackBar(
 //                      content: Text(' you are loading, plz wait.'),
 //                    ));
@@ -149,16 +155,24 @@ class _LoginPageFormState extends State<LoginPageForm> {
               color: Colors.blue[400],
             ),
             RaisedButton(
-              child: Text('Register'),
-              onPressed: (){
-                //todo go register page.
-                Navigator.of(context);
+              child: Text(
+                'Register',
+                style: TextStyle(color: Colors.white),
+              ),
+              color: Colors.blue[700],
+              onPressed: () {
+                gotoRegister(context);
               },
             ),
             GestureDetector(
               onTap: () {
                 print('tap');
-                loginGoogle();
+                loginGoogle().then((user) {
+                  gotoHome(user, context);
+                }).catchError((e) {
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text('Login failed! $e')));
+                });
               },
               child: Image.asset(
                 'assets/images/signin_google.png',
@@ -185,25 +199,22 @@ class _LoginPageFormState extends State<LoginPageForm> {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Logined!')));
         setRemberSet();
 
-        //todo go homepage
-
-
+        gotoHome(user, context);
       });
     }).catchError((e) {
-      print(e);
       print('!!! $e');
       //when failed.
       setState(() {
         isLoading = false;
-        if(e == 'ERROR NETWORK REQUEST FAILED, A network error (such as timeout, interrupted connection or unreachable host'){
-
-          Scaffold.of(context)
-              .showSnackBar(SnackBar(content: Text('Login failed! Google Service is not running. Run Google Play Store first and try again.')));
-        }else{
+        if (e ==
+            'ERROR NETWORK REQUEST FAILED, A network error (such as timeout, interrupted connection or unreachable host') {
+          Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  'Login failed! Google Service is not running. Run Google Play Store first and try again.')));
+        } else {
           Scaffold.of(context)
               .showSnackBar(SnackBar(content: Text('Login failed! $e')));
         }
-
       });
     });
   }
@@ -232,6 +243,26 @@ class _LoginPageFormState extends State<LoginPageForm> {
     print('signed in ' + user.displayName);
     print(user);
     return user;
+  }
+
+  //跳转注册界面,并且还会接收注册成功后新创建的user.
+  gotoRegister(BuildContext context) async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return RegisterPage();
+    })).then((user) {
+      if (user != null) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return HomePage(user: user);
+        }));
+      }
+    });
+  }
+
+  //登录成功,获取到了用户信息,携带user跳转home.
+  gotoHome(FirebaseUser user, BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage(user: user);
+    }));
   }
 
   //获取是否记住账号密码.
