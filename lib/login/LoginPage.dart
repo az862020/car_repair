@@ -247,10 +247,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   //跳转注册界面,并且还会接收注册成功后新创建的user.
   gotoRegister(BuildContext context) async {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return RegisterPage();
-    })).then((user) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) =>RegisterPage()))
+        .then((user) {
       if (user != null) {
+        print('!!! get user in loginpage  $user');
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return HomePage(user: user);
         }));
