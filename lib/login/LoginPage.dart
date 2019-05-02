@@ -142,9 +142,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
                   if (!isLoading) {
                     falseHttp();
                   } else {
-                    //may be here should add a tips
-                    // to tell user don't click when requesting.
-
 //                    Scaffold.of(context).showSnackBar(SnackBar(
 //                      content: Text(' you are loading, plz wait.'),
 //                    ));
@@ -267,23 +264,28 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   //获取是否记住账号密码.
   void getRemberSet() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    rember = sharedPreferences.getBool(RemberSet) ?? false;
-    if (rember) {
-      username = sharedPreferences.getString(UsernameSet) ?? '';
-      password = sharedPreferences.getString(password) ?? '';
-      usernameController.text = username;
-      passwordController.text = password;
-    }
+    final sharedPreferences = await SharedPreferences.getInstance();
+      final remberV = (sharedPreferences.getBool(RemberSet) ?? false);
+        username = (sharedPreferences.getString(UsernameSet) ?? '');
+        password = (sharedPreferences.getString(PasswordSet) ?? '');
+    setState(() {
+      rember = remberV;
+      print('!!!!! rember $rember');
+      if (rember) {
+        usernameController.text = username;
+        passwordController.text = password;
+        print('!!!!  username:$username  password:$password');
+      }
+    });
   }
 
   //登录成功之后,保存
   void setRemberSet() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    await sp.setBool(RemberSet, rember);
+    final sp = await SharedPreferences.getInstance();
+    sp.setBool(RemberSet, rember);
     if (rember) {
-      await sp.setString(UsernameSet, usernameController.text);
-      await sp.setString(PasswordSet, passwordController.text);
+      sp.setString(UsernameSet, usernameController.text);
+      sp.setString(PasswordSet, passwordController.text);
     }
   }
 }
