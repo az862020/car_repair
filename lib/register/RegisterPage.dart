@@ -34,6 +34,16 @@ class _RegisterState extends State<RegisterState> {
   final passwordController = TextEditingController();
   final passwordAgainController = TextEditingController();
 
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    passwordAgainController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -71,6 +81,7 @@ class _RegisterState extends State<RegisterState> {
             ),
             TextFormField(
               controller: passwordAgainController,
+              obscureText: true,
               validator: (string) {
                 if (string.isEmpty) return 'Password can\'t be empty.';
                 if (string.length < 6 || string.length > 15)
