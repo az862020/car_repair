@@ -11,23 +11,26 @@ class MyFavoritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(mTitle),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+    return MaterialApp(
+      title: mTitle,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(mTitle),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ),
+        body: FavoritePage(_user),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.cloud_download),
             onPressed: () {
-              Navigator.pop(context);
+              print('float button on tip.');
+              //TODO down load the favorite photo/video.
+
             }),
       ),
-      body: FavoritePage(_user),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.cloud_download),
-          onPressed: () {
-            print('float button on tip.');
-            //TODO down load the favorite photo/video.
-
-          }),
     );
   }
 }

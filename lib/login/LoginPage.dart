@@ -123,7 +123,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                           height: 12.0,
                           child: CircularProgressIndicator(
                             valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.red),
+                                AlwaysStoppedAnimation<Color>(Colors.red),
                             strokeWidth: 2.0,
                           ),
                         ),
@@ -221,7 +221,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         email: usernameController.text, password: passwordController.text);
 
     final FirebaseUser user =
-    await FirebaseAuth.instance.signInWithCredential(credential);
+        await FirebaseAuth.instance.signInWithCredential(credential);
     print('signed in ' + user.email);
     return user;
   }
@@ -230,13 +230,13 @@ class _LoginPageFormState extends State<LoginPageForm> {
 //    Dialog();
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+        await googleUser.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
     final FirebaseUser user =
-    await FirebaseAuth.instance.signInWithCredential(credential);
+        await FirebaseAuth.instance.signInWithCredential(credential);
     print('signed in ' + user.displayName);
     print(user);
     return user;
@@ -245,23 +245,26 @@ class _LoginPageFormState extends State<LoginPageForm> {
   //跳转注册界面,并且还会接收注册成功后新创建的user.
   gotoRegister(BuildContext context) async {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => RegisterPage()))
+            context, MaterialPageRoute(builder: (context) => RegisterPage()))
         .then((user) {
       if (user != null) {
         print('!!! get user in loginpage  $user');
-        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) {
-          return HomePage(user: user);
-        },
-        ),(route) => route == null);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(user: user),
+            ),
+            (route) => route == null);
       }
     });
   }
 
   //登录成功,获取到了用户信息,携带user跳转home.
   gotoHome(FirebaseUser user, BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage(user: user);
-    }));
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(user: user)),
+        (route) => route == null);
   }
 
   //获取是否记住账号密码.
