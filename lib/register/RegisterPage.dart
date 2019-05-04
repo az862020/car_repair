@@ -12,7 +12,7 @@ class RegisterPage extends StatelessWidget {
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context, 'asdghtwergsrggs');
+              Navigator.pop(context);
             }),
       ),
       body: RegisterState(),

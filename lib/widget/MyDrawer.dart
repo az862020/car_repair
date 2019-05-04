@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+class MyDrawer extends StatefulWidget {
+  FirebaseUser _user;
+
+  MyDrawer(this._user);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _MyDrawerState();
+  }
+}
+
+class _MyDrawerState extends State<MyDrawer> {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: UserAccountsDrawerHeader(
+
+              accountName:
+                  Text('${widget._user.displayName ?? widget._user.email}'),
+              accountEmail: Text('${widget._user.email ?? ''}'),
+              currentAccountPicture: widget._user.displayName == null
+                  ? Image.asset('assets/images/account_box.png')
+                  : CircleAvatar(
+                      backgroundImage:
+                          CachedNetworkImageProvider(widget._user.photoUrl),
+                    ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              onDetailsPressed: () {
+                print('!!! user account tip.');
+              },
+            ),
+            margin: EdgeInsets.zero,
+            padding: EdgeInsets.zero,
+          ),
+          ListTile(
+            title: Text('Favorite'),
+            leading: new CircleAvatar(
+              child: new Icon(Icons.favorite),
+            ),
+            onTap: () {
+
+            },
+          ),
+
+          ListTile(
+            title: Text('Published'),
+            leading: new CircleAvatar(
+              child: new Icon(Icons.publish),
+            ),
+            onTap: () {
+
+            },
+          ),
+          ListTile(
+            title: Text('Settings'),
+            leading: new CircleAvatar(
+              child: new Icon(Icons.settings),
+            ),
+            onTap: () {
+
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

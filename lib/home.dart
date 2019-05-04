@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'widget/MyDrawer.dart';
 
 
 class HomePage extends StatelessWidget{
@@ -22,6 +22,7 @@ class HomePage extends StatelessWidget{
             Text('ddddddd \n $user'),
           ],
         ),
+        drawer: MyDrawer(user),
       ),
     );
   }
