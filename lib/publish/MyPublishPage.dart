@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class MyPublisthPage extends StatelessWidget {
+class MyPublishPage extends StatelessWidget {
   final String mTitle = 'MyPublished';
   final FirebaseUser _user;
 
-  MyPublisthPage(this._user);
+  MyPublishPage(this._user);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MyPublisthPage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: PublisthPage(_user),
+        body: PublishPage(_user),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.cloud_upload),
             onPressed: () {
@@ -33,10 +33,10 @@ class MyPublisthPage extends StatelessWidget {
   }
 }
 
-class PublisthPage extends StatefulWidget {
+class PublishPage extends StatefulWidget {
   final FirebaseUser _user;
 
-  PublisthPage(this._user);
+  PublishPage(this._user);
 
   @override
   State<StatefulWidget> createState() {
@@ -44,7 +44,7 @@ class PublisthPage extends StatefulWidget {
   }
 }
 
-class _PublisthState extends State<PublisthPage> {
+class _PublisthState extends State<PublishPage> {
   @override
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(

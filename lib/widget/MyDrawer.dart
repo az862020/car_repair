@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:car_repair/favorite/MyFavoritePage.dart';
-import 'package:car_repair/publish/MyPublisthPage.dart';
+import 'package:car_repair/publish/MyPublishPage.dart';
 import 'package:car_repair/settings/MySettingsPage.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -65,7 +65,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => PublisthPage(widget._user)));
+                      builder: (context) => MyPublishPage(widget._user)));
             },
           ),
           ListTile(
