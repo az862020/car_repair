@@ -8,10 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:car_repair/home.dart';
 import 'package:car_repair/register/RegisterPage.dart';
+import 'package:car_repair/base/conf.dart';
 
-final String RemberSet = 'rember';
-final String UsernameSet = 'rember_username';
-final String PasswordSet = 'rember_password';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -270,9 +268,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
   //获取是否记住账号密码.
   void getRemberSet() async {
     final sharedPreferences = await SharedPreferences.getInstance();
-    final remberV = (sharedPreferences.getBool(RemberSet) ?? false);
-    username = (sharedPreferences.getString(UsernameSet) ?? '');
-    password = (sharedPreferences.getString(PasswordSet) ?? '');
+    final remberV = (sharedPreferences.getBool(Config.RemberSet) ?? false);
+    username = (sharedPreferences.getString(Config.UsernameSet) ?? '');
+    password = (sharedPreferences.getString(Config.PasswordSet) ?? '');
     setState(() {
       rember = remberV;
       print('!!!!! rember $rember');
@@ -287,10 +285,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
   //登录成功之后,保存
   void setRemberSet() async {
     final sp = await SharedPreferences.getInstance();
-    sp.setBool(RemberSet, rember);
+    sp.setBool(Config.RemberSet, rember);
     if (rember) {
-      sp.setString(UsernameSet, usernameController.text);
-      sp.setString(PasswordSet, passwordController.text);
+      sp.setString(Config.UsernameSet, usernameController.text);
+      sp.setString(Config.PasswordSet, passwordController.text);
     }
   }
 }

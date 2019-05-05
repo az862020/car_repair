@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class MyFavoritePage extends StatelessWidget {
-  final String mTitle = 'MyFavorite';
+class MyPublisthPage extends StatelessWidget {
+  final String mTitle = 'MyPublished';
   final FirebaseUser _user;
 
-  MyFavoritePage(this._user);
+  MyPublisthPage(this._user);
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +21,30 @@ class MyFavoritePage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: FavoritePage(_user),
+        body: PublisthPage(_user),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.cloud_download),
+            child: Icon(Icons.cloud_upload),
             onPressed: () {
               print('float button on tip.');
-              //TODO down load the favorite photo/video.
+              //TODO XO up load and publish photo/video.
             }),
       ),
     );
   }
 }
 
-class FavoritePage extends StatefulWidget {
+class PublisthPage extends StatefulWidget {
   final FirebaseUser _user;
 
-  FavoritePage(this._user);
+  PublisthPage(this._user);
 
   @override
   State<StatefulWidget> createState() {
-    return _FavoriteState();
+    return _PublisthState();
   }
 }
 
-class _FavoriteState extends State<FavoritePage> {
+class _PublisthState extends State<PublisthPage> {
   @override
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(

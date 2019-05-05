@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:car_repair/favorite/MyFavoritePage.dart';
+import 'package:car_repair/publish/MyPublisthPage.dart';
+import 'package:car_repair/settings/MySettingsPage.dart';
 
 class MyDrawer extends StatefulWidget {
   FirebaseUser _user;
@@ -58,14 +61,25 @@ class _MyDrawerState extends State<MyDrawer> {
             leading: new CircleAvatar(
               child: new Icon(Icons.publish),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PublisthPage(widget._user)));
+            },
           ),
           ListTile(
             title: Text('Settings'),
             leading: new CircleAvatar(
               child: new Icon(Icons.settings),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MySettingsPage(widget._user)))
+              ;
+            },
           ),
         ],
       ),
