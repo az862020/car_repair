@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -5,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPage.dart';
 import 'package:car_repair/settings/MySettingsPage.dart';
+import 'package:car_repair/MyImagePick/MyImagePickerPage.dart';
 
 class MyDrawer extends StatefulWidget {
   FirebaseUser _user;
@@ -29,10 +31,15 @@ class _MyDrawerState extends State<MyDrawer> {
               accountName:
                   Text('${widget._user.displayName ?? widget._user.email}'),
               accountEmail: Text('${widget._user.email ?? ''}'),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage: widget._user.displayName == null
-                    ? AssetImage('assets/images/account_box.png')
-                    : CachedNetworkImageProvider(widget._user.photoUrl),
+              currentAccountPicture: GestureDetector(
+                onTap: () {
+                  gotoPickHead();
+                },
+                child: CircleAvatar(
+                  backgroundImage: widget._user.displayName == null
+                      ? AssetImage('assets/images/account_box.png')
+                      : CachedNetworkImageProvider(widget._user.photoUrl),
+                ),
               ),
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -77,12 +84,21 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MySettingsPage(widget._user)))
-              ;
+                      builder: (context) => MySettingsPage(widget._user)));
             },
           ),
         ],
       ),
     );
+  }
+
+  gotoPickHead() async {
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MyImagePickerPage()))
+        .then((file) {
+      File img = file;
+      print('!!! ${img.path} ');
+      //TODO get file and upload. and change the head photo.
+    });
   }
 }
