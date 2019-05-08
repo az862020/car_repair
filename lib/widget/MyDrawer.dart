@@ -96,9 +96,12 @@ class _MyDrawerState extends State<MyDrawer> {
     Navigator.push(context,
             MaterialPageRoute(builder: (context) => MyImagePickerPage()))
         .then((file) {
-      File img = file;
-      print('!!! ${img.path} ');
-      //TODO get file and upload. and change the head photo.
+      if (file != null) {
+        File img = file;
+        print('!!! draw ${img.path} ');
+        //TODO get file and upload. and change the head photo.
+
+      }
     });
   }
 }
