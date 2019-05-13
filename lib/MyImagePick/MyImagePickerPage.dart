@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'MyCropPage.dart';
 
@@ -14,10 +15,11 @@ class MyImagePickerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _context = context;
-    return MaterialApp(
-      title: mTitle,
-      home: ImagePickerPage(mTitle),
-    );
+//    return MaterialApp(
+//      title: mTitle,
+//      home: ImagePickerPage(mTitle),
+//    );
+    return ImagePickerPage(mTitle);
   }
 }
 
@@ -55,6 +57,8 @@ class _MyImagePick extends State<ImagePickerPage> {
                 onPressed: () {
                   //TODO start upload.
                   Navigator.pop(_context, _image);
+
+
                 }),
           ),
         ],

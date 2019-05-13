@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'widget/MyDrawer.dart';
 
 
@@ -17,11 +18,7 @@ class HomePage extends StatelessWidget{
       title: mTitle,
       home: Scaffold(
         appBar: AppBar(title: Text(mTitle),),
-        body: Column(
-          children: <Widget>[
-            Text('ddddddd \n $user'),
-          ],
-        ),
+        body: HomeState(user),
         drawer: MyDrawer(user),
       ),
     );
@@ -30,9 +27,41 @@ class HomePage extends StatelessWidget{
 }
 
 class HomeState extends StatefulWidget {
+  final FirebaseUser user;
+
+
+  HomeState(this.user);
 
   @override
   State<StatefulWidget> createState() {
-    return null;
+    return _HomeState();
   }
+}
+
+class _HomeState extends State<HomeState> {
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text('ddddddd \n ${widget.user}'),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    Firestore.instance.collection('userinfo/${widget.user.uid}').getDocuments()
+        .then((snapshot){
+
+    }
+    );
+//    widget.user.updateProfile(userUpdateInfo)
+    
+  }
+
+
+
 }
