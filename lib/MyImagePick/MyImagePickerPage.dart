@@ -1,15 +1,14 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/widget/MyLoadingDialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'MyCropPage.dart';
-import 'package:car_repair/base/conf.dart';
-import 'package:package_info/package_info.dart';
 
 BuildContext _context;
 
@@ -22,14 +21,11 @@ class MyImagePickerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _context = context;
-//    return MaterialApp(
-//      title: mTitle,
-//      home: ImagePickerPage(mTitle),
-//    );
-    Config().initAppDir();
     return ImagePickerPage(mTitle, user);
   }
 }
+
+bool isLoading = false;
 
 class ImagePickerPage extends StatefulWidget {
   final String mTitle;
@@ -60,7 +56,8 @@ class _MyImagePick extends State<ImagePickerPage> {
             child: IconButton(
                 icon: Icon(Icons.done),
                 onPressed: () {
-                  //TODO start upload.
+                  // start upload.
+
                   uploadPic();
 //                  Navigator.pop(_context, _image);
                 }),
@@ -88,6 +85,15 @@ class _MyImagePick extends State<ImagePickerPage> {
   }
 
   Future<String> uploadPic() async {
+    if (isLoading) return '';
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return MyLoadingDialog();
+        });
+
     String path = _image.absolute.path;
     String name = path.substring(path.lastIndexOf('/') + 1);
     path = path.substring(path.lastIndexOf('/'));
@@ -96,50 +102,84 @@ class _MyImagePick extends State<ImagePickerPage> {
     print('!!! url $url');
     print('!!! img $_image');
 
-    final StorageReference reference =
-        Config.storage
-        .ref()
-        .child('userinfo')
-        .child('photoUrl')
-        .child('${widget.user.uid}')
-        .child(name);
-    print('!!! ref ${reference.path}');
-//    FirebaseStorage.instance
-//        .getReferenceFromUrl(url)
-//        .then((reference) {
-
-      StorageUploadTask task = reference
-          .putFile(
-              _image,
-              StorageMetadata(
-                contentType: 'image/jpeg',
-//                customMetadata: <String, String>{'type': 'image/jpeg'},
-              ));
-      StorageTaskSnapshot snapshot = await task.onComplete;
-      String upUrl = await snapshot.ref.getDownloadURL();
-      print('!!! onComplete $upUrl');
+//    final StorageReference reference =
+//        Config.storage
+//        .ref()
+//        .child('userinfo')
+//        .child('photoUrl')
+//        .child('${widget.user.uid}')
+//        .child(name);
+//    print('!!! ref ${reference.path}');
+////    FirebaseStorage.instance
+////        .getReferenceFromUrl(url)
+////        .then((reference) {
+//
+//      StorageUploadTask task = reference
+//          .putFile(
+//              _image,
+//              StorageMetadata(
+//                contentType: 'image/jpeg',
+////                customMetadata: <String, String>{'type': 'image/jpeg'},
+//              ));
+//      StorageTaskSnapshot snapshot = await task.onComplete;
+//      String upUrl = await snapshot.ref.getDownloadURL();
+//      print('!!! onComplete $upUrl');
 //          .events
 //          .listen((dataEvent) {
 //            print('!!! ${dataEvent.type}');
 //      }, onDone: () {
 //        print('!!! onDone  ${reference.path}');
-        updateWhenUpload(reference.path);
+
 //      }, onError: (){
 //        print('!!! onError  ${reference.path}');
 //
 //      });
 //      }
 //      );
+
+    bool isLoad = false;
+    var reference = Config.storage.ref().child(url);
+    reference.putFile(_image).events.listen((event) {
+      if (event == StorageTaskEventType.success ||
+          event == StorageTaskEventType.failure ||
+          event == StorageTaskEventType.pause) {
+        // stop upload.
+        isLoad = false;
+        if (event == StorageTaskEventType.success) {
+          updateWhenUpload(reference.path);
+        } else if (event == StorageTaskEventType.failure) {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text('Upload failure.')));
+        }
+        Navigator.of(context).pop();
+      } else if (event == StorageTaskEventType.progress) {
+        var snapshot = event.snapshot;
+        print('!!! ${snapshot.bytesTransferred} / ${snapshot.totalByteCount}');
+        var procent = snapshot.bytesTransferred / snapshot.totalByteCount * 100;
+        print('!!! $procent%');
+        isLoad = true;
+      }
+      if (isLoad != isLoading) {
+        setState(() {
+          isLoading = isLoad;
+        });
+      }
+    });
   }
 
-  updateWhenUpload(String downloadUrl) {}
+  updateWhenUpload(String referencePath) {
+    print('!!! update url to user $referencePath}');
+    UserUpdateInfo info = UserUpdateInfo();
+    info.photoUrl = referencePath;
+    widget.user.updateProfile(info).then((result) {
+      print('!!! updateProfile.');
+    });
+  }
 
   @override
   void initState() {
     Config().initFirebaseStorage();
   }
-
-
 }
 
 File _image;
@@ -149,7 +189,7 @@ pickImage(BuildContext context) async {
     if (file != null) {
       Navigator.push(context,
               MaterialPageRoute(builder: (context) => MyCropPage(file)))
-          .then((cropfile) async{
+          .then((cropfile) async {
         debugPrint('!!! pick crop $cropfile ');
         _image?.delete();
         _image = null;
@@ -157,15 +197,14 @@ pickImage(BuildContext context) async {
         String path = _image.absolute.path;
         path = path.substring(0, path.lastIndexOf('/') + 1);
         print('!!! get path $path');
-        String newPath =
-            '${path}${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String newPath = '${path}${DateTime.now().millisecondsSinceEpoch}.jpg';
         bool exists = await File(newPath).exists();
-        if(!exists) {
+        if (!exists) {
           await File(newPath).create(recursive: true);
         }
         _image.rename(newPath).then((file) {
           _image = file;
-        }).catchError((e){
+        }).catchError((e) {
           print('!!! rename faile  $_image');
         });
       });
