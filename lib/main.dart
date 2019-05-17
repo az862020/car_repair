@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'login/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'base/conf.dart';
+import 'package:build_config/build_config.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'dart:io';
 
@@ -15,10 +20,15 @@ import 'package:image_crop/image_crop.dart';
 
 import 'package:image_picker/image_picker.dart';
 
-void main(){
+void main() async{
   runApp(LoginPage());
   final GoogleSignIn _gooleSingIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  Config().initAppDir();
+
+  //FireBase Storage need initialized
+  Config().initFirebaseStorage();
+
 }
 
 //void main() {

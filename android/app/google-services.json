@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "789785197992-6ocln16ahllass9hnspqvofrr71i3i98.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cndota2.car_repair",
+            "certificate_hash": "3763cd3d76d134b1ff8744f9307e3efd143ed309"
+          }
+        },
+        {
           "client_id": "789785197992-4an65d385if1dh4qtghkv1s6o9smdvvm.apps.googleusercontent.com",
           "client_type": 3
         }

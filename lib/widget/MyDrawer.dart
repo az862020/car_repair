@@ -15,11 +15,16 @@ class MyDrawer extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _MyDrawerState();
+    return _MyDrawerState(_user);
   }
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  FirebaseUser _user;
+
+
+  _MyDrawerState(this._user);
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -94,7 +99,7 @@ class _MyDrawerState extends State<MyDrawer> {
 
   gotoPickHead() async {
     Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MyImagePickerPage()))
+            MaterialPageRoute(builder: (context) => MyImagePickerPage(user: widget._user,)))
         .then((file) {
       if (file != null) {
         File img = file;
