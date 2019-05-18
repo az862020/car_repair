@@ -1,9 +1,12 @@
 import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 /**
  * 这个用于存储shardpreferences的key值.
@@ -20,10 +23,11 @@ class Config {
   static String AppDirFile = ''; //应用外部存储路径-文件文件夹.
   static String AppDirCache = ''; //应用外部存储路径-缓存文件夹.
 
-
   static FirebaseUser user;
 
   static FirebaseStorage storage;
+  static FirebaseAuth auth;
+  static Firestore store;
 
   /**
    * 初始化外部文件路径.
@@ -54,9 +58,7 @@ class Config {
     return dir;
   }
 
-
-
-  initFirebaseStorage() async{
+  initFirebaseStorage() async {
     final FirebaseApp app = await FirebaseApp.configure(
       name: 'CarRepair',
       options: FirebaseOptions(
@@ -72,7 +74,11 @@ class Config {
     storage = await FirebaseStorage(
         app: app, storageBucket: 'gs://carrepair-16710.appspot.com/');
     print('!!! init storage ${storage.storageBucket}');
-    print('!!! init storage2 ${FirebaseStorage.instance.storageBucket}');
-    print('!!! ${storage.ref().child('userinfo/avatar/image_crop_dog.jpg').getName()}');
+
+    auth = FirebaseAuth.fromApp(app);
+    store = Firestore(app: app);
+
+    final GoogleSignIn _gooleSingIn = GoogleSignIn();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
   }
 }

@@ -87,7 +87,7 @@ class _MyImagePick extends State<ImagePickerPage> {
   Future<String> uploadPic() async {
     if (isLoading) return '';
 
-    showDialog(
+    var dialog = await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
@@ -138,7 +138,7 @@ class _MyImagePick extends State<ImagePickerPage> {
 //      );
 
     bool isLoad = false;
-    var reference = Config.storage.ref().child(url);
+    var reference = FirebaseStorage.instance.ref().child(url).child(name);
     reference.putFile(_image).events.listen((event) {
       if (event == StorageTaskEventType.success ||
           event == StorageTaskEventType.failure ||
@@ -146,12 +146,14 @@ class _MyImagePick extends State<ImagePickerPage> {
         // stop upload.
         isLoad = false;
         if (event == StorageTaskEventType.success) {
-          updateWhenUpload(reference.path);
+          updateWhenUpload(
+              dialog, Config.storage.storageBucket + reference.path);
         } else if (event == StorageTaskEventType.failure) {
           Scaffold.of(context)
               .showSnackBar(SnackBar(content: Text('Upload failure.')));
+
+          Navigator.of(dialog).pop();
         }
-        Navigator.of(context).pop();
       } else if (event == StorageTaskEventType.progress) {
         var snapshot = event.snapshot;
         print('!!! ${snapshot.bytesTransferred} / ${snapshot.totalByteCount}');
@@ -167,18 +169,14 @@ class _MyImagePick extends State<ImagePickerPage> {
     });
   }
 
-  updateWhenUpload(String referencePath) {
+  updateWhenUpload(BuildContext dialog, String referencePath) {
     print('!!! update url to user $referencePath}');
     UserUpdateInfo info = UserUpdateInfo();
     info.photoUrl = referencePath;
     widget.user.updateProfile(info).then((result) {
       print('!!! updateProfile.');
-    });
-  }
-
-  @override
-  void initState() {
-    Config().initFirebaseStorage();
+      Navigator.of(dialog).pop();
+    }).catchError((e) {});
   }
 }
 

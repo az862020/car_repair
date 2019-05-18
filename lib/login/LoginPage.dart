@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/home.dart';
 import 'package:car_repair/register/RegisterPage.dart';
-import 'package:car_repair/base/conf.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -221,6 +218,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
     final FirebaseUser user =
         await FirebaseAuth.instance.signInWithCredential(credential);
     print('signed in ' + user.email);
+
+    FirebaseUser userD = await FirebaseAuth.instance.currentUser();
+    print('!!! userD = user ${userD.uid == user.uid}');
     return user;
   }
 
@@ -236,7 +236,8 @@ class _LoginPageFormState extends State<LoginPageForm> {
     final FirebaseUser user =
         await FirebaseAuth.instance.signInWithCredential(credential);
     print('signed in ' + user.displayName);
-    print(user);
+    FirebaseUser userD = await FirebaseAuth.instance.currentUser();
+    print('!!! userD = user ${userD.uid == user.uid}');
     Config.user = user;
     return user;
   }
