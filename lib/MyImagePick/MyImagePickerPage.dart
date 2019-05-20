@@ -57,9 +57,7 @@ class _MyImagePick extends State<ImagePickerPage> {
                 icon: Icon(Icons.done),
                 onPressed: () {
                   // start upload.
-
-                  uploadPic();
-//                  Navigator.pop(_context, _image);
+                  uploadPic(context);
                 }),
           ),
         ],
@@ -84,15 +82,8 @@ class _MyImagePick extends State<ImagePickerPage> {
     );
   }
 
-  Future<String> uploadPic() async {
+  Future<String> uploadPic(BuildContext context) async {
     if (isLoading) return '';
-
-    var dialog = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return MyLoadingDialog();
-        });
 
     String path = _image.absolute.path;
     String name = path.substring(path.lastIndexOf('/') + 1);
@@ -102,59 +93,24 @@ class _MyImagePick extends State<ImagePickerPage> {
     print('!!! url $url');
     print('!!! img $_image');
 
-//    final StorageReference reference =
-//        Config.storage
-//        .ref()
-//        .child('userinfo')
-//        .child('photoUrl')
-//        .child('${widget.user.uid}')
-//        .child(name);
-//    print('!!! ref ${reference.path}');
-////    FirebaseStorage.instance
-////        .getReferenceFromUrl(url)
-////        .then((reference) {
-//
-//      StorageUploadTask task = reference
-//          .putFile(
-//              _image,
-//              StorageMetadata(
-//                contentType: 'image/jpeg',
-////                customMetadata: <String, String>{'type': 'image/jpeg'},
-//              ));
-//      StorageTaskSnapshot snapshot = await task.onComplete;
-//      String upUrl = await snapshot.ref.getDownloadURL();
-//      print('!!! onComplete $upUrl');
-//          .events
-//          .listen((dataEvent) {
-//            print('!!! ${dataEvent.type}');
-//      }, onDone: () {
-//        print('!!! onDone  ${reference.path}');
-
-//      }, onError: (){
-//        print('!!! onError  ${reference.path}');
-//
-//      });
-//      }
-//      );
-
     bool isLoad = false;
     var reference = FirebaseStorage.instance.ref().child(url).child(name);
     reference.putFile(_image).events.listen((event) {
-      if (event == StorageTaskEventType.success ||
-          event == StorageTaskEventType.failure ||
-          event == StorageTaskEventType.pause) {
+      print('!!! event ${event.type}');
+      if (event.type == StorageTaskEventType.success ||
+          event.type == StorageTaskEventType.failure ||
+          event.type == StorageTaskEventType.pause) {
         // stop upload.
         isLoad = false;
-        if (event == StorageTaskEventType.success) {
+        if (event.type == StorageTaskEventType.success) {
           updateWhenUpload(
-              dialog, Config.storage.storageBucket + reference.path);
-        } else if (event == StorageTaskEventType.failure) {
+              context, Config.storage.storageBucket + reference.path);
+        } else if (event.type == StorageTaskEventType.failure) {
+          Navigator.pop(context, 'dialog');
           Scaffold.of(context)
               .showSnackBar(SnackBar(content: Text('Upload failure.')));
-
-          Navigator.of(dialog).pop();
         }
-      } else if (event == StorageTaskEventType.progress) {
+      } else if (event.type == StorageTaskEventType.progress) {
         var snapshot = event.snapshot;
         print('!!! ${snapshot.bytesTransferred} / ${snapshot.totalByteCount}');
         var procent = snapshot.bytesTransferred / snapshot.totalByteCount * 100;
@@ -167,16 +123,28 @@ class _MyImagePick extends State<ImagePickerPage> {
         });
       }
     });
+    Config.showLoadingDialog(context);
   }
 
   updateWhenUpload(BuildContext dialog, String referencePath) {
-    print('!!! update url to user $referencePath}');
+    print('!!! update url to user $referencePath');
     UserUpdateInfo info = UserUpdateInfo();
     info.photoUrl = referencePath;
+    info.displayName = widget.user.displayName == null
+        ? widget.user.email
+        : widget.user.displayName;
     widget.user.updateProfile(info).then((result) {
-      print('!!! updateProfile.');
-      Navigator.of(dialog).pop();
+      print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
+      Navigator.of(dialog, rootNavigator: true).pop('dialog');
+      Navigator.of(dialog).pop(widget.user);
     }).catchError((e) {});
+  }
+
+  @override
+  void dispose() {
+    _image?.delete();
+    _image = null;
+    super.dispose();
   }
 }
 

@@ -135,7 +135,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 //如果验证通过
                 if (_formKey.currentState.validate()) {
                   if (!isLoading) {
-                    falseHttp();
+                    falseHttp(context);
                   } else {
 //                    Scaffold.of(context).showSnackBar(SnackBar(
 //                      content: Text(' you are loading, plz wait.'),
@@ -159,7 +159,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
             GestureDetector(
               onTap: () {
                 print('tap');
-                loginGoogle().then((user) {
+                loginGoogle(context).then((user) {
                   gotoHome(user, context);
                 }).catchError((e) {
                   Scaffold.of(context).showSnackBar(
@@ -178,12 +178,12 @@ class _LoginPageFormState extends State<LoginPageForm> {
   }
 
   //开启定时器,模拟HTTP请求.
-  void falseHttp() {
+  void falseHttp(BuildContext context) {
     setState(() {
       isLoading = true;
       print('tap');
     });
-    login().then((user) {
+    login(context).then((user) {
       //when success.
       print(user);
       setState(() {
@@ -211,7 +211,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
     });
   }
 
-  Future<FirebaseUser> login() async {
+  Future<FirebaseUser> login(BuildContext context) async {
+    Config.showLoadingDialog(context);
+
     final AuthCredential credential = EmailAuthProvider.getCredential(
         email: usernameController.text, password: passwordController.text);
 
@@ -224,8 +226,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
     return user;
   }
 
-  Future<FirebaseUser> loginGoogle() async {
+  Future<FirebaseUser> loginGoogle(BuildContext context) async {
 //    Dialog();
+    Config.showLoadingDialog(context);
+
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -261,6 +265,8 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   //登录成功,获取到了用户信息,携带user跳转home.
   gotoHome(FirebaseUser user, BuildContext context) {
+    Navigator.pop(context);
+
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => HomePage(user: user)),

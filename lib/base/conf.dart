@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:car_repair/widget/MyLoadingDialog.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +23,9 @@ class Config {
   static String AppDir = ''; //应用外部存储路径.
   static String AppDirFile = ''; //应用外部存储路径-文件文件夹.
   static String AppDirCache = ''; //应用外部存储路径-缓存文件夹.
+
+  static String AppBucket =
+      'gs://carrepair-16710.appspot.com/'; //google storage bucket.
 
   static FirebaseUser user;
 
@@ -80,5 +84,14 @@ class Config {
 
     final GoogleSignIn _gooleSingIn = GoogleSignIn();
     final FirebaseAuth _auth = FirebaseAuth.instance;
+  }
+
+  static showLoadingDialog(BuildContext context) async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return MyLoadingDialog();
+        });
   }
 }
