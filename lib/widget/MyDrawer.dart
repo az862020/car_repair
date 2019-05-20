@@ -109,6 +109,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   user: widget._user,
                 ))).then((user) {
       if (user == null) return;
+      //todo when i refresh userinfo, should make image download new url.
       bool isG = user.photoUrl.startsWith(Config.AppBucket);
       print('!!! isG $isG');
       setState(() {
