@@ -19,6 +19,7 @@ class CloudCacheManager extends BaseCacheManager {
     if (_instance == null) {
       _instance = new CloudCacheManager._();
     }
+    print('!!! CloudCacheManager ');
     return _instance;
   }
 

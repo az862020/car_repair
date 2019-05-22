@@ -135,7 +135,7 @@ class _MyImagePick extends State<ImagePickerPage> {
         : widget.user.displayName;
     widget.user.updateProfile(info).then((result) {
       print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
-      Navigator.of(dialog, rootNavigator: true).pop('dialog');
+      Navigator.of(dialog, rootNavigator: true).pop(widget.user);
       Navigator.of(dialog).pop(widget.user);
     }).catchError((e) {});
   }
