@@ -135,8 +135,15 @@ class _MyImagePick extends State<ImagePickerPage> {
         : widget.user.displayName;
     widget.user.updateProfile(info).then((result) {
       print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
-      Navigator.of(dialog, rootNavigator: true).pop(widget.user);
-      Navigator.of(dialog).pop(widget.user);
+      widget.user.reload().then((x) {
+        print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
+        FirebaseAuth.instance.currentUser().then((user) {
+          Config.user = user;
+          print('!!! updateProfile. photoUrl:${user.photoUrl}');
+          Navigator.of(dialog, rootNavigator: true).pop(user);
+          Navigator.of(dialog).pop(user);
+        });
+      });
     }).catchError((e) {});
   }
 

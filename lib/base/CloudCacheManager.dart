@@ -19,7 +19,7 @@ class CloudCacheManager extends BaseCacheManager {
     if (_instance == null) {
       _instance = new CloudCacheManager._();
     }
-    print('!!! CloudCacheManager ');
+    print('!!! CloudCacheManager factory');
     return _instance;
   }
 
@@ -39,8 +39,9 @@ class CloudCacheManager extends BaseCacheManager {
     url = url.replaceAll(Config.AppBucket, '');
     StorageReference reference = FirebaseStorage.instance.ref().child(url);
     // Do things with headers, the url or whatever.
+    print('!!! start get G url: $url');
     url = await reference.getDownloadURL();
-    print('!!! url: $url');
+    print('!!! end get G url: $url');
     return HttpFileFetcherResponse(await http.get(url, headers: headers));
   }
 }

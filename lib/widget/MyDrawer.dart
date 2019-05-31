@@ -57,7 +57,6 @@ class _MyDrawerState extends State<MyDrawer> {
                   gotoPickHead(context);
                 },
                 child: CircleAvatar(
-                  key: ,
                   backgroundImage: photoUrl == null
                       ? AssetImage('assets/images/account_box.png')
                       : CloudImageProvider('$photoUrl'),
@@ -123,14 +122,13 @@ class _MyDrawerState extends State<MyDrawer> {
                   user: _user,
                 ))).then((user) {
       if (user != null) {
-        //todo when i refresh userinfo, should make image download new url.
+        // when i refresh userinfo, should make image download new url.
         bool isG = user.photoUrl.startsWith(Config.AppBucket);
-        print('!!! isG $isG');
+        print('!!! isG $isG  ${user.photoUrl}');
         if (isG)
           setState(() {
             _user = user;
             photoUrl = _user.photoUrl;
-            widget.
           });
       }
     });
