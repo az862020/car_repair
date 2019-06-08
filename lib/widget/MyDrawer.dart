@@ -54,11 +54,13 @@ class _MyDrawerState extends State<MyDrawer> {
               accountEmail: Text('${Email}'),
               currentAccountPicture: GestureDetector(
                 onTap: () {
+                  print('!!! photoUrl : $photoUrl');
                   gotoPickHead(context);
                 },
                 child: CircleAvatar(
                   backgroundImage: photoUrl == null
                       ? AssetImage('assets/images/account_box.png')
+//                      ? Image.file(File(''))
                       : CloudImageProvider('$photoUrl'),
                 ),
               ),

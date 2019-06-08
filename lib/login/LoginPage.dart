@@ -221,8 +221,8 @@ class _LoginPageFormState extends State<LoginPageForm> {
         await FirebaseAuth.instance.signInWithCredential(credential);
     print('signed in ' + user.email);
 
-    FirebaseUser userD = await FirebaseAuth.instance.currentUser();
-    print('!!! userD = user ${userD.uid == user.uid}');
+    Config.user = await FirebaseAuth.instance.currentUser();
+    print('!!! userD = user ${Config.user.uid == user.uid}');
     return user;
   }
 
