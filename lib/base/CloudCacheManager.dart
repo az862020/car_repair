@@ -15,6 +15,8 @@ class CloudCacheManager extends BaseCacheManager {
 
   static CloudCacheManager _instance;
 
+  static bool isFileProxy = false;
+
   factory CloudCacheManager() {
     if (_instance == null) {
       _instance = new CloudCacheManager._();
@@ -23,11 +25,7 @@ class CloudCacheManager extends BaseCacheManager {
     return _instance;
   }
 
-  CloudCacheManager._()
-      : super(key,
-            maxAgeCacheObject: Duration(days: 7),
-            maxNrOfCacheObjects: 100,
-            fileFetcher: _customHttpGetter);
+  CloudCacheManager._() : super(key, fileFetcher: _customHttpGetter);
 
   Future<String> getFilePath() async {
     var directory = await getTemporaryDirectory();
@@ -39,9 +37,38 @@ class CloudCacheManager extends BaseCacheManager {
     url = url.replaceAll(Config.AppBucket, '');
     StorageReference reference = FirebaseStorage.instance.ref().child(url);
     // Do things with headers, the url or whatever.
-    print('!!! start get G url: $url');
-    url = await reference.getDownloadURL();
-    print('!!! end get G url: $url');
-    return HttpFileFetcherResponse(await http.get(url, headers: headers));
+    if (isFileProxy) {
+      String newPath =
+          Config.AppDirCache + url.replaceAll(Config.AppBucket, '');
+      File proxyFile = new File(newPath);
+      bool exists = await proxyFile.exists();
+      if (!exists) {
+        await proxyFile.create(recursive: true);
+      }
+      var future = await reference.writeToFile(proxyFile).future;
+      final String tempFileContents = await proxyFile.readAsString();
+      http.Response _response = new http.Response(tempFileContents, 200);
+      return HttpFileFetcherResponse(_response);
+    } else {
+      url = await reference.getDownloadURL();
+      return HttpFileFetcherResponse(await http.get(url, headers: headers));
+    }
   }
+
+//  @override
+//  Future<FileInfo> downloadFile(String url,
+//      {Map<String, String> authHeaders, bool force = false}) {
+//    super.downloadFile(url);
+//    print('!!! override downloadFile');
+//    StorageReference reference = FirebaseStorage.instance.ref().child(url);
+//    File(path)
+//    reference.writeToFile(file);
+//  }
+//
+//  @override
+//  Future<File> getSingleFile(String url, {Map<String, String> headers}) {
+//    // TODO: implement getSingleFile
+//    return super.getSingleFile(url, headers);
+//  }
+
 }

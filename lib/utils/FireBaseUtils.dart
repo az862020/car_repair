@@ -67,22 +67,24 @@ class FireBaseUtils {
     UserUpdateInfo info = UserUpdateInfo();
     if (type == PHOTOURL) {
       info.photoUrl = updateInfo;
-      info.displayName = Config.user.displayName == null
-          ? Config.user.email
-          : Config.user.displayName;
+      info.displayName = Config.user.displayName ?? Config.user.email;
     } else if (type == DISPLAY) {
       info.photoUrl = Config.user.photoUrl;
       info.displayName = updateInfo;
     }
-
-    return await updateUserInfo(info);
+    return await updateUserInfo(info, type);
   }
 
-  /// 更新用户信息.
-  static Future<FirebaseUser> updateUserInfo(UserUpdateInfo info) async {
+  /// 更新用户信息. 如果是头像, 删除老头像, 重新加载用户信息, 赋值到公共变量.
+  static Future<FirebaseUser> updateUserInfo(
+      UserUpdateInfo info, int type) async {
     if (Config.user == null) return null;
-
     await Config.user.updateProfile(info);
+    if (type == PHOTOURL)
+      FirebaseStorage.instance
+          .ref()
+          .child(Config.user.photoUrl.replaceAll(Config.AppBucket, ''))
+          .delete();
     await Config.user.reload();
     Config.user = await FirebaseAuth.instance.currentUser();
     return Config.user;

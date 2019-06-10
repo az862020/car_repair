@@ -3,32 +3,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'widget/MyDrawer.dart';
 
-
-class HomePage extends StatelessWidget{
+class HomePage extends StatelessWidget {
   final String mTitle = 'home';
 
   final FirebaseUser user;
 
   const HomePage({Key key, @required this.user}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: mTitle,
       home: Scaffold(
-        appBar: AppBar(title: Text(mTitle),),
+        appBar: AppBar(
+          title: Text(mTitle),
+        ),
         body: HomeState(user),
-        drawer: MyDrawer(user),
+        drawer: MyDrawer(),
       ),
     );
   }
-
 }
 
 class HomeState extends StatefulWidget {
   final FirebaseUser user;
-
 
   HomeState(this.user);
 
@@ -39,9 +37,6 @@ class HomeState extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeState> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -53,15 +48,10 @@ class _HomeState extends State<HomeState> {
 
   @override
   void initState() {
-    Firestore.instance.collection('userinfo/${widget.user.uid}').getDocuments()
-        .then((snapshot){
-
-    }
-    );
+    Firestore.instance
+        .collection('userinfo/${widget.user.uid}')
+        .getDocuments()
+        .then((snapshot) {});
 //    widget.user.updateProfile(userUpdateInfo)
-    
   }
-
-
-
 }

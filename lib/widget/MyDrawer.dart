@@ -13,35 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class MyDrawer extends StatefulWidget {
-  FirebaseUser _user;
-
-  MyDrawer(this._user);
-
   @override
   State<StatefulWidget> createState() {
-    return _MyDrawerState(_user);
+    return _MyDrawerState();
   }
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  FirebaseUser _user;
-
-  _MyDrawerState(this._user);
-
-//  final _photoKey = GlobalKey<DrawerHeader>();
-
-  String nickName;
-  String Email;
-  String photoUrl;
-
-  @override
-  void initState() {
-    super.initState();
-    nickName = _user.displayName ?? _user.email;
-    Email = _user.email ?? '';
-    photoUrl = _user.photoUrl;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -50,18 +28,19 @@ class _MyDrawerState extends State<MyDrawer> {
         children: <Widget>[
           DrawerHeader(
             child: UserAccountsDrawerHeader(
-              accountName: Text('${nickName}'),
-              accountEmail: Text('${Email}'),
+              accountName:
+                  Text('${Config.user.displayName ?? Config.user.email}'),
+              accountEmail: Text('${Config.user.email}'),
               currentAccountPicture: GestureDetector(
                 onTap: () {
-                  print('!!! photoUrl : $photoUrl');
+                  print('!!! photoUrl : ${Config.user.photoUrl}');
                   gotoPickHead(context);
                 },
                 child: CircleAvatar(
-                  backgroundImage: photoUrl == null
+                  backgroundImage: Config.user.photoUrl == null
                       ? AssetImage('assets/images/account_box.png')
 //                      ? Image.file(File(''))
-                      : CloudImageProvider('$photoUrl'),
+                      : CloudImageProvider(Config.user.photoUrl),
                 ),
               ),
               decoration: BoxDecoration(
@@ -84,7 +63,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyFavoritePage(_user)));
+                      builder: (context) => MyFavoritePage(Config.user)));
             },
           ),
           ListTile(
@@ -96,7 +75,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyPublishPage(_user)));
+                      builder: (context) => MyPublishPage(Config.user)));
             },
           ),
           ListTile(
@@ -108,7 +87,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MySettingsPage(_user)));
+                      builder: (context) => MySettingsPage(Config.user)));
             },
           ),
         ],
@@ -121,7 +100,7 @@ class _MyDrawerState extends State<MyDrawer> {
         context,
         MaterialPageRoute(
             builder: (context) => MyImagePickerPage(
-                  user: _user,
+                  user: Config.user,
                 ))).then((user) {
       if (user != null) {
         // when i refresh userinfo, should make image download new url.
@@ -129,8 +108,7 @@ class _MyDrawerState extends State<MyDrawer> {
         print('!!! isG $isG  ${user.photoUrl}');
         if (isG)
           setState(() {
-            _user = user;
-            photoUrl = _user.photoUrl;
+            Config.user = user;
           });
       }
     });

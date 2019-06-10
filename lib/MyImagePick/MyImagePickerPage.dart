@@ -86,76 +86,7 @@ class _MyImagePick extends State<ImagePickerPage> {
   Future<String> uploadPic(BuildContext context) async {
     FireBaseUtils.uploadPhotoUrl(
         context, _image, FireBaseUtils.STORAGE_PHOTOURL_PATH);
-
-//    if (isLoading) return '';
-//
-//    String path = _image.absolute.path;
-//    String name = path.substring(path.lastIndexOf('/') + 1);
-//    path = path.substring(path.lastIndexOf('/'));
-//
-//    String url = 'userinfo/photoUrl/${widget.user.uid}';
-//    print('!!! url $url');
-//    print('!!! img $_image');
-//
-//    bool isLoad = false;
-//    var reference = FirebaseStorage.instance.ref().child(url).child(name);
-//    reference.putFile(_image).events.listen((event) {
-//      print('!!! event ${event.type}');
-//      if (event.type == StorageTaskEventType.success ||
-//          event.type == StorageTaskEventType.failure ||
-//          event.type == StorageTaskEventType.pause) {
-//        // stop upload.
-//        isLoad = false;
-//        if (event.type == StorageTaskEventType.success) {
-//          updateWhenUpload(
-//              context, Config.storage.storageBucket + reference.path);
-//        } else if (event.type == StorageTaskEventType.failure) {
-//          Navigator.pop(context, 'dialog');
-//          Scaffold.of(context)
-//              .showSnackBar(SnackBar(content: Text('Upload failure.')));
-//        }
-//      } else if (event.type == StorageTaskEventType.progress) {
-//        var snapshot = event.snapshot;
-//        print('!!! ${snapshot.bytesTransferred} / ${snapshot.totalByteCount}');
-//        var procent = snapshot.bytesTransferred / snapshot.totalByteCount * 100;
-//        print('!!! $procent%');
-//        isLoad = true;
-//      }
-//      if (isLoad != isLoading) {
-//        setState(() {
-//          isLoading = isLoad;
-//        });
-//      }
-//    });
-//    Config.showLoadingDialog(context);
   }
-
-//  updateWhenUpload(BuildContext dialog, String referencePath) {
-//    print('!!! update url to user $referencePath');
-//    FireBaseUtils.updatePhotoUrl(referencePath, FireBaseUtils.PHOTOURL)
-//        .then((user) {
-//      Navigator.of(dialog, rootNavigator: true).pop(user);
-//      Navigator.of(dialog).pop(user);
-//    });
-
-//    UserUpdateInfo info = UserUpdateInfo();
-//    info.photoUrl = referencePath;
-//    info.displayName = widget.user.displayName == null
-//        ? widget.user.email
-//        : widget.user.displayName;
-//    widget.user.updateProfile(info).then((result) {
-//      print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
-//      widget.user.reload().then((x) {
-//        print('!!! updateProfile. photoUrl:${widget.user.photoUrl}');
-//        FirebaseAuth.instance.currentUser().then((user) {
-//          Config.user = user;
-//          print('!!! updateProfile. photoUrl:${user.photoUrl}');
-//          Navigator.of(dialog, rootNavigator: true).pop(user);
-//          Navigator.of(dialog).pop(user);
-//        });
-//      });
-//    }).catchError((e) {});
-//  }
 
   @override
   void dispose() {

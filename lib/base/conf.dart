@@ -23,6 +23,7 @@ class Config {
   static String AppDir = ''; //应用外部存储路径.
   static String AppDirFile = ''; //应用外部存储路径-文件文件夹.
   static String AppDirCache = ''; //应用外部存储路径-缓存文件夹.
+  ///storage/emulated/0/Android/data/com.cndota2.car_repair/files/
 
   static String AppBucket =
       'gs://carrepair-16710.appspot.com/'; //google storage bucket.
@@ -38,9 +39,9 @@ class Config {
    * todo 只针对安卓, 虽然可能之后就得改掉. 因为iOS没有.
    */
   initAppDir() {
-    getExternalStorageDirectory().then((dir) {
+    getTemporaryDirectory().then((dir) {
       PackageInfo.fromPlatform().then((packageinfo) {
-        Config.AppDir = '${dir.path}/Android/data/${packageinfo.packageName}';
+        Config.AppDir = '${dir.path}/';
         checkFileExist('${Config.AppDir}/files').then((dir) {
           Config.AppDirFile = dir;
         });
