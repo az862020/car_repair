@@ -15,7 +15,7 @@ class CloudCacheManager extends BaseCacheManager {
 
   static CloudCacheManager _instance;
 
-  static bool isFileProxy = false;
+  static bool isFileProxy = true;
 
   factory CloudCacheManager() {
     if (_instance == null) {
@@ -38,16 +38,17 @@ class CloudCacheManager extends BaseCacheManager {
     StorageReference reference = FirebaseStorage.instance.ref().child(url);
     // Do things with headers, the url or whatever.
     if (isFileProxy) {
-      String newPath =
-          Config.AppDirCache + url.replaceAll(Config.AppBucket, '');
+      String newPath = Config.AppDirCache + url;
       File proxyFile = new File(newPath);
       bool exists = await proxyFile.exists();
       if (!exists) {
         await proxyFile.create(recursive: true);
       }
-      var task = await reference.writeToFile(proxyFile);
+      var task = reference.writeToFile(proxyFile);
       var count = (await task.future).totalByteCount;
-      final String tempFileContents = await proxyFile.readAsString();
+
+      final String tempFileContents = proxyFile.readAsStringSync();
+
       http.Response _response = new http.Response(tempFileContents, 200);
       return HttpFileFetcherResponse(_response);
     } else {

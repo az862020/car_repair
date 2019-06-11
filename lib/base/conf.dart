@@ -41,11 +41,11 @@ class Config {
   initAppDir() {
     getTemporaryDirectory().then((dir) {
       PackageInfo.fromPlatform().then((packageinfo) {
-        Config.AppDir = '${dir.path}/';
-        checkFileExist('${Config.AppDir}/files').then((dir) {
+        Config.AppDir = dir.path + (dir.path.endsWith('/') ? '' : '/');
+        checkFileExist('${Config.AppDir}files').then((dir) {
           Config.AppDirFile = dir;
         });
-        checkFileExist('${Config.AppDir}/cache').then((dir) {
+        checkFileExist('${Config.AppDir}cache').then((dir) {
           Config.AppDirCache = dir;
         });
       });
