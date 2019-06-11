@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 
 class FireBaseUtils {
   static final int PHOTOURL = 1; //头像
-  static final int DISPLAY = 2; //昵称
+  static final int DISPLAYName = 2; //昵称
 
   static String STORAGE_PHOTOURL_PATH = 'userinfo/photoUrl/'; //云端头像文件存放路径
 
@@ -37,7 +37,7 @@ class FireBaseUtils {
         if (event.type == StorageTaskEventType.success) {
           if (CouldPath == STORAGE_PHOTOURL_PATH) {
             //photoUrl
-            updatePhotoUrl(
+            updateUserInfo(
                     Config.storage.storageBucket + reference.path, PHOTOURL)
                 .then((user) {
               Navigator.of(context, rootNavigator: true).pop(user);
@@ -61,22 +61,28 @@ class FireBaseUtils {
   }
 
   /// 更新用户信息.
-  static Future<FirebaseUser> updatePhotoUrl(
-      String updateInfo, int type) async {
+  static Future<FirebaseUser> updateUserInfo(String updateInfo, int type,
+      {BuildContext dialogContext}) async {
     print('!!! update type $type to user $updateInfo');
+    if (dialogContext != null) Config.showLoadingDialog(dialogContext);
     UserUpdateInfo info = UserUpdateInfo();
     if (type == PHOTOURL) {
       info.photoUrl = updateInfo;
       info.displayName = Config.user.displayName ?? Config.user.email;
-    } else if (type == DISPLAY) {
+    } else if (type == DISPLAYName) {
       info.photoUrl = Config.user.photoUrl;
       info.displayName = updateInfo;
     }
-    return await updateUserInfo(info, type);
+    if (dialogContext == null)
+      return await _updateUserInfo(info, type);
+    else
+      await _updateUserInfo(info, type);
+    Navigator.of(dialogContext, rootNavigator: true).pop();
+    Navigator.of(dialogContext).pop();
   }
 
   /// 更新用户信息. 如果是头像, 删除老头像, 重新加载用户信息, 赋值到公共变量.
-  static Future<FirebaseUser> updateUserInfo(
+  static Future<FirebaseUser> _updateUserInfo(
       UserUpdateInfo info, int type) async {
     if (Config.user == null) return null;
     await Config.user.updateProfile(info);

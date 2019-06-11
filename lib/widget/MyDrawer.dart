@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:car_repair/MyImagePick/MyImagePickerPage.dart';
+import 'package:car_repair/Account/MyImagePick/MyImagePickerPage.dart';
 import 'package:car_repair/base/CloudImageCache.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPage.dart';
 import 'package:car_repair/settings/MySettingsPage.dart';
+import 'package:car_repair/Account/MyEditDisplayNamePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ class _MyDrawerState extends State<MyDrawer> {
               ),
               onDetailsPressed: () {
                 print('!!! user account tip.');
-                gotoAccountSet();
+                gotoAccountSet(context);
               },
             ),
             margin: EdgeInsets.zero,
@@ -114,7 +115,13 @@ class _MyDrawerState extends State<MyDrawer> {
     });
   }
 
-  gotoAccountSet() async {
+  gotoAccountSet(BuildContext context) async {
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MyEditDisplayNamePage()))
+        .then((any) {
+      setState(() {});
+    });
+
 //    UserUpdateInfo info = UserUpdateInfo();
 //    info.displayName = 'test123';
 //    widget._user.updateProfile(info).then((result) {

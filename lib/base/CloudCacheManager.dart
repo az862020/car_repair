@@ -51,6 +51,7 @@ class CloudCacheManager extends BaseCacheManager {
       http.Response _response = new http.Response(tempFileContents, 200);
       return HttpFileFetcherResponse(_response);
     } else {
+      //get getDownloadURL from http. and then download from http. too slow.
       url = await reference.getDownloadURL();
       return HttpFileFetcherResponse(await http.get(url, headers: headers));
     }
