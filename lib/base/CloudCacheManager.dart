@@ -45,7 +45,8 @@ class CloudCacheManager extends BaseCacheManager {
       if (!exists) {
         await proxyFile.create(recursive: true);
       }
-      var future = await reference.writeToFile(proxyFile).future;
+      var task = await reference.writeToFile(proxyFile);
+      var count = (await task.future).totalByteCount;
       final String tempFileContents = await proxyFile.readAsString();
       http.Response _response = new http.Response(tempFileContents, 200);
       return HttpFileFetcherResponse(_response);
