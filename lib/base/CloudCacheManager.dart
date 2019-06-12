@@ -38,6 +38,7 @@ class CloudCacheManager extends BaseCacheManager {
     StorageReference reference = FirebaseStorage.instance.ref().child(url);
     // Do things with headers, the url or whatever.
     if (isFileProxy) {
+      //download the file first, and then link the file to the response, just want be fast.
       String newPath = Config.AppDirCache + url;
       File proxyFile = new File(newPath);
       bool exists = await proxyFile.exists();
@@ -47,9 +48,8 @@ class CloudCacheManager extends BaseCacheManager {
       var task = reference.writeToFile(proxyFile);
       var count = (await task.future).totalByteCount;
 
-      final String tempFileContents = proxyFile.readAsStringSync();
-
-      http.Response _response = new http.Response(tempFileContents, 200);
+      http.Response _response =
+          new http.Response.bytes(proxyFile.readAsBytesSync(), 200);
       return HttpFileFetcherResponse(_response);
     } else {
       //get getDownloadURL from http. and then download from http. too slow.
