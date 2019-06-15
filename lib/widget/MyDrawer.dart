@@ -5,7 +5,7 @@ import 'package:car_repair/Account/MyImagePick/MyImagePickerPage.dart';
 import 'package:car_repair/base/CloudImageCache.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
-import 'package:car_repair/publish/MyPublishPage.dart';
+import 'package:car_repair/publish/MyPublishPageList.dart';
 import 'package:car_repair/settings/MySettingsPage.dart';
 import 'package:car_repair/Account/MyEditDisplayNamePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,7 +76,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyPublishPage(Config.user)));
+                      builder: (context) => MyPublishListPage(Config.user)));
             },
           ),
           ListTile(

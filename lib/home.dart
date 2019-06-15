@@ -1,3 +1,4 @@
+import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,12 @@ class HomePage extends StatelessWidget {
         ),
         body: HomeState(user),
         drawer: MyDrawer(),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.publish),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MyNewPublishPage()));
+            }),
       ),
     );
   }
