@@ -14,12 +14,12 @@ import 'package:car_repair/utils/DBHelp.dart';
  * 这个用于存储shardpreferences的key值.
  */
 class Config {
-  static String RemberSet = 'rember'; //是否记住密码
-  static String UsernameSet = 'rember_username'; //记住的账号
-  static String PasswordSet = 'rember_password'; //记住的密码
+  static const RemberSet = 'rember'; //是否记住密码
+  static const UsernameSet = 'rember_username'; //记住的账号
+  static const PasswordSet = 'rember_password'; //记住的密码
 
-  static String testSettings = 'testSettings'; //测试用的.
-  static String testSettings2 = 'testSettings2'; //测试用的.
+  static const testSettings = 'testSettings'; //测试用的.
+  static const testSettings2 = 'testSettings2'; //测试用的.
 
   static String AppDir = ''; //应用外部存储路径.
   static String AppDirFile = ''; //应用外部存储路径-文件文件夹.
