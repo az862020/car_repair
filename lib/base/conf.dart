@@ -37,7 +37,6 @@ class Config {
 
   /**
    * 初始化外部文件路径.
-   * todo 只针对安卓, 虽然可能之后就得改掉. 因为iOS没有.
    */
   initAppDir() {
     getTemporaryDirectory().then((dir) {

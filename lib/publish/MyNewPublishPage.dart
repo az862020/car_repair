@@ -32,9 +32,39 @@ class MyNewPublishPage extends StatelessWidget {
   }
 }
 
-publish() {
-  //1. TODO compression
+publish() async {
+  //1.  compression
+  if (photoPathList.length > 0) {
+    //make the two list's size equal.
+    if (uploadFiles == null || uploadFiles.length != photoPathList.length)
+      uploadFiles = new List<String>(photoPathList.length);
+
+    for (var i = 0; i < photoPathList.length; i++) {
+      if (uploadFiles[i] == null) {
+        String jpegPath =
+            '${Config.AppDirCache}${DateTime.now().millisecondsSinceEpoch}.jpg';
+        ImageJpeg.encodeJpeg(photoPathList[i].id, jpegPath, 80, 1920, 1080)
+            .then((string) {
+          print('!!! encodeJpge result: $string');
+          uploadFiles[i] = string;
+          if (isAllDone()) {
+            upload();
+          }
+        });
+      }
+    }
+  }
+}
+
+upload() {
   //2. TODO upload
+}
+
+bool isAllDone() {
+  for (var i = 0; i < uploadFiles.length; i++) {
+    if (uploadFiles[i] == null || uploadFiles[i].isEmpty) return false;
+  }
+  return true;
 }
 
 class MyNewPublish extends StatefulWidget {
@@ -48,92 +78,128 @@ var titleControl = TextEditingController();
 var describeControl = TextEditingController();
 //var pics = List<String>();
 var photoPathList = List<AssetEntity>();
+var uploadFiles = List<String>();
 //var video = '';
 
 class _MyNewPublishState extends State<MyNewPublish> {
+  @override
+  void initState() {
+    photoPathList = List<AssetEntity>();
+    uploadFiles = List<String>();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    titleControl.dispose();
+    describeControl.dispose();
+    photoPathList.clear();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Flex(
       direction: Axis.vertical,
       children: <Widget>[
-        TextFormField(
-          controller: titleControl,
-          decoration:
-              InputDecoration(hintText: "This is title. Empty is allow."),
+        Container(
+          margin: EdgeInsets.fromLTRB(30.0, 5, 30, 15),
+          child: TextFormField(
+            controller: titleControl,
+            decoration:
+                InputDecoration(hintText: "This is title. Empty is allow."),
+          ),
         ),
         Expanded(
-          flex: 1,
-          child: GridView.builder(
+          flex: 3,
+          child: Container(
+            margin: EdgeInsets.all(5.0),
+            padding: EdgeInsets.symmetric(vertical: 15.0),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            ),
+            child: GridView.builder(
               itemCount: 9,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3, childAspectRatio: 1.0),
-              itemBuilder: (context, index) {
-                if (index == photoPathList.length) {
-                  return Container(
-                    margin: EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                    ),
-                    child: IconButton(
-                        iconSize: 48,
-                        icon: Icon(Icons.add_photo_alternate),
-                        onPressed: () {
-//            add();
-                          pickAsset();
-                        }),
-                  );
-                } else if (index > photoPathList.length) {
-                  return Container(
-                    margin: EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                    ),
-                  );
-                } else {
-                  return GestureDetector(
-                    child: Image.file(File(photoPathList[index].id)),
-                    onTap: () {
-                      preview();
-                    },
-                    onLongPress: () {
-//          alertDelete();
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                title: Text('R U sure?'),
-                                content:
-                                    Text('Are you sure you want to delete it?'),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text('Cancle'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text('Delete'),
-                                    onPressed: () {
-                                      setState(() {
-                                        photoPathList.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ));
-                    },
-                  );
-                }
-              }),
+              itemBuilder: _gridItemBuild,
+            ),
+          ),
         ),
-        TextFormField(
-          controller: titleControl,
-          decoration:
-              InputDecoration(hintText: "This is describe. Empty is allow."),
+        Expanded(
+          flex: 1,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10.0, 5, 10, 15),
+            child: TextFormField(
+              controller: describeControl,
+              decoration: InputDecoration(
+                  hintText: "This is describe. Empty is allow."),
+            ),
+          ),
         ),
       ],
     );
+  }
+
+  Widget _gridItemBuild(context, index) {
+    if (index == photoPathList.length) {
+      return Container(
+        margin: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[350],
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        ),
+        child: IconButton(
+            iconSize: 48,
+            icon: Icon(Icons.add_photo_alternate),
+            onPressed: () {
+//            add();
+              pickAsset();
+            }),
+      );
+    } else if (index > photoPathList.length) {
+      return Container(
+        margin: EdgeInsets.all(5.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[350],
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+        ),
+      );
+    } else {
+      return GestureDetector(
+        child: Image.file(File(photoPathList[index].id)),
+        onTap: () {
+          preview();
+        },
+        onLongPress: () {
+//          alertDelete();
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text('R U sure?'),
+                    content: Text('Are you sure you want to delete it?'),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Cancle'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      FlatButton(
+                        child: Text('Delete'),
+                        onPressed: () {
+                          setState(() {
+                            photoPathList.removeAt(index);
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                    ],
+                  ));
+        },
+      );
+    }
   }
 
 //  add() async {
@@ -160,6 +226,7 @@ class _MyNewPublishState extends State<MyNewPublish> {
   void pickAsset() async {
     var result = await PhotoPicker.pickAsset(
       context: context,
+      rowCount: 3,
 
       /// The following are optional parameters.
       themeColor: Colors.blue,
