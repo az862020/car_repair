@@ -26,13 +26,13 @@ class MyNewPublishPage extends StatelessWidget {
         ),
         body: MyNewPublish(),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.publish), onPressed: () => publish()),
+            child: Icon(Icons.publish), onPressed: () => publish(context)),
       ),
     );
   }
 }
 
-publish() async {
+publish(BuildContext context) async {
   //1.  compression
   if (photoPathList.length > 0) {
     //make the two list's size equal.
@@ -50,6 +50,9 @@ publish() async {
           if (isAllDone()) {
             upload();
           }
+        }).catchError((e) {
+          Scaffold.of(context).showSnackBar(
+              SnackBar(content: Text('Compressed picture failed.')));
         });
       }
     }
@@ -61,8 +64,10 @@ upload() {
 }
 
 bool isAllDone() {
-  for (var i = 0; i < uploadFiles.length; i++) {
-    if (uploadFiles[i] == null || uploadFiles[i].isEmpty) return false;
+  var tempList = List();
+  tempList.addAll(uploadFiles);
+  for (var i = 0; i < tempList.length; i++) {
+    if (tempList[i] == null || tempList[i].isEmpty) return false;
   }
   return true;
 }
