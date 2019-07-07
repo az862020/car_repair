@@ -31,8 +31,7 @@ Future<DownloadFile> QueryFile(String url) async {
       await db.query(DOWNLOADFILE, where: 'fileUrl=?', whereArgs: [url]);
   if (maps.length > 0)
     return DownloadFile(
-        maps[0]['fileUrl'], maps[0]['filePath'], maps[0]['fileLength'],
-        id: maps[0]['id']);
+        maps[0]['fileUrl'], maps[0]['filePath'], maps[0]['fileLength']);
   return null;
 }
 

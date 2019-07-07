@@ -8,7 +8,7 @@ import 'package:car_repair/utils/DBEntity/DownloadFile.dart';
 import 'package:http/http.dart' as http;
 
 class FileDownloadRecord {
-  getFileResponse(String url) async {
+  static getFileResponse(String url) async {
     //Query the DB, don't download twice.
     DownloadFile downloadFile = await QueryFile(url);
     File proxyFile;

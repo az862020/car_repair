@@ -4,7 +4,7 @@ class DownloadFile {
   String filePath;
   int fileLength;
 
-  DownloadFile(this.fileUrl, this.filePath, this.fileLength, {int id});
+  DownloadFile(this.fileUrl, this.filePath, this.fileLength);
 
   Map<String, dynamic> toMap() {
     var map = {

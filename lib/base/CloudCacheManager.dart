@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_repair/utils/FileDownloadRecord.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:http/http.dart' as http;
@@ -39,17 +40,20 @@ class CloudCacheManager extends BaseCacheManager {
     // Do things with headers, the url or whatever.
     if (isFileProxy) {
       //download the file first, and then link the file to the response, just want be fast.
-      String newPath = Config.AppDirCache + url;
-      File proxyFile = new File(newPath);
-      bool exists = await proxyFile.exists();
-      if (!exists) {
-        await proxyFile.create(recursive: true);
-      }
-      var task = reference.writeToFile(proxyFile);
-      var count = (await task.future).totalByteCount;
+//      String newPath = Config.AppDirCache + url;
+//      File proxyFile = new File(newPath);
+//      bool exists = await proxyFile.exists();
+//      if (!exists) {
+//        await proxyFile.create(recursive: true);
+//      }
+//      var task = reference.writeToFile(proxyFile);
+//      var count = (await task.future).totalByteCount;
+//
+//      http.Response _response =
+//          new http.Response.bytes(proxyFile.readAsBytesSync(), 200);
 
-      http.Response _response =
-          new http.Response.bytes(proxyFile.readAsBytesSync(), 200);
+      http.Response _response = await FileDownloadRecord.getFileResponse(url);
+
       return HttpFileFetcherResponse(_response);
     } else {
       //get getDownloadURL from http. and then download from http. too slow.
