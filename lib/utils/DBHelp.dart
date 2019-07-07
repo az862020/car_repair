@@ -7,12 +7,17 @@ import 'package:car_repair/utils/DBEntity/DownloadFile.dart';
 final Future<Database> database = initDB();
 
 final String DOWNLOADFILE = 'downloadfile';
+final String UPLOADTASK = 'uploadTask';
+final String UPLOADENTITY = 'uploadEntity';
 
 Future<Database> initDB() async {
   var path = join(await getDatabasesPath(), 'car_repair.db');
   var db = await openDatabase(path, version: 1, onCreate: (db, version) {
     return db.execute(
-        "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER)");
+        "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER); "
+        "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, title TEXT, describe TEXT); "
+        "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, taskID INTEGER); "
+        "");
   });
   return db;
 }
