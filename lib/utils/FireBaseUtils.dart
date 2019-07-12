@@ -12,6 +12,7 @@ class FireBaseUtils {
   static final int DISPLAYName = 2; //昵称
 
   static String STORAGE_PHOTOURL_PATH = 'userinfo/photoUrl/'; //云端头像文件存放路径
+  static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
 
   /// 上传图片
   /// context 用于 开启/关闭 Dialog, pop 当前界面.
