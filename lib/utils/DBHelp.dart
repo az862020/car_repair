@@ -3,6 +3,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:car_repair/utils/DBEntity/DownloadFile.dart';
+import 'package:car_repair/utils/DBEntity/UploadTask.dart';
+import 'package:car_repair/utils/DBEntity/UploadEntity.dart';
 
 final Future<Database> database = initDB();
 
@@ -22,6 +24,8 @@ Future<Database> initDB() async {
   return db;
 }
 
+///***************** File *********************
+
 Future<void> insertFile(DownloadFile file) async {
   final Database db = await database;
 
@@ -34,9 +38,7 @@ Future<DownloadFile> QueryFile(String url) async {
 
   final List<Map<String, dynamic>> maps =
       await db.query(DOWNLOADFILE, where: 'fileUrl=?', whereArgs: [url]);
-  if (maps.length > 0)
-    return DownloadFile(
-        maps[0]['fileUrl'], maps[0]['filePath'], maps[0]['fileLength']);
+  if (maps.length > 0) return DownloadFile.fromMap(maps.first);
   return null;
 }
 
@@ -54,3 +56,42 @@ Future<void> deleteFile(String fileUrl) async {
   final db = await database;
   await db.delete(DOWNLOADFILE, where: 'fileUrl = ?', whereArgs: [fileUrl]);
 }
+
+///***************** File *********************
+
+///***************** UploadTask *********************
+
+Future<UploadTask> insertTask(UploadTask uploadtask) async {
+  final Database db = await database;
+  uploadtask.tasktID = await db.insert(UPLOADTASK, uploadtask.toMap());
+  return uploadtask;
+}
+
+Future<List<UploadTask>> queryAll() async {
+  final Database db = await database;
+  List<Map<String, dynamic>> maps = await db.query(UPLOADTASK);
+  if (maps.length > 0) {
+    List<UploadTask> data = List();
+    for (var i = 0; i < maps.length; i++) {
+      data.add(UploadTask.fromMap(maps[i]));
+    }
+    return data;
+  }
+  return null;
+}
+
+Future<void> deleteUploadTask(int taskID) async {
+  final Database db = await database;
+  db.delete(DOWNLOADFILE, where: 'tasktID = ?', whereArgs: [taskID]);
+}
+
+///***************** UploadTask *********************
+
+///***************** UploadEntity *********************
+Future<void> insertUploadEntity(UploadEntity uploadEntity) async {
+  final Database db = await database;
+  await db.insert(UPLOADENTITY, uploadEntity.toMap());
+  return uploadtask;
+}
+
+///***************** UploadEntity *********************

@@ -15,6 +15,12 @@ class DownloadFile {
     return map;
   }
 
+  DownloadFile.fromMap(Map<String, dynamic> map) {
+    fileUrl = map['fileUrl'];
+    filePath = map['filePath'];
+    fileLength = map['fileLength'];
+  }
+
   @override
   String toString() {
     return 'File{fileUrl:$fileUrl, filePath:$filePath, fileLength:$fileLength}';
