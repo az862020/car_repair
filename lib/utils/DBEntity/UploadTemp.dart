@@ -5,6 +5,8 @@ class UploadTemp {
   int tasktID;
   String filePath;
 
+  UploadTemp(this.tasktID, this.filePath, {this.id});
+
   Map<String, dynamic> toMap() {
     var map = {
       'tasktID': tasktID,

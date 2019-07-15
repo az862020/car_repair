@@ -4,16 +4,16 @@ class UploadEntity {
   String localPath;
   String proxyPath;
   String cloudPath;
-  String taskID;
+  String ext1;
 
-  UploadEntity(this.localPath, this.proxyPath, this.cloudPath, this.taskID);
+  UploadEntity(this.localPath, this.proxyPath, this.cloudPath, this.ext1);
 
   Map<String, dynamic> toMap() {
     var map = {
       'localPath': localPath,
       'proxyPath': proxyPath,
       'cloudPath': cloudPath,
-      'taskID': taskID,
+      'ext1': ext1,
     };
     return map;
   }
@@ -22,11 +22,11 @@ class UploadEntity {
     localPath = map['localPath'];
     proxyPath = map['proxyPath'];
     cloudPath = map['cloudPath'];
-    taskID = map['taskID'];
+    ext1 = map['ext1'];
   }
 
   @override
   String toString() {
-    return 'File{localPath:$localPath, proxyPath:$proxyPath, cloudPath:$cloudPath, taskID:$taskID}';
+    return 'File{localPath:$localPath, proxyPath:$proxyPath, cloudPath:$cloudPath, ext1:$ext1}';
   }
 }

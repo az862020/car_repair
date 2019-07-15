@@ -40,6 +40,7 @@ dependencies:
   sqflite: ^1.1.5
   image_jpeg: ^1.1.1
   photo: ^0.3.4+1
+  uuid: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -6,10 +6,13 @@ import 'package:car_repair/utils/DBEntity/DownloadFile.dart';
 import 'package:car_repair/utils/DBEntity/UploadTask.dart';
 import 'package:car_repair/utils/DBEntity/UploadEntity.dart';
 
+import 'DBEntity/UploadTemp.dart';
+
 final Future<Database> database = initDB();
 
 final String DOWNLOADFILE = 'downloadfile';
 final String UPLOADTASK = 'uploadTask';
+final String UPLOADTEMP = 'uploadTemp';
 final String UPLOADENTITY = 'uploadEntity';
 
 Future<Database> initDB() async {
@@ -18,6 +21,7 @@ Future<Database> initDB() async {
     return db.execute(
         "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER); "
         "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, title TEXT, describe TEXT); "
+        "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT); "
         "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, taskID INTEGER); "
         "");
   });
@@ -87,11 +91,35 @@ Future<void> deleteUploadTask(int taskID) async {
 
 ///***************** UploadTask *********************
 
+///***************** UploadTemp *********************
+Future<UploadTemp> insertUploadTemp(UploadTemp uploadTemp) async {
+  final Database db = await database;
+  uploadTemp.id = await db.insert(UPLOADTEMP, uploadTemp.toMap());
+  return uploadTemp;
+}
+
+///***************** UploadTemp *********************
+
 ///***************** UploadEntity *********************
-Future<void> insertUploadEntity(UploadEntity uploadEntity) async {
+Future<Null> insertUploadEntity(UploadEntity uploadEntity) async {
   final Database db = await database;
   await db.insert(UPLOADENTITY, uploadEntity.toMap());
-  return uploadtask;
+}
+
+Future<UploadEntity> getUploadEntity(String path) async {
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+      await db.query(UPLOADENTITY, where: 'localPath = ?', whereArgs: [path]);
+  if (data != null && data.length > 0) {
+    return UploadEntity.fromMap(data.first);
+  }
+  return null;
+}
+
+Future<Null> updateUploadEntity(UploadEntity uploadEntity) async {
+  final Database db = await database;
+  await db.update(UPLOADENTITY, uploadEntity.toMap(),
+      where: 'localPath = ?', whereArgs: [uploadEntity.localPath]);
 }
 
 ///***************** UploadEntity *********************

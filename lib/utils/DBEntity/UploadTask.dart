@@ -1,11 +1,11 @@
 /// UploadTask, Mulite files upload. single upload entity 's papa.
 class UploadTask {
   int tasktID;
-  int type;
+  int type;       //0: square
   String title;
   String describe;
 
-  UploadTask(this.tasktID, this.type, this.title, this.describe);
+  UploadTask(this.type, this.title, this.describe, {this.tasktID});
 
   Map<String, dynamic> toMap() {
     var map = {
