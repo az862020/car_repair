@@ -12,7 +12,7 @@ class DBUtil {
     List<UploadTemp> temps = List();
     int entity = 0;
     for (int i = 0; i < paths.length; i++) {
-      UploadTemp uploadTemp = UploadTemp(task.tasktID, paths[i]);
+      UploadTemp uploadTemp = UploadTemp(task.tasktID, paths[i], 0);
       insertUploadTemp(uploadTemp).then((temp) {
         temps.add(temp);
         if (temps.length == paths.length && entity == paths.length) {

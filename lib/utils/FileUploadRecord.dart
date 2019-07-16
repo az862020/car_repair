@@ -10,6 +10,8 @@ import 'DBEntity/UploadEntity.dart';
 import 'DBEntity/UploadTemp.dart';
 import 'DBUtil.dart';
 
+import 'package:path/path.dart';
+
 import 'FireBaseUtils.dart';
 
 class FileUploadRecord {
@@ -41,12 +43,12 @@ class FileUploadRecord {
     if (entity.cloudPath.isEmpty) {
       var reference = FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH);
       File file = File(entity.proxyPath);
-      int length = await file.length();
-      var url = STORAGE_SQUARE_PATH + 'fileName';
+
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
           //4. update to db
-          insertFile(DownloadFile(url, entity.proxyPath, length));
+          saveDBWhenSuccess(temp, entity, file);
+          callback(true);
         } else if (event.type == StorageTaskEventType.failure) {
           callback(false);
         }
@@ -56,8 +58,20 @@ class FileUploadRecord {
     }
   }
 
+  static Future<void> saveDBWhenSuccess(
+      UploadTemp temp, UploadEntity entity, File file) async {
+    int length = await file.length();
+    var url = STORAGE_SQUARE_PATH + basename(entity.proxyPath);
+    entity.cloudPath = url;
+    updateUploadEntity(entity);
+    temp.cloudPath = url;
+    temp.isDone = 1;
+    updateUploadTemp(temp);
+    insertFile(DownloadFile(url, entity.proxyPath, length));
+  }
+
   static uploadFiles(BuildContext context, List<String> paths, int type,
-      String title, String describe, Function done) {
+      String title, String describe, Function(bool) done) {
     //TODO multi file upload task.
     if (paths == null || paths.length == 0)
       throw Exception('Can not find files to upload.');
@@ -66,6 +80,9 @@ class FileUploadRecord {
       for (var i = 0; i < temps.length; i++) {
         uploadFile(context, temps[i], (isOk) {
           //TODO check is all upload finish.
+          if (!isOk)
+            done(false);
+          else {}
         });
       }
     });

@@ -21,7 +21,7 @@ Future<Database> initDB() async {
     return db.execute(
         "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER); "
         "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, title TEXT, describe TEXT); "
-        "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT); "
+        "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT, isDone int, cloudPath TEXT); "
         "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, taskID INTEGER); "
         "");
   });
@@ -95,6 +95,13 @@ Future<void> deleteUploadTask(int taskID) async {
 Future<UploadTemp> insertUploadTemp(UploadTemp uploadTemp) async {
   final Database db = await database;
   uploadTemp.id = await db.insert(UPLOADTEMP, uploadTemp.toMap());
+  return uploadTemp;
+}
+
+Future<Null> updateUploadTemp(UploadTemp uploadTemp) async {
+  final Database db = await database;
+  uploadTemp.id = await db.update(UPLOADTEMP, uploadTemp.toMap(),
+      where: 'id = ?', whereArgs: [uploadTemp.id]);
   return uploadTemp;
 }
 

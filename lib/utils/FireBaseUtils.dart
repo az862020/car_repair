@@ -20,7 +20,7 @@ class FireBaseUtils {
   /// CouldPath 云端的文件路径, 上传到哪儿. 也用于确定后续逻辑.
   static uploadPhotoUrl(BuildContext context, File _image, String CouldPath) {
     String path = _image.absolute.path;
-    String name = path.substring(path.lastIndexOf('/') + 1);
+    String name = basename(path);
     path = path.substring(path.lastIndexOf('/'));
 
     String url = CouldPath + Config.user.uid;
