@@ -19,9 +19,9 @@ class FileUploadRecord {
 
   static upload(String filePath) {}
 
-  static uploadFile(
-      BuildContext context, UploadTemp temp, Function(bool) callback) async {
-    //TODO single upload task
+  static uploadFile(BuildContext context, UploadTemp temp,
+      Function(UploadTemp) callback) async {
+    // single upload task
     UploadEntity entity = await getUploadEntity(temp.filePath);
     if (entity == null) {
       entity = UploadEntity(temp.filePath, '', '', '');
@@ -47,42 +47,52 @@ class FileUploadRecord {
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
           //4. update to db
-          saveDBWhenSuccess(temp, entity, file);
-          callback(true);
+          saveDBWhenSuccess(temp, entity, file).then((temp) {
+            callback(temp);
+          }).catchError((e) => callback(temp));
         } else if (event.type == StorageTaskEventType.failure) {
-          callback(false);
+          callback(temp);
         }
       });
     } else {
-      callback(true);
+      callback(temp);
     }
   }
 
-  static Future<void> saveDBWhenSuccess(
+  static Future<UploadTemp> saveDBWhenSuccess(
       UploadTemp temp, UploadEntity entity, File file) async {
     int length = await file.length();
     var url = STORAGE_SQUARE_PATH + basename(entity.proxyPath);
     entity.cloudPath = url;
-    updateUploadEntity(entity);
+    await updateUploadEntity(entity);
     temp.cloudPath = url;
     temp.isDone = 1;
-    updateUploadTemp(temp);
-    insertFile(DownloadFile(url, entity.proxyPath, length));
+    await updateUploadTemp(temp);
+    await insertFile(DownloadFile(url, entity.proxyPath, length));
+    return temp;
+  }
+
+  static Future<bool> isTaskAllDone(UploadTemp) {
+    //TODO check is all Temp is Done.
   }
 
   static uploadFiles(BuildContext context, List<String> paths, int type,
       String title, String describe, Function(bool) done) {
-    //TODO multi file upload task.
+    // multi file upload task.
     if (paths == null || paths.length == 0)
       throw Exception('Can not find files to upload.');
-
+    bool hasCallBack = false;
     DBUtil.addTask(paths, type, title, describe, (temps) {
       for (var i = 0; i < temps.length; i++) {
-        uploadFile(context, temps[i], (isOk) {
-          //TODO check is all upload finish.
-          if (!isOk)
-            done(false);
-          else {}
+        uploadFile(context, temps[i], (temp) {
+          // check is all upload finish.
+          if (hasCallBack) return;
+          isTaskAllDone(temp).then((isOK) {
+            if (isOK) {
+              done(true);
+              hasCallBack = true;
+            }
+          });
         });
       }
     });
