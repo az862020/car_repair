@@ -105,6 +105,17 @@ Future<Null> updateUploadTemp(UploadTemp uploadTemp) async {
   return uploadTemp;
 }
 
+Future<List<UploadTemp>> getUploadTemps(int taskID) async {
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+      await db.query(UPLOADTEMP, where: 'tasktID = ?', whereArgs: [taskID]);
+  List<UploadTemp> result = List();
+  for (int i = 0; i < data.length; i++) {
+    result.add(UploadTemp.fromMap(data.first));
+  }
+  return result;
+}
+
 ///***************** UploadTemp *********************
 
 ///***************** UploadEntity *********************

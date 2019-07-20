@@ -30,4 +30,11 @@ class DBUtil {
   }
 
   static getTasks() {}
+
+  static Future<bool> isTaskAllDone(UploadTemp temp) async {
+    List<UploadTemp> list = await getUploadTemps(temp.tasktID);
+    return list.any((temp) {
+      return temp.isDone == 0;
+    });
+  }
 }

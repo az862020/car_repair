@@ -72,10 +72,6 @@ class FileUploadRecord {
     return temp;
   }
 
-  static Future<bool> isTaskAllDone(UploadTemp) {
-    //TODO check is all Temp is Done.
-  }
-
   static uploadFiles(BuildContext context, List<String> paths, int type,
       String title, String describe, Function(bool) done) {
     // multi file upload task.
@@ -87,7 +83,7 @@ class FileUploadRecord {
         uploadFile(context, temps[i], (temp) {
           // check is all upload finish.
           if (hasCallBack) return;
-          isTaskAllDone(temp).then((isOK) {
+          DBUtil.isTaskAllDone(temp).then((isOK) {
             if (isOK) {
               done(true);
               hasCallBack = true;
