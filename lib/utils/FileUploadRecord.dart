@@ -16,6 +16,7 @@ import 'FireBaseUtils.dart';
 
 class FileUploadRecord {
   static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
+  static int type_square = 0;
 
   static upload(String filePath) {}
 

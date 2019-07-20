@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_jpeg/image_jpeg.dart';
 import 'package:photo/photo.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:car_repair/utils/FileUploadRecord.dart';
 
 class MyNewPublishPage extends StatelessWidget {
   final String mTitle = 'MyNewPublishPage';
@@ -35,41 +36,18 @@ class MyNewPublishPage extends StatelessWidget {
 publish(BuildContext context) async {
   //1.  compression
   if (photoPathList.length > 0) {
-    //make the two list's size equal.
-    if (uploadFiles == null || uploadFiles.length != photoPathList.length)
-      uploadFiles = new List<String>(photoPathList.length);
-
-    for (var i = 0; i < photoPathList.length; i++) {
-      if (uploadFiles[i] == null) {
-        String jpegPath =
-            '${Config.AppDirCache}${DateTime.now().millisecondsSinceEpoch}.jpg';
-        ImageJpeg.encodeJpeg(photoPathList[i].id, jpegPath, 80, 1920, 1080)
-            .then((string) {
-          print('!!! encodeJpge result: $string');
-          uploadFiles[i] = string;
-          if (isAllDone()) {
-            upload();
-          }
-        }).catchError((e) {
-          Scaffold.of(context).showSnackBar(
-              SnackBar(content: Text('Compressed picture failed.')));
-        });
-      }
-    }
+    uploadFiles.clear();
+    //TODO need check is all data added.
+    uploadFiles.addAll(photoPathList.map((assetEntity) => assetEntity.id));
+    FileUploadRecord.uploadFiles(
+        context,
+        uploadFiles,
+        FileUploadRecord.type_square,
+        titleControl.text,
+        describeControl.text, (ok) {
+      //TODO here is update method.
+    });
   }
-}
-
-upload() {
-  //2. TODO upload
-}
-
-bool isAllDone() {
-  var tempList = List();
-  tempList.addAll(uploadFiles);
-  for (var i = 0; i < tempList.length; i++) {
-    if (tempList[i] == null || tempList[i].isEmpty) return false;
-  }
-  return true;
 }
 
 class MyNewPublish extends StatefulWidget {
