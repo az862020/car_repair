@@ -84,6 +84,10 @@ class FileUploadRecord {
         uploadFile(context, temps[i], (temp) {
           // check is all upload finish.
           if (hasCallBack) return;
+          if (temp.isDone == 0) {
+            hasCallBack = true;
+            done(false);
+          }
           DBUtil.isTaskAllDone(temp).then((isOK) {
             if (isOK) {
               done(true);

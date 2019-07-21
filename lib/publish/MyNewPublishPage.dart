@@ -37,8 +37,8 @@ publish(BuildContext context) async {
   //1.  compression
   if (photoPathList.length > 0) {
     uploadFiles.clear();
-    //TODO need check is all data added.
-    uploadFiles.addAll(photoPathList.map((assetEntity) => assetEntity.id));
+    uploadFiles
+        .addAll(photoPathList.map((assetEntity) => assetEntity.id).toList());
     FileUploadRecord.uploadFiles(
         context,
         uploadFiles,
@@ -46,6 +46,10 @@ publish(BuildContext context) async {
         titleControl.text,
         describeControl.text, (ok) {
       //TODO here is update method.
+      if (ok) {
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text('上传失败')));
+      }
     });
   }
 }
