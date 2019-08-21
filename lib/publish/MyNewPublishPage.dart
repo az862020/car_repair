@@ -36,6 +36,7 @@ class MyNewPublishPage extends StatelessWidget {
 publish(BuildContext context) async {
   //1.  compression
   if (photoPathList.length > 0) {
+    Config.showLoadingDialog(context);
     uploadFiles.clear();
     uploadFiles
         .addAll(photoPathList.map((assetEntity) => assetEntity.id).toList());
@@ -46,12 +47,15 @@ publish(BuildContext context) async {
         FileUploadRecord.type_square,
         titleControl.text,
         describeControl.text, done: (ok) {
+      Navigator.of(context, rootNavigator: true).pop();
       if (ok) {
-//        FireBaseUtils.update();
+        Navigator.pop(context);
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('上传失败')));
       }
     });
+  } else {
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text('暂不支持没有图片或者视频.')));
   }
 }
 

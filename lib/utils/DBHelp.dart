@@ -17,7 +17,7 @@ final String UPLOADENTITY = 'uploadEntity';
 
 Future<Database> initDB() async {
   var path = join(await getDatabasesPath(), 'car_repair.db');
-  var db = await openDatabase(path, version: 1, onCreate: (db, version) {
+  var db = await openDatabase(path, version: 2, onCreate: (db, version) {
     return db.execute(
         "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER); "
         "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, title TEXT, describe TEXT); "
