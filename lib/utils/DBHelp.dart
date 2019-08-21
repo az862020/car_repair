@@ -71,6 +71,16 @@ Future<UploadTask> insertTask(UploadTask uploadtask) async {
   return uploadtask;
 }
 
+Future<UploadTask> getTask(int taskID) async {
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+      await db.query(UPLOADTEMP, where: 'tasktID = ?', whereArgs: [taskID]);
+  if (data.length > 0) {
+    return UploadTask.fromMap(data.first);
+  }
+  return null;
+}
+
 Future<List<UploadTask>> queryAll() async {
   final Database db = await database;
   List<Map<String, dynamic>> maps = await db.query(UPLOADTASK);

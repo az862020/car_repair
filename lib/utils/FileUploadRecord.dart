@@ -9,6 +9,7 @@ import 'DBEntity/DownloadFile.dart';
 import 'DBEntity/UploadEntity.dart';
 import 'DBEntity/UploadTemp.dart';
 import 'DBUtil.dart';
+import 'package:car_repair/utils/FireBaseUtils.dart';
 
 import 'package:path/path.dart';
 
@@ -16,7 +17,11 @@ import 'FireBaseUtils.dart';
 
 class FileUploadRecord {
   static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
+  static String STOR_SQUARE_PATH = 'Square'; //云端广场文档记录路径
   static int type_square = 0;
+
+  static int mediaType_picture = 0;
+  static int mediaType_video = 1;
 
   static upload(String filePath) {}
 
@@ -74,12 +79,13 @@ class FileUploadRecord {
   }
 
   static uploadFiles(BuildContext context, List<String> paths, int type,
-      String title, String describe, Function(bool) done) {
+      int mediaType, String title, String describe,
+      {Function(bool) done}) {
     // multi file upload task.
     if (paths == null || paths.length == 0)
       throw Exception('Can not find files to upload.');
     bool hasCallBack = false;
-    DBUtil.addTask(paths, type, title, describe, (temps) {
+    DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {
       for (var i = 0; i < temps.length; i++) {
         uploadFile(context, temps[i], (temp) {
           // check is all upload finish.
@@ -88,10 +94,13 @@ class FileUploadRecord {
             hasCallBack = true;
             done(false);
           }
-          DBUtil.isTaskAllDone(temp).then((isOK) {
+          DBUtil.isTaskAllDone(temp.tasktID).then((isOK) {
             if (isOK) {
-              done(true);
               hasCallBack = true;
+              if (done != null) {
+                done(true);
+              }
+              FireBaseUtils.update(temp.tasktID, done: done == null ?? done);
             }
           });
         });

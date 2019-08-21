@@ -5,9 +5,9 @@ import 'DBEntity/UploadEntity.dart';
 
 class DBUtil {
   /// add a multi file upload task record to DB, and uploadTemp record.
-  static addTask(List<String> paths, int type, String title, String describe,
-      Function(List<UploadTemp>) callback) async {
-    UploadTask task = UploadTask(type, title, describe);
+  static addTask(List<String> paths, int type, int mediaType, String title,
+      String describe, Function(List<UploadTemp>) callback) async {
+    UploadTask task = UploadTask(type, mediaType, title, describe);
     task = await insertTask(task);
     List<UploadTemp> temps = List();
     int entity = 0;
@@ -29,11 +29,20 @@ class DBUtil {
     }
   }
 
-  static getTasks() {}
+  static getTasks() {
+    //when app is start, should check DB.
+    // if there is crash show down upload task.
+  }
 
-  static Future<bool> isTaskAllDone(UploadTemp temp) async {
-    List<UploadTemp> list = await getUploadTemps(temp.tasktID);
-    return list.any((temp) {
+  static Future<bool> isTaskAllDone(int tasktID) async {
+    List<UploadTemp> list = await getUploadTemps(tasktID);
+
+//    return list.every((temp) {
+//      return temp.isDone == 1;
+//    });
+
+    //this will be faster then old (every).
+    return !list.any((temp) {
       return temp.isDone == 0;
     });
   }

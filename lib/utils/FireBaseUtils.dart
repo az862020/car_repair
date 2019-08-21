@@ -7,6 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
+import 'DBEntity/UploadTask.dart';
+import 'DBEntity/UploadTemp.dart';
+import 'DBHelp.dart';
+import 'package:car_repair/entity/Square.dart';
+
+import 'FileUploadRecord.dart';
+import 'package:car_repair/base/conf.dart';
+
 class FireBaseUtils {
   static final int PHOTOURL = 1; //头像
   static final int DISPLAYName = 2; //昵称
@@ -95,5 +103,34 @@ class FireBaseUtils {
     await Config.user.reload();
     Config.user = await FirebaseAuth.instance.currentUser();
     return Config.user;
+  }
+
+  ///文件已上传, 开始更新广场信息.
+  static Future<Null> update(int taskID, {Function(bool) done}) async {
+    //all file had uploaded, update the data.
+    List<UploadTemp> temps = await getUploadTemps(taskID);
+    UploadTask uploadtask = await getTask(taskID);
+    List<String> res = List();
+    if (uploadtask.type == FileUploadRecord.mediaType_video) {
+      res.add(temps.first.cloudPath);
+    } else {}
+    for (int i = 0; i < temps.length; i++) {
+      res.add(temps[i].cloudPath);
+    }
+    Square square = Square(
+        BigInt.from(0),
+        uploadtask.title,
+        uploadtask.describe,
+        uploadtask.type == FileUploadRecord.mediaType_video ?? res.first,
+        uploadtask.type == FileUploadRecord.mediaType_picture ?? res);
+
+    Config.store
+        .collection(FileUploadRecord.STOR_SQUARE_PATH)
+        .add(square.toJson())
+        .whenComplete(() {
+      if (done != null) done(true);
+    }).catchError(() {
+      if (done != null) done(false);
+    });
   }
 }

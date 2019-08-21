@@ -42,11 +42,12 @@ publish(BuildContext context) async {
     FileUploadRecord.uploadFiles(
         context,
         uploadFiles,
+        FileUploadRecord.mediaType_picture,
         FileUploadRecord.type_square,
         titleControl.text,
-        describeControl.text, (ok) {
-      //TODO here is update method.
+        describeControl.text, done: (ok) {
       if (ok) {
+//        FireBaseUtils.update();
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('上传失败')));
       }
