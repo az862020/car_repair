@@ -197,6 +197,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
       print('!!! $e');
       //when failed.
       setState(() {
+        Navigator.pop(context);
         isLoading = false;
         if (e ==
             'ERROR NETWORK REQUEST FAILED, A network error (such as timeout, interrupted connection or unreachable host') {
@@ -223,6 +224,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
     Config.user = await FirebaseAuth.instance.currentUser();
     print('!!! userD = user ${Config.user.uid == user.uid}');
+
     return user;
   }
 
