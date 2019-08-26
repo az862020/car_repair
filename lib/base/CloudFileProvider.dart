@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'dart:ui' as ui show Codec;
-import 'dart:ui' show Size, Locale, TextDirection, hashValues;
+import 'dart:ui' show hashValues;
 
 class CloudFileProvider extends ImageProvider<CloudFileProvider> {
   /// Creates an object that decodes a [File] as an image.
@@ -31,9 +31,6 @@ class CloudFileProvider extends ImageProvider<CloudFileProvider> {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key),
       scale: key.scale,
-      informationCollector: (StringBuffer information) {
-        information.writeln('Path: ${file?.path}');
-      },
     );
   }
 

@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:car_repair/base/conf.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:image_jpeg/image_jpeg.dart';
 import 'package:photo/photo.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:car_repair/utils/FileUploadRecord.dart';

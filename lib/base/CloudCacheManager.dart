@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:car_repair/utils/FileDownloadRecord.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path/path.dart' as p;
@@ -7,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 import 'conf.dart';
 

@@ -67,6 +67,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
               controller: usernameController,
               validator: (string) {
                 if (string.isEmpty) return 'Username can\'t be empty.';
+                return '';
               },
               decoration: InputDecoration(
                   labelText: 'Enter your username',
@@ -80,6 +81,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 obscureText: true,
                 validator: (string) {
                   if (string.isEmpty) return 'Password can\'t be empty.';
+                  return '';
                 },
                 decoration: InputDecoration(
                     labelText: 'Enter your password',

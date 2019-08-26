@@ -8,11 +8,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:car_repair/utils/DBHelp.dart';
 
-/**
- * 这个用于存储shardpreferences的key值.
- */
+///这个用于存储shardpreferences的key值.
 class Config {
   static const RemberSet = 'rember'; //是否记住密码
   static const UsernameSet = 'rember_username'; //记住的账号

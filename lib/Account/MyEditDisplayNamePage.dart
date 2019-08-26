@@ -51,7 +51,7 @@ class _EditDisplayName extends State<EditDisplayNamePage> {
           autofocus: true,
           controller: displayNameControler,
           validator: (string) {
-            if (string.isEmpty) return 'displayName can\'t be empty.';
+            if (string.isEmpty) return 'displayName can\'t be empty.'; return '';
           },
           decoration: InputDecoration(
               labelText: 'Enter your displayName',

@@ -34,7 +34,6 @@ class _RegisterState extends State<RegisterState> {
   final passwordController = TextEditingController();
   final passwordAgainController = TextEditingController();
 
-
   @override
   void dispose() {
     usernameController.dispose();
@@ -42,7 +41,6 @@ class _RegisterState extends State<RegisterState> {
     passwordAgainController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +55,7 @@ class _RegisterState extends State<RegisterState> {
               validator: (string) {
                 if (string.isEmpty) return 'email can\'t be empty.';
                 if (!isEmail(string)) return 'this is not a Email address.';
+                return '';
               },
               decoration: InputDecoration(
                   labelText: 'Enter your Email address',
@@ -72,6 +71,7 @@ class _RegisterState extends State<RegisterState> {
                   if (string.isEmpty) return 'Password can\'t be empty.';
                   if (string.length < 6 || string.length > 15)
                     return 'Password should be 6 - 15.';
+                  return '';
                 },
                 decoration: InputDecoration(
                     labelText: 'Enter your password',
@@ -88,6 +88,7 @@ class _RegisterState extends State<RegisterState> {
                   return 'Password should be 6 - 15.';
                 if (string != passwordController.text)
                   return 'Password is different.';
+                return '';
               },
               decoration: InputDecoration(
                   labelText: 'Enter your password again',
@@ -101,7 +102,6 @@ class _RegisterState extends State<RegisterState> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -110,16 +110,16 @@ class _RegisterState extends State<RegisterState> {
                       child: SizedBox(
                         width: 16.0,
                         height: 16.0,
-                        child: CircularProgressIndicator(valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.red),
-                          strokeWidth: 2.0,),
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                          strokeWidth: 2.0,
+                        ),
                       ),
                     ),
                   ),
                   Text(
                     'Register',
                     style: TextStyle(color: Colors.white),
-
                   )
                 ],
               ),
