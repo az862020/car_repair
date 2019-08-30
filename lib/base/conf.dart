@@ -32,9 +32,8 @@ class Config {
   static FirebaseAuth auth;
   static Firestore store;
 
-  /**
-   * 初始化外部文件路径.
-   */
+  /// 初始化外部文件路径.
+
   initAppDir() {
     getTemporaryDirectory().then((dir) {
       PackageInfo.fromPlatform().then((packageinfo) {
