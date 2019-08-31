@@ -102,7 +102,7 @@ class FileUploadRecord {
               if (done != null) {
                 done(true);
               }
-              FireBaseUtils.update(temp.tasktID, done: done == null ?? done);
+              FireBaseUtils.update(temp.tasktID, done: done);
             }
           });
         });

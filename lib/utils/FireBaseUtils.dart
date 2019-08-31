@@ -121,8 +121,8 @@ class FireBaseUtils {
         BigInt.from(0),
         uploadtask.title,
         uploadtask.describe,
-        uploadtask.type == FileUploadRecord.mediaType_video ?? res.first,
-        uploadtask.type == FileUploadRecord.mediaType_picture ?? res);
+        uploadtask.type == FileUploadRecord.mediaType_video ? res.first : null,
+        uploadtask.type == FileUploadRecord.mediaType_picture ? res : null);
 
     Config.store
         .collection(FileUploadRecord.STOR_SQUARE_PATH)

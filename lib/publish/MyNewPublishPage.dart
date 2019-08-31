@@ -66,14 +66,14 @@ class MyNewPublish extends StatefulWidget {
 
 var titleControl = TextEditingController();
 var describeControl = TextEditingController();
-//var pics = List<String>();
 var photoPathList = List<AssetEntity>();
 var uploadFiles = List<String>();
-//var video = '';
 
 class _MyNewPublishState extends State<MyNewPublish> {
   @override
   void initState() {
+    titleControl = TextEditingController();
+    describeControl = TextEditingController();
     photoPathList = List<AssetEntity>();
     uploadFiles = List<String>();
     super.initState();
