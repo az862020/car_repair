@@ -17,13 +17,16 @@ final String UPLOADENTITY = 'uploadEntity';
 
 Future<Database> initDB() async {
   var path = join(await getDatabasesPath(), 'car_repair.db');
-  var db = await openDatabase(path, version: 1, onCreate: (db, version) {
-    return db.execute(
-        "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER); "
-        "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, mediaType INTEGER, title TEXT, describe TEXT); "
-        "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT, isDone INTEGER, cloudPath TEXT); "
-        "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, ext1 TEXT); "
-        "");
+  var db = await openDatabase(path, version: 1, onCreate: (db, version) async {
+    await db.execute(
+        "CREATE TABLE $DOWNLOADFILE (fileUrl TEXT PRIMARY KEY , filePath TEXT, fileLength INTEGER)");
+    await db.execute(
+        "CREATE TABLE $UPLOADTASK (tasktID INTEGER PRIMARY KEY autoincrement, type INTEGER, mediaType INTEGER, title TEXT, describe TEXT)");
+    await db.execute(
+        "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT, isDone INTEGER, cloudPath TEXT)");
+    await db.execute(
+        "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, ext1 TEXT)");
+    return db;
   });
   return db;
 }
