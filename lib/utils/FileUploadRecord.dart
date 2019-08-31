@@ -34,7 +34,7 @@ class FileUploadRecord {
       await insertUploadEntity(entity);
     }
     //1. encodejpeg
-    if (entity.proxyPath.isEmpty) {
+    if (entity.proxyPath == null) {
       var name = '${Uuid().v1()}.jpg';
       String jpegPath = '${Config.AppDirCache}$name';
       String path = await ImageJpeg.encodeJpeg(
@@ -46,7 +46,7 @@ class FileUploadRecord {
     }
 
     //3. upload
-    if (entity.cloudPath.isEmpty) {
+    if (entity.cloudPath == null) {
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
       var reference =
