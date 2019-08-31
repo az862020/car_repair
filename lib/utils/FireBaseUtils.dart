@@ -111,9 +111,9 @@ class FireBaseUtils {
     List<UploadTemp> temps = await getUploadTemps(taskID);
     UploadTask uploadtask = await getTask(taskID);
     List<String> res = List();
-    if (uploadtask.type == FileUploadRecord.mediaType_video) {
-      res.add(temps.first.cloudPath);
-    } else {}
+//    if (uploadtask.type == FileUploadRecord.mediaType_video) {
+//      res.add(temps.first.cloudPath);
+//    } else {}
     for (int i = 0; i < temps.length; i++) {
       res.add(temps[i].cloudPath);
     }
@@ -126,7 +126,8 @@ class FireBaseUtils {
 
     Config.store
         .collection(FileUploadRecord.STOR_SQUARE_PATH)
-        .add(square.toJson())
+        .document()
+        .setData(square.toJson())
         .whenComplete(() {
       if (done != null) done(true);
     }).catchError(() {

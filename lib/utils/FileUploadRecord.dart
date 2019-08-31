@@ -47,8 +47,10 @@ class FileUploadRecord {
 
     //3. upload
     if (entity.cloudPath.isEmpty) {
-      var reference = FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH);
       File file = File(entity.proxyPath);
+      var filename = entity.proxyPath.split('/').last;
+      var reference =
+          FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH + filename);
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
