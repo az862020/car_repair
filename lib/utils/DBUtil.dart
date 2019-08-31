@@ -19,7 +19,7 @@ class DBUtil {
           callback(temps);
         }
       });
-      UploadEntity uploadEntity = UploadEntity(paths[i], '', '', '');
+      UploadEntity uploadEntity = UploadEntity(paths[i]);
       insertUploadEntity(uploadEntity).then((Null) {
         entity++;
         if (temps.length == paths.length && entity == paths.length) {

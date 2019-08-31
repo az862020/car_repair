@@ -30,7 +30,7 @@ class FileUploadRecord {
     // single upload task
     UploadEntity entity = await getUploadEntity(temp.filePath);
     if (entity == null) {
-      entity = UploadEntity(temp.filePath, '', '', '');
+      entity = UploadEntity(temp.filePath);
       await insertUploadEntity(entity);
     }
     //1. encodejpeg

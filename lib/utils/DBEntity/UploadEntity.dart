@@ -6,15 +6,15 @@ class UploadEntity {
   String cloudPath;
   String ext1;
 
-  UploadEntity(this.localPath, this.proxyPath, this.cloudPath, this.ext1);
+  UploadEntity(this.localPath, {this.proxyPath, this.cloudPath, this.ext1});
 
   Map<String, dynamic> toMap() {
     var map = {
       'localPath': localPath,
-      'proxyPath': proxyPath,
-      'cloudPath': cloudPath,
-      'ext1': ext1,
     };
+    if(proxyPath != null) map['proxyPath'] = proxyPath;
+    if(proxyPath != null) map['cloudPath'] = cloudPath;
+    if(proxyPath != null) map['ext1'] = ext1;
     return map;
   }
 
