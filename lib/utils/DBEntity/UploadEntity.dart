@@ -12,17 +12,17 @@ class UploadEntity {
     var map = {
       'localPath': localPath,
     };
-    if(proxyPath != null) map['proxyPath'] = proxyPath;
-    if(proxyPath != null) map['cloudPath'] = cloudPath;
-    if(proxyPath != null) map['ext1'] = ext1;
+    if (proxyPath != null) map['proxyPath'] = proxyPath;
+    if (cloudPath != null) map['cloudPath'] = cloudPath;
+    if (ext1 != null) map['ext1'] = ext1;
     return map;
   }
 
   UploadEntity.fromMap(Map<String, dynamic> map) {
     localPath = map['localPath'];
-    proxyPath = map['proxyPath'];
-    cloudPath = map['cloudPath'];
-    ext1 = map['ext1'];
+    if (map.containsKey('proxyPath')) proxyPath = map['proxyPath'];
+    if (map.containsKey('cloudPath')) cloudPath = map['cloudPath'];
+    if (map.containsKey('ext1')) ext1 = map['ext1'];
   }
 
   @override

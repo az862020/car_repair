@@ -134,17 +134,19 @@ Future<List<UploadTemp>> getUploadTemps(int taskID) async {
 ///***************** UploadEntity *********************
 Future<Null> insertUploadEntity(UploadEntity uploadEntity) async {
   final Database db = await database;
-  List<Map<String, dynamic>> data =
-  await db.query(UPLOADENTITY, where: 'localPath = ?', whereArgs: [uploadEntity.localPath]);
-  if(data.length == 0)
+  List<Map<String, dynamic>> data = await db.query(UPLOADENTITY,
+      where: 'localPath = ?', whereArgs: [uploadEntity.localPath]);
+  if (data.length == 0) {
+    print('!!! had insert a new record!');
     await db.insert(UPLOADENTITY, uploadEntity.toMap());
+  }
 }
 
 Future<UploadEntity> getUploadEntity(String path) async {
   final Database db = await database;
   List<Map<String, dynamic>> data =
       await db.query(UPLOADENTITY, where: 'localPath = ?', whereArgs: [path]);
-  if (data.length == 0) {
+  if (data.length > 0) {
     return UploadEntity.fromMap(data.first);
   }
   return null;

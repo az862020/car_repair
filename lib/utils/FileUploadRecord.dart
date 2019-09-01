@@ -30,11 +30,13 @@ class FileUploadRecord {
     // single upload task
     UploadEntity entity = await getUploadEntity(temp.filePath);
     if (entity == null) {
+      print('!!! 需要新建上传文件记录!');
       entity = UploadEntity(temp.filePath);
       await insertUploadEntity(entity);
     }
     //1. encodejpeg
     if (entity.proxyPath == null) {
+      print('!!! 需要压缩, 新建压缩文件!');
       var name = '${Uuid().v1()}.jpg';
       String jpegPath = '${Config.AppDirCache}$name';
       String path = await ImageJpeg.encodeJpeg(
@@ -47,6 +49,7 @@ class FileUploadRecord {
 
     //3. upload
     if (entity.cloudPath == null) {
+      print('!!! 需要上传, 新建云端文件!');
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
       var reference =
