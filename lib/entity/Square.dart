@@ -17,4 +17,9 @@ class Square {
   factory Square.fromJson(Map<String, dynamic> json) => _$SquareFromJson(json);
 
   Map<String, dynamic> toJson() => _$SquareToJson(this);
+
+  @override
+  String toString() {
+    return 'Square{ ${id ?? ''}, favorate:$favorate, title:$title, note:$note, video:$video, pics:$pics} ';
+  }
 }

@@ -109,7 +109,9 @@ class FireBaseUtils {
   static Future<Null> update(int taskID, {Function(bool) done}) async {
     //all file had uploaded, update the data.
     List<UploadTemp> temps = await getUploadTemps(taskID);
+    print('!!! ${temps.first.toMap().toString()}');
     UploadTask uploadtask = await getTask(taskID);
+    print('!!! ${uploadtask.toMap().toString()}');
     List<String> res = List();
 //    if (uploadtask.type == FileUploadRecord.mediaType_video) {
 //      res.add(temps.first.cloudPath);
@@ -123,15 +125,17 @@ class FireBaseUtils {
         uploadtask.describe,
         uploadtask.type == FileUploadRecord.mediaType_video ? res.first : null,
         uploadtask.type == FileUploadRecord.mediaType_picture ? res : null);
-
+    print('!!! ${square.toString()}');
+    print('!!! ${square.toJson().toString()}');
     Config.store
         .collection(FileUploadRecord.STOR_SQUARE_PATH)
         .document()
         .setData(square.toJson())
         .whenComplete(() {
       if (done != null) done(true);
-    }).catchError(() {
-      if (done != null) done(false);
+//    })
+//        .catchError(() {
+//      if (done != null) done(false);
     });
   }
 }

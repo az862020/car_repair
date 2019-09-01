@@ -25,7 +25,7 @@ class MyNewPublishPage extends StatelessWidget {
         ),
         body: MyNewPublish(),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.publish), onPressed: () => publish(context)),
+            child: Icon(Icons.publish), onPressed: () => publish(mContext)),
       ),
     );
   }
@@ -68,6 +68,7 @@ var titleControl = TextEditingController();
 var describeControl = TextEditingController();
 var photoPathList = List<AssetEntity>();
 var uploadFiles = List<String>();
+BuildContext mContext;
 
 class _MyNewPublishState extends State<MyNewPublish> {
   @override
@@ -89,6 +90,7 @@ class _MyNewPublishState extends State<MyNewPublish> {
 
   @override
   Widget build(BuildContext context) {
+    mContext = context;
     return Flex(
       direction: Axis.vertical,
       children: <Widget>[

@@ -66,7 +66,10 @@ class FileUploadRecord {
         }
       });
     } else {
-      callback(temp);
+      File file = File(entity.proxyPath);
+      saveDBWhenSuccess(temp, entity, file).then((temp) {
+        callback(temp);
+      }).catchError((e) => callback(temp));
     }
   }
 
@@ -94,7 +97,9 @@ class FileUploadRecord {
       for (var i = 0; i < temps.length; i++) {
         uploadFile(context, temps[i], (temp) {
           // check is all upload finish.
+          print('!!! has callback: $hasCallBack');
           if (hasCallBack) return;
+          print('!!! has done: ${temp.isDone}');
           if (temp.isDone == 0) {
             hasCallBack = true;
             done(false);
