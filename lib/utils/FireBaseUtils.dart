@@ -113,24 +113,26 @@ class FireBaseUtils {
     UploadTask uploadtask = await getTask(taskID);
     print('!!! ${uploadtask.toMap().toString()}');
     List<String> res = List();
-//    if (uploadtask.type == FileUploadRecord.mediaType_video) {
-//      res.add(temps.first.cloudPath);
-//    } else {}
     for (int i = 0; i < temps.length; i++) {
       res.add(temps[i].cloudPath);
     }
-    Square square = Square(
-        BigInt.from(0),
-        uploadtask.title,
-        uploadtask.describe,
-        uploadtask.type == FileUploadRecord.mediaType_video ? res.first : null,
-        uploadtask.type == FileUploadRecord.mediaType_picture ? res : null);
+    Square square =
+        Square(BigInt.from(0), uploadtask.title, uploadtask.describe);
+    if (res.length > 0) {
+      if (uploadtask.type == FileUploadRecord.mediaType_video) {
+        square.video = res.first;
+      } else if (uploadtask.type == FileUploadRecord.mediaType_picture) {
+        square.pics = res;
+      }
+    }
+
     print('!!! ${square.toString()}');
     print('!!! ${square.toJson().toString()}');
     Config.store
         .collection(FileUploadRecord.STOR_SQUARE_PATH)
-        .document()
-        .setData(square.toJson())
+//        .document()
+//        .setData(square.toJson())
+        .add(square.toJson())
         .whenComplete(() {
       if (done != null) done(true);
 //    })

@@ -4,15 +4,15 @@ part 'Square.g.dart';
 
 @JsonSerializable()
 class Square {
-  final String id;
+  String id;
   final BigInt favorate;
   final String title;
   final String note;
-  final String video;
-  final List<String> pics;
+  String video;
+  List<String> pics;
 
-  Square(this.favorate, this.title, this.note, this.video, this.pics,
-      {this.id});
+  Square(this.favorate, this.title, this.note,
+      {this.video, this.pics, this.id});
 
   factory Square.fromJson(Map<String, dynamic> json) => _$SquareFromJson(json);
 

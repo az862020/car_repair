@@ -70,7 +70,14 @@ Future<void> deleteFile(String fileUrl) async {
 
 Future<UploadTask> insertTask(UploadTask uploadtask) async {
   final Database db = await database;
-  uploadtask.tasktID = await db.insert(UPLOADTASK, uploadtask.toMap());
+  List<Map<String, dynamic>> data = await db.query(UPLOADTASK,
+      where: 'title=?,describe=? ',
+      whereArgs: [uploadtask.title, uploadtask.describe]);
+  if (data.length > 0) {
+    uploadtask.tasktID = data.first['tasktID'];
+  } else {
+    uploadtask.tasktID = await db.insert(UPLOADTASK, uploadtask.toMap());
+  }
   return uploadtask;
 }
 

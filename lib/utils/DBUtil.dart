@@ -30,16 +30,12 @@ class DBUtil {
   }
 
   static getTasks() {
-    //when app is start, should check DB.
+    //TODO when app is start, should check DB.
     // if there is crash show down upload task.
   }
 
   static Future<bool> isTaskAllDone(int tasktID) async {
     List<UploadTemp> list = await getUploadTemps(tasktID);
-
-//    return list.every((temp) {
-//      return temp.isDone == 1;
-//    });
 
     //this will be faster then old (every).
     return !list.any((temp) {
