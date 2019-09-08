@@ -11,7 +11,8 @@ class UserInfo {
   final String sex;
   final String signature;
 
-  UserInfo(this.uid, this.photoUrl, this.displayName, this.sex, this.signature);
+  UserInfo(this.uid, this.photoUrl, this.displayName,
+      {this.sex, this.signature});
 
   //json
   factory UserInfo.fromJson(Map<String, dynamic> json) =>
