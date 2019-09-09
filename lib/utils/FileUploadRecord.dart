@@ -66,6 +66,7 @@ class FileUploadRecord {
         }
       });
     } else {
+      print('!!! $entity');
       File file = File(entity.proxyPath);
       saveDBWhenSuccess(temp, entity, file).then((temp) {
         callback(temp);
@@ -107,9 +108,9 @@ class FileUploadRecord {
           DBUtil.isTaskAllDone(temp.tasktID).then((isOK) {
             if (isOK) {
               hasCallBack = true;
-              if (done != null) {
-                done(true);
-              }
+//              if (done != null) {
+//                done(true);
+//              }
               FireBaseUtils.update(temp.tasktID, done: done);
             }
           });

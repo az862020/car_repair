@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 
 import 'DBEntity/UploadTask.dart';
 import 'DBEntity/UploadTemp.dart';
@@ -14,6 +16,8 @@ import 'package:car_repair/entity/Square.dart';
 
 import 'FileUploadRecord.dart';
 import 'package:car_repair/base/conf.dart';
+
+import 'package:uuid/uuid.dart';
 
 class FireBaseUtils {
   static final int PHOTOURL = 1; //头像
@@ -125,7 +129,7 @@ class FireBaseUtils {
         square.pics = res;
       }
     }
-
+//    square.id = Uuid().v1();
     print('!!! ${square.toString()}');
     print('!!! ${square.toJson().toString()}');
     Config.store
@@ -135,9 +139,8 @@ class FireBaseUtils {
         .add(square.toJson())
         .whenComplete(() {
       if (done != null) done(true);
-//    })
-//        .catchError(() {
-//      if (done != null) done(false);
+    }).catchError(() {
+      if (done != null) done(false);
     });
   }
 }

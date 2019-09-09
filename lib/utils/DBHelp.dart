@@ -70,9 +70,14 @@ Future<void> deleteFile(String fileUrl) async {
 
 Future<UploadTask> insertTask(UploadTask uploadtask) async {
   final Database db = await database;
-  List<Map<String, dynamic>> data = await db.query(UPLOADTASK,
-      where: 'title=?,describe=? ',
-      whereArgs: [uploadtask.title, uploadtask.describe]);
+  List<Map<String, dynamic>> data =
+//  await db.query(UPLOADTASK,
+//      where: 'title=?,describe=? ',
+//      whereArgs: [uploadtask.title, uploadtask.describe]);
+      await db.rawQuery(
+          'select * from $UPLOADTASK where title=? and describe=?',
+          [uploadtask.title, uploadtask.describe]);
+
   if (data.length > 0) {
     uploadtask.tasktID = data.first['tasktID'];
   } else {
