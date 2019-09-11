@@ -129,14 +129,15 @@ class FireBaseUtils {
         square.pics = res;
       }
     }
-//    square.id = Uuid().v1();
     print('!!! ${square.toString()}');
+//    square.id = Uuid().v1();
     print('!!! ${square.toJson().toString()}');
+
     Config.store
         .collection(FileUploadRecord.STOR_SQUARE_PATH)
-//        .document()
-//        .setData(square.toJson())
-        .add(square.toJson())
+        .document()
+        .setData(square.toJson())
+//        .add(square.toJson())
         .whenComplete(() {
       if (done != null) done(true);
     }).catchError(() {

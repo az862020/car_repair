@@ -78,6 +78,7 @@ class Config {
 
     auth = FirebaseAuth.fromApp(app);
     store = Firestore(app: app);
+    await store.settings(timestampsInSnapshotsEnabled: true);
 
     final GoogleSignIn _gooleSingIn = GoogleSignIn();
     final FirebaseAuth _auth = FirebaseAuth.instance;

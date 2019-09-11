@@ -45,9 +45,10 @@ publish(BuildContext context) async {
         FileUploadRecord.type_square,
         titleControl.text,
         describeControl.text, done: (ok) {
-      Navigator.of(context, rootNavigator: true).pop();
+      Navigator.pop(context);
+
       if (ok) {
-        Navigator.pop(context);
+        Navigator.of(context, rootNavigator: true).pop();
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('上传失败')));
       }
