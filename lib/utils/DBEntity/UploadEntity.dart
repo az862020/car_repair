@@ -27,6 +27,6 @@ class UploadEntity {
 
   @override
   String toString() {
-    return 'File{localPath:$localPath, proxyPath:$proxyPath, cloudPath:$cloudPath, ext1:$ext1}';
+    return 'File{localPath:$localPath, proxyPath:${proxyPath ?? ''}, cloudPath:${cloudPath ?? ''}, ext1:${ext1 ?? ''}';
   }
 }

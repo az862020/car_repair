@@ -119,7 +119,14 @@ Future<void> deleteUploadTask(int taskID) async {
 ///***************** UploadTemp *********************
 Future<UploadTemp> insertUploadTemp(UploadTemp uploadTemp) async {
   final Database db = await database;
-  uploadTemp.id = await db.insert(UPLOADTEMP, uploadTemp.toMap());
+  List<Map<String, dynamic>> data = await db
+      .query(UPLOADTEMP, where: 'tasktID = ?', whereArgs: [uploadTemp.tasktID]);
+  if (data.length > 0) {
+    uploadTemp = UploadTemp.fromMap(data.first);
+    return uploadTemp;
+  } else {
+    uploadTemp.id = await db.insert(UPLOADTEMP, uploadTemp.toMap());
+  }
   return uploadTemp;
 }
 

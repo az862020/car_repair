@@ -25,6 +25,38 @@ class FileUploadRecord {
 
   static upload(String filePath) {}
 
+  static uploadFiles(BuildContext context, List<String> paths, int type,
+      int mediaType, String title, String describe,
+      {Function(bool) done}) {
+    // multi file upload task.
+    if (paths == null || paths.length == 0)
+      throw Exception('Can not find files to upload.');
+    bool hasCallBack = false;
+    DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {
+      for (var i = 0; i < temps.length; i++) {
+        uploadFile(context, temps[i], (temp) {
+          // check is all upload finish.
+          print('!!! has callback: $hasCallBack');
+          if (hasCallBack) return;
+          print('!!! has done: ${temp.isDone}');
+          if (temp.isDone == 0) {
+            hasCallBack = true;
+            done(false);
+          }
+          DBUtil.isTaskAllDone(temp.tasktID).then((isOK) {
+            if (isOK) {
+              hasCallBack = true;
+//              if (done != null) {
+//                done(true);
+//              }
+              FireBaseUtils.update(temp.tasktID, done: done);
+            }
+          });
+        });
+      }
+    });
+  }
+
   static uploadFile(BuildContext context, UploadTemp temp,
       Function(UploadTemp) callback) async {
     // single upload task
@@ -58,7 +90,9 @@ class FileUploadRecord {
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
           //4. update to db
+          print('!!! 上传文件成功');
           saveDBWhenSuccess(temp, entity, file).then((temp) {
+            print('!!! 上传文件成功, 数据库记录状态更新成功.');
             callback(temp);
           }).catchError((e) => callback(temp));
         } else if (event.type == StorageTaskEventType.failure) {
@@ -66,11 +100,20 @@ class FileUploadRecord {
         }
       });
     } else {
-      print('!!! $entity');
-      File file = File(entity.proxyPath);
-      saveDBWhenSuccess(temp, entity, file).then((temp) {
+      print('!!! 已上传, 复制并保存云端链接');
+      print('!!! ${temp.toString()}');
+      print('!!! ${entity.toString()}');
+      if (temp.isDone == 1 && temp.cloudPath != null) {
         callback(temp);
-      }).catchError((e) => callback(temp));
+      } else {
+        File file = File(entity.proxyPath);
+        saveDBWhenSuccess(temp, entity, file).then((temp) {
+          callback(temp);
+        }).catchError((e) {
+          print('!!! $e');
+          callback(temp);
+        });
+      }
     }
   }
 
@@ -84,38 +127,7 @@ class FileUploadRecord {
     temp.isDone = 1;
     await updateUploadTemp(temp);
     await insertFile(DownloadFile(url, entity.proxyPath, length));
+    print('!!! 保存记录成功.');
     return temp;
-  }
-
-  static uploadFiles(BuildContext context, List<String> paths, int type,
-      int mediaType, String title, String describe,
-      {Function(bool) done}) {
-    // multi file upload task.
-    if (paths == null || paths.length == 0)
-      throw Exception('Can not find files to upload.');
-    bool hasCallBack = false;
-    DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {
-      for (var i = 0; i < temps.length; i++) {
-        uploadFile(context, temps[i], (temp) {
-          // check is all upload finish.
-          print('!!! has callback: $hasCallBack');
-          if (hasCallBack) return;
-          print('!!! has done: ${temp.isDone}');
-          if (temp.isDone == 0) {
-            hasCallBack = true;
-            done(false);
-          }
-          DBUtil.isTaskAllDone(temp.tasktID).then((isOK) {
-            if (isOK) {
-              hasCallBack = true;
-//              if (done != null) {
-//                done(true);
-//              }
-              FireBaseUtils.update(temp.tasktID, done: done);
-            }
-          });
-        });
-      }
-    });
   }
 }

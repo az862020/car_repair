@@ -30,11 +30,11 @@ class UploadTemp {
     tasktID = map['tasktID'];
     filePath = map['filePath'];
     isDone = map['isDone'];
-    filePath = map['cloudPath'];
+    cloudPath = map['cloudPath'];
   }
 
   @override
   String toString() {
-    return 'UploadTask{id:$id, tasktID:$tasktID, filePath:$filePath, isDone:$isDone, filePath:$filePath}';
+    return 'UploadTemp{id:${id ?? ''}, tasktID:$tasktID, filePath:$filePath, isDone:$isDone, cloudPath:$cloudPath}';
   }
 }

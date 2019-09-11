@@ -1,12 +1,13 @@
 /// UploadTask, Mulite files upload. single upload entity 's papa.
 class UploadTask {
   int tasktID;
-  int type;       //0: square
-  int mediaType;  //0: picture; 1:video
+  int type; //0: square
+  int mediaType; //0: picture; 1:video
   String title;
   String describe;
 
-  UploadTask(this.type, this.mediaType, this.title, this.describe, {this.tasktID});
+  UploadTask(this.type, this.mediaType, this.title, this.describe,
+      {this.tasktID});
 
   Map<String, dynamic> toMap() {
     var map = {
@@ -22,8 +23,7 @@ class UploadTask {
   }
 
   UploadTask.fromMap(Map<String, dynamic> map) {
-    if(map.containsKey('taskID'))
-      tasktID = map['tasktID'];
+    if (map.containsKey('taskID')) tasktID = map['tasktID'];
     type = map['type'];
     mediaType = map['mediaType'];
     title = map['title'];
@@ -32,6 +32,6 @@ class UploadTask {
 
   @override
   String toString() {
-    return 'UploadTask{tasktID:$tasktID, type:$type, title:$title, describe:$describe}';
+    return 'UploadTask{tasktID:${tasktID ?? ''}, type:$type, title:$title, describe:$describe}';
   }
 }
