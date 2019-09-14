@@ -91,7 +91,7 @@ class FileUploadRecord {
         if (event.type == StorageTaskEventType.success) {
           //4. update to db
           print('!!! 上传文件成功');
-          saveDBWhenSuccess(temp, entity, file).then((temp) {
+          entityFinish(temp, entity, file).then((temp) {
             print('!!! 上传文件成功, 数据库记录状态更新成功.');
             callback(temp);
           }).catchError((e) => callback(temp));
@@ -106,8 +106,7 @@ class FileUploadRecord {
       if (temp.isDone == 1 && temp.cloudPath != null) {
         callback(temp);
       } else {
-        File file = File(entity.proxyPath);
-        saveDBWhenSuccess(temp, entity, file).then((temp) {
+        tempFinish(temp, entity.cloudPath).then((temp) {
           callback(temp);
         }).catchError((e) {
           print('!!! $e');
@@ -117,17 +116,23 @@ class FileUploadRecord {
     }
   }
 
-  static Future<UploadTemp> saveDBWhenSuccess(
+  static Future<UploadTemp> entityFinish(
       UploadTemp temp, UploadEntity entity, File file) async {
     int length = await file.length();
     var url = STORAGE_SQUARE_PATH + basename(entity.proxyPath);
     entity.cloudPath = url;
     await updateUploadEntity(entity);
+    await insertFile(DownloadFile(url, entity.proxyPath, length));
+    print('!!! 保存上传记录成功.');
+    tempFinish(temp, url);
+    return temp;
+  }
+
+  static Future<UploadTemp> tempFinish(UploadTemp temp, String url) async {
     temp.cloudPath = url;
     temp.isDone = 1;
     await updateUploadTemp(temp);
-    await insertFile(DownloadFile(url, entity.proxyPath, length));
-    print('!!! 保存记录成功.');
+    print('!!! 保存任务记录成功.');
     return temp;
   }
 }
