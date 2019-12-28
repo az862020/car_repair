@@ -37,17 +37,6 @@ class CloudCacheManager extends BaseCacheManager {
     // Do things with headers, the url or whatever.
     if (isFileProxy) {
       //download the file first, and then link the file to the response, just want be fast.
-//      String newPath = Config.AppDirCache + url;
-//      File proxyFile = new File(newPath);
-//      bool exists = await proxyFile.exists();
-//      if (!exists) {
-//        await proxyFile.create(recursive: true);
-//      }
-//      var task = reference.writeToFile(proxyFile);
-//      var count = (await task.future).totalByteCount;
-//
-//      http.Response _response =
-//          new http.Response.bytes(proxyFile.readAsBytesSync(), 200);
 
       http.Response _response = await FileDownloadRecord.getFileResponse(url);
 
@@ -59,16 +48,6 @@ class CloudCacheManager extends BaseCacheManager {
     }
   }
 
-//  @override
-//  Future<FileInfo> downloadFile(String url,
-//      {Map<String, String> authHeaders, bool force = false}) {
-//    super.downloadFile(url);
-//    print('!!! override downloadFile');
-//    StorageReference reference = FirebaseStorage.instance.ref().child(url);
-//    File(path)
-//    reference.writeToFile(file);
-//  }
-//
 //  @override
 //  Future<File> getSingleFile(String url, {Map<String, String> headers}) {
 //    // TODO: implement getSingleFile

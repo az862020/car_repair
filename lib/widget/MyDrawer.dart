@@ -1,5 +1,5 @@
 import 'package:car_repair/Account/MyImagePick/MyImagePickerPage.dart';
-import 'package:car_repair/base/CloudImageCache.dart';
+import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';

@@ -108,7 +108,7 @@ pickImage(BuildContext context) async {
         String path = _image.absolute.path;
         path = path.substring(0, path.lastIndexOf('/') + 1);
         print('!!! get path $path');
-        String newPath = '${path}${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String newPath = '$path${DateTime.now().millisecondsSinceEpoch}.jpg';
         bool exists = await File(newPath).exists();
         if (!exists) {
           await File(newPath).create(recursive: true);

@@ -72,13 +72,13 @@ class Config {
         storageBucket: 'gs://carrepair-16710.appspot.com/',
       ),
     );
-    storage = await FirebaseStorage(
+    storage = FirebaseStorage(
         app: app, storageBucket: 'gs://carrepair-16710.appspot.com/');
     print('!!! init storage ${storage.storageBucket}');
 
     auth = FirebaseAuth.fromApp(app);
     store = Firestore(app: app);
-    await store.settings(timestampsInSnapshotsEnabled: true);
+//    await store.settings(timestampsInSnapshotsEnabled: true);
 
     final GoogleSignIn _gooleSingIn = GoogleSignIn();
     final FirebaseAuth _auth = FirebaseAuth.instance;

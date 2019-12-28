@@ -27,7 +27,7 @@ class CloudFileProvider extends ImageProvider<CloudFileProvider> {
   }
 
   @override
-  ImageStreamCompleter load(CloudFileProvider key) {
+  ImageStreamCompleter load(CloudFileProvider key, decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key),
       scale: key.scale,
