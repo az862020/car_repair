@@ -55,7 +55,7 @@ class _RegisterState extends State<RegisterState> {
               validator: (string) {
                 if (string.isEmpty) return 'email can\'t be empty.';
                 if (!isEmail(string)) return 'this is not a Email address.';
-                return '';
+                return null;
               },
               decoration: InputDecoration(
                   labelText: 'Enter your Email address',
@@ -71,7 +71,7 @@ class _RegisterState extends State<RegisterState> {
                   if (string.isEmpty) return 'Password can\'t be empty.';
                   if (string.length < 6 || string.length > 15)
                     return 'Password should be 6 - 15.';
-                  return '';
+                  return null;
                 },
                 decoration: InputDecoration(
                     labelText: 'Enter your password',
@@ -88,7 +88,7 @@ class _RegisterState extends State<RegisterState> {
                   return 'Password should be 6 - 15.';
                 if (string != passwordController.text)
                   return 'Password is different.';
-                return '';
+                return null;
               },
               decoration: InputDecoration(
                   labelText: 'Enter your password again',
@@ -168,10 +168,10 @@ class _RegisterState extends State<RegisterState> {
   //firebase的注册
   Future<FirebaseUser> registerByFirebase() async {
     final FirebaseUser user =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    (await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: usernameController.text,
       password: passwordController.text,
-    );
+    )).user;
     return user;
   }
 }

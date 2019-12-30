@@ -67,7 +67,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
               controller: usernameController,
               validator: (string) {
                 if (string.isEmpty) return 'Username can\'t be empty.';
-                return '';
+                return null;
               },
               decoration: InputDecoration(
                   labelText: 'Enter your username',
@@ -81,7 +81,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 obscureText: true,
                 validator: (string) {
                   if (string.isEmpty) return 'Password can\'t be empty.';
-                  return '';
+                  return null;
                 },
                 decoration: InputDecoration(
                     labelText: 'Enter your password',
@@ -221,7 +221,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         email: usernameController.text, password: passwordController.text);
 
     final FirebaseUser user =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.email);
 
     Config.user = await FirebaseAuth.instance.currentUser();
@@ -242,7 +242,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
     final FirebaseUser user =
-        await FirebaseAuth.instance.signInWithCredential(credential);
+    (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.displayName);
     FirebaseUser userD = await FirebaseAuth.instance.currentUser();
     print('!!! userD = user ${userD.uid == user.uid}');
