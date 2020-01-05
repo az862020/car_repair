@@ -73,7 +73,7 @@ class Config {
       ),
     );
     storage = FirebaseStorage(
-        app: app, storageBucket: 'gs://carrepair-16710.appspot.com/');
+        app: app, storageBucket: AppBucket);
     print('!!! init storage ${storage.storageBucket}');
 
     auth = FirebaseAuth.fromApp(app);

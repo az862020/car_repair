@@ -1,3 +1,4 @@
+
 import 'package:car_repair/utils/FileDownloadRecord.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path/path.dart' as p;
@@ -32,12 +33,12 @@ class CloudCacheManager extends BaseCacheManager {
 
   static Future<FileFetcherResponse> _customHttpGetter(String url,
       {Map<String, String> headers}) async {
-    url = url.replaceAll(Config.AppBucket, '');
+    url = url.replaceAll(RegExp(Config.AppBucket), '');
     StorageReference reference = FirebaseStorage.instance.ref().child(url);
     // Do things with headers, the url or whatever.
     if (isFileProxy) {
       //download the file first, and then link the file to the response, just want be fast.
-
+      print('!!! download file use CloudCacheManager');
       http.Response _response = await FileDownloadRecord.getFileResponse(url);
 
       return HttpFileFetcherResponse(_response);
@@ -47,11 +48,5 @@ class CloudCacheManager extends BaseCacheManager {
       return HttpFileFetcherResponse(await http.get(url, headers: headers));
     }
   }
-
-//  @override
-//  Future<File> getSingleFile(String url, {Map<String, String> headers}) {
-//    // TODO: implement getSingleFile
-//    return super.getSingleFile(url, headers);
-//  }
 
 }

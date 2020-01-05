@@ -102,7 +102,7 @@ class FireBaseUtils {
     if (type == PHOTOURL)
       FirebaseStorage.instance
           .ref()
-          .child(Config.user.photoUrl.replaceAll(Config.AppBucket, ''))
+          .child(Config.user.photoUrl.replaceAll(RegExp(Config.AppBucket), ''))
           .delete();
     await Config.user.reload();
     Config.user = await FirebaseAuth.instance.currentUser();

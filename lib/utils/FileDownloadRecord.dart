@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sqflite/sql.dart';
 import 'package:car_repair/base/conf.dart';
@@ -14,11 +15,14 @@ class FileDownloadRecord {
     File proxyFile;
     //If the file has been deleted.
     if (downloadFile != null) {
+      print('!!! had file record. ${downloadFile.filePath}');
       proxyFile = File(downloadFile.filePath);
       if (!await proxyFile.exists()) {
+        print('!!! file was delete, delete record.');
         deleteFile(downloadFile.fileUrl);
         downloadFile = null;
-      }
+      }else
+        print('!!! file had download, ok.');
     }
 
     //If the file is now in DB.
@@ -34,11 +38,13 @@ class FileDownloadRecord {
       var count = (await task.future).totalByteCount;
       //Save the file in DB.
       insertFile(DownloadFile(url, newPath, count));
+      print('!!! download file and save record. ${downloadFile.filePath}');
     }
 
-    final String tempFileContents = proxyFile.readAsStringSync();
-
+    final String tempFileContents = String.fromCharCodes(proxyFile.readAsBytesSync());
+    print('!!! read file as string.');
     http.Response _response = new http.Response(tempFileContents, 200);
+    print('!!! make string to response.');
     return _response;
   }
 }
