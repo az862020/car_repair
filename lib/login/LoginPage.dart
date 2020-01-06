@@ -105,8 +105,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
               height: 1.0,
             ),
             RaisedButton(
-              child: Align(
-                alignment: Alignment.center,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
 //                    crossAxisAlignment: CrossAxisAlignment.center,
@@ -132,7 +130,6 @@ class _LoginPageFormState extends State<LoginPageForm> {
                     ),
                   ],
                 ),
-              ),
               onPressed: () {
                 //如果验证通过
                 if (_formKey.currentState.validate()) {
@@ -164,6 +161,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
                 loginGoogle(context).then((user) {
                   gotoHome(user, context);
                 }).catchError((e) {
+                  Navigator.pop(context);
                   Scaffold.of(context).showSnackBar(
                       SnackBar(content: Text('Login failed! $e')));
                 });
