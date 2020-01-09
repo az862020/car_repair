@@ -54,7 +54,7 @@ class _HomeState extends State<HomeState> {
     return Column(
       children: <Widget>[
         Text('ddddddd \n ${widget.user.displayName}\n--${widget.user.photoUrl}\n --${widget.user.email}\n'),
-        Image.file(new File('/data/user/0/com.cndota2.car_repair/cache/cache/userinfo/photoUrl/DNtzyCjy3raIRTPlBthhQjDedSj2/1578214859900.jpg')),
+
       ],
     );
   }
@@ -65,11 +65,12 @@ class _HomeState extends State<HomeState> {
         .collection('userinfo/${widget.user.uid}')
         .getDocuments()
         .then((snapshot) {});
-    File file = new File('/data/user/0/com.cndota2.car_repair/cache/cache/userinfo/photoUrl/DNtzyCjy3raIRTPlBthhQjDedSj2/1578214859900.jpg');
-    String temp ;
-    temp = String.fromCharCodes(file.readAsBytesSync());
-
-    http.Response response = new http.Response(temp, 200);
+//    File file = new File('/data/user/0/com.cndota2.car_repair/cache/cache/userinfo/photoUrl/DNtzyCjy3raIRTPlBthhQjDedSj2/1578214859900.jpg');
+//    String temp ;
+//    temp = String.fromCharCodes(file.readAsBytesSync());
+//
+//    http.Response response = new http.Response(temp, 200);
+    super.initState();
 //    widget.user.updateProfile(userUpdateInfo)
   }
 }

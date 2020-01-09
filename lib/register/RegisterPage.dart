@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -149,6 +150,7 @@ class _RegisterState extends State<RegisterState> {
       });
       registerByFirebase().then((user) {
         setState(() {
+          addItem(user);
           isLoading = false;
           print(user);
           Navigator.pop(context, user);
@@ -173,5 +175,11 @@ class _RegisterState extends State<RegisterState> {
       password: passwordController.text,
     )).user;
     return user;
+  }
+
+  void addItem(FirebaseUser user) {
+    Firestore.instance
+        .collection('userinfo')
+        .add({'favorate': new List(), 'displayName': user.email, 'photoUrl': user.photoUrl,'publish':new List()});
   }
 }
