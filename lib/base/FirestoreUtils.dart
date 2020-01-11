@@ -1,31 +1,61 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:car_repair/entity/UserInfo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+
+
 /// FireStore 远程数据库.带基础搜索功能.
-/// 区分Collection 和 Docoument. 两种连接方式不同.
+/// 区分 Userinfo 和 Square.
 /// 需要一套 增删改查.
 class FireStoreUtils {
-  /**********************Collection****************************/
-  /// Collection 增
-  addCollection(String path) {}
+  static String STORE_USERINFO = 'userinfo'; //云端头像文件存放路径
 
-  /// Collection 删
-  deleteCollection(String path) {}
 
-  /// Collection 改
-  updateCollection(String path) {}
+  static final int PHOTOURL = 0; //头像
+  static final int DISPLAYName = 1; //昵称
+  static final int SIX = 2; //性别
+  static final int SIGNATURE = 3; //签名
+  static final int BACKGROUND = 4; //头像背景
 
-  /// Collection 查
-  queryCollection(String path) {}
+  static final keys = ['photoUrl', 'displayName', 'sex', 'signature','background'];
 
-  /**********************Docoument****************************/
+  /**********************Userinfo****************************/
+  /// Userinfo 增- 注册
+  static addUserinfo(FirebaseUser user) {
 
-  /// Docoument 增
-  addDocoument(String path) {}
+    CollectionReference collectionReference = Firestore.instance.collection(STORE_USERINFO);
+    print('!!! CollectionReference get');
+    DocumentReference documentReference = collectionReference.document(user.uid);
+    print('!!! DocumentReference get');
+    documentReference.setData({'displayName':user.displayName, 'photoUrl':user.photoUrl});
+    print('!!! DocumentReference set ok ');
+  }
 
-  /// Docoument 删
-  deleteDocoument(String path) {}
+  /// Userinfo 删
+  deleteUserinfo(String path) {}
 
-  /// Docoument 改
-  updateDocoument(String path) {}
+  /// Userinfo 改 - 修改 昵称, 头像, 签名, 性别
+  static updateUserinfo(String value, int type,  FirebaseUser user) {
 
-  /// Docoument 查
-  queryDocoument(String path) {}
+    var document = Firestore.instance.collection(STORE_USERINFO).document(user.uid);
+
+    document.updateData({keys[type]:value});
+  }
+
+  /// Userinfo 查
+  static queryUserinfo(String path) {}
+
+  /**********************Square****************************/
+
+  /// Square 增
+  static addSquare(String path) {}
+
+  /// Square 删
+  deleteSquare(String path) {}
+
+  /// Square 改
+  static updateSquare(String path) {}
+
+  /// Square 查
+  static querySquare(String path) {}
 }

@@ -1,3 +1,5 @@
+import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/utils/FireBaseUtils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -178,8 +180,11 @@ class _RegisterState extends State<RegisterState> {
   }
 
   void addItem(FirebaseUser user) {
-    Firestore.instance
-        .collection('userinfo')
-        .add({'favorate': new List(), 'displayName': user.email, 'photoUrl': user.photoUrl,'publish':new List()});
+//    Firestore.instance
+//        .collection('userinfo')
+////        .add({'favorate': new List(), 'displayName': user.email, 'photoUrl': user.photoUrl,'publish':new List()});
+//        .document(user.uid)
+//        .setData({'displayName': user.email, 'photoUrl': user.photoUrl});
+      FireStoreUtils.addUserinfo(user);
   }
 }

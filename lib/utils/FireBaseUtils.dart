@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,8 +21,8 @@ import 'package:car_repair/base/conf.dart';
 import 'package:uuid/uuid.dart';
 
 class FireBaseUtils {
-  static final int PHOTOURL = 1; //头像
-  static final int DISPLAYName = 2; //昵称
+  static final int PHOTOURL = 0; //头像
+  static final int DISPLAYName = 1; //昵称
 
   static String STORAGE_PHOTOURL_PATH = 'userinfo/photoUrl/'; //云端头像文件存放路径
 //  static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
@@ -73,7 +74,7 @@ class FireBaseUtils {
     Config.showLoadingDialog(context);
   }
 
-  /// 更新用户信息.
+  /// 更新用户信息. Auth 上的.
   static Future<FirebaseUser> updateUserInfo(String updateInfo, int type,
       {BuildContext dialogContext}) async {
     print('!!! update type $type to user $updateInfo');
@@ -94,7 +95,7 @@ class FireBaseUtils {
     Navigator.of(dialogContext).pop();
   }
 
-  /// 更新用户信息. 如果是头像, 删除老头像, 重新加载用户信息, 赋值到公共变量.
+  /// 更新用户信息. FireStore上的. 如果是头像, 删除老头像, 重新加载用户信息, 赋值到公共变量.
   static Future<FirebaseUser> _updateUserInfo(
       UserUpdateInfo info, int type) async {
     if (Config.user == null) return null;
@@ -106,11 +107,13 @@ class FireBaseUtils {
           .delete();
     await Config.user.reload();
     Config.user = await FirebaseAuth.instance.currentUser();
+    //update firestore data.
+    FireStoreUtils.updateUserinfo(type == PHOTOURL? info.photoUrl : info.displayName , type,  Config.user);
     return Config.user;
   }
 
   ///文件已上传, 开始更新广场信息.
-  static Future<Null> update(int taskID, {Function(bool) done}) async {
+  static Future<Null> updateFireStore(int taskID, {Function(bool) done}) async {
     //all file had uploaded, update the data.
     List<UploadTemp> temps = await getUploadTemps(taskID);
     print('!!! ${temps.first.toMap().toString()}');

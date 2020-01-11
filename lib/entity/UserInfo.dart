@@ -4,19 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 part 'UserInfo.g.dart';
 
 @JsonSerializable()
-class UserInfo {
+class FireUserInfo {
   final String uid;
   final String photoUrl;
   final String displayName;
-  final String sex;
-  final String signature;
+  String sex;
+  String signature;
 
-  UserInfo(this.uid, this.photoUrl, this.displayName,
+  FireUserInfo(this.uid, this.photoUrl, this.displayName,
       {this.sex, this.signature});
 
   //json
-  factory UserInfo.fromJson(Map<String, dynamic> json) =>
-      _$UserInfoFromJson(json);
+  factory FireUserInfo.fromJson(Map<String, dynamic> json) =>
+      _$FireUserInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserInfoToJson(this);
+  Map<String, dynamic> toJson() => _$FireUserInfoToJson(this);
 }

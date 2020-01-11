@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,15 +62,12 @@ class _HomeState extends State<HomeState> {
 
   @override
   void initState() {
-    Firestore.instance
-        .collection('userinfo/${widget.user.uid}')
-        .getDocuments()
-        .then((snapshot) {});
-//    File file = new File('/data/user/0/com.cndota2.car_repair/cache/cache/userinfo/photoUrl/DNtzyCjy3raIRTPlBthhQjDedSj2/1578214859900.jpg');
-//    String temp ;
-//    temp = String.fromCharCodes(file.readAsBytesSync());
-//
-//    http.Response response = new http.Response(temp, 200);
+//    Firestore.instance
+//        .collection('userinfo/${widget.user.uid}')
+//        .getDocuments()
+//        .then((snapshot) {});
+//    FireStoreUtils.addCollection(FireStoreUtils.STORE_PHOTOURL, widget.user);
+
     super.initState();
 //    widget.user.updateProfile(userUpdateInfo)
   }
