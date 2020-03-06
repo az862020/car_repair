@@ -70,6 +70,7 @@ var describeControl = TextEditingController();
 var photoPathList = List<AssetEntity>();
 var uploadFiles = List<String>();
 BuildContext mContext;
+var radioValue = 'default';
 
 class _MyNewPublishState extends State<MyNewPublish> {
   @override
@@ -78,6 +79,7 @@ class _MyNewPublishState extends State<MyNewPublish> {
     describeControl = TextEditingController();
     photoPathList = List<AssetEntity>();
     uploadFiles = List<String>();
+    radioValue = 'default';
     super.initState();
   }
 
@@ -102,6 +104,23 @@ class _MyNewPublishState extends State<MyNewPublish> {
             decoration:
                 InputDecoration(hintText: "This is title. Empty is allow."),
           ),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RadioListTile<String>(
+              value: 'default',
+              title: Text('default'),
+              groupValue: radioValue,
+              onChanged: (i)=>updateRadio,
+            ),
+            RadioListTile(
+              value: 'New',
+              title: Text('New'),
+              groupValue: radioValue,
+              onChanged: (i)=>updateRadio,
+            ),
+          ],
         ),
         Expanded(
           flex: 3,
@@ -193,6 +212,13 @@ class _MyNewPublishState extends State<MyNewPublish> {
         },
       );
     }
+  }
+
+  void updateRadio(var i) {
+    radioValue = i;
+    setState(() {
+      radioValue = i;
+    });
   }
 
 //  add() async {

@@ -1,4 +1,5 @@
 import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/utils/FireBaseUtils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -176,6 +177,7 @@ class _RegisterState extends State<RegisterState> {
       email: usernameController.text,
       password: passwordController.text,
     )).user;
+    Config.user = user;
     return user;
   }
 

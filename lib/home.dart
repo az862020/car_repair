@@ -54,7 +54,7 @@ class _HomeState extends State<HomeState> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text('ddddddd \n ${widget.user.displayName}\n--${widget.user.photoUrl}\n --${widget.user.email}\n'),
+        Text('ddddddd \n ${widget.user.displayName??widget.user.uid}\n--${widget.user.photoUrl}\n --${widget.user.email}\n'),
 
       ],
     );
