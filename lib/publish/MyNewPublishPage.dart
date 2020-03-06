@@ -25,13 +25,13 @@ class MyNewPublishPage extends StatelessWidget {
         ),
         body: MyNewPublish(),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.publish), onPressed: () => publish(mContext)),
+            child: Icon(Icons.publish), onPressed: () => publish(mContext, radioValue)),
       ),
     );
   }
 }
 
-publish(BuildContext context) async {
+publish(BuildContext context, var radioValue) async {
   //1.  compression
   if (photoPathList.length > 0) {
     Config.showLoadingDialog(context);
@@ -43,7 +43,7 @@ publish(BuildContext context) async {
         uploadFiles,
         FileUploadRecord.mediaType_picture,
         FileUploadRecord.type_square,
-        titleControl.text,
+        titleControl.text, radioValue,
         describeControl.text, done: (ok) {
       Navigator.pop(context);
 

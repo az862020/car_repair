@@ -26,7 +26,7 @@ class FileUploadRecord {
   static upload(String filePath) {}
 
   static uploadFiles(BuildContext context, List<String> paths, int type,
-      int mediaType, String title, String describe,
+      int mediaType, String title, String describe, String square,
       {Function(bool) done}) {
     // multi file upload task.
     if (paths == null || paths.length == 0)
@@ -34,7 +34,7 @@ class FileUploadRecord {
     bool hasCallBack = false;
     DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {
       for (var i = 0; i < temps.length; i++) {
-        uploadFile(context, temps[i], (temp) {
+        uploadFile(context, temps[i], square, (temp) {
           // check is all upload finish.
           print('!!! has callback: $hasCallBack');
           if (hasCallBack) return;
@@ -57,7 +57,7 @@ class FileUploadRecord {
     });
   }
 
-  static uploadFile(BuildContext context, UploadTemp temp,
+  static uploadFile(BuildContext context, UploadTemp temp, String square,
       Function(UploadTemp) callback) async {
     // single upload task
     UploadEntity entity = await getUploadEntity(temp.filePath);
@@ -85,7 +85,7 @@ class FileUploadRecord {
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
       var reference =
-          FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH + filename);
+          FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH + '$square/'+ filename);
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
