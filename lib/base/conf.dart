@@ -84,12 +84,13 @@ class Config {
     final FirebaseAuth _auth = FirebaseAuth.instance;
   }
 
-  static showLoadingDialog(BuildContext context) async {
-    showDialog(
+  static Future<BuildContext> showLoadingDialog(BuildContext context) async {
+    MyLoadingDialog dialog = MyLoadingDialog();
+    return showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return MyLoadingDialog();
+          return dialog;
         });
   }
 }

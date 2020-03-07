@@ -130,7 +130,7 @@ Future<UploadTemp> insertUploadTemp(UploadTemp uploadTemp) async {
   return uploadTemp;
 }
 
-Future<Null> updateUploadTemp(UploadTemp uploadTemp) async {
+Future<UploadTemp> updateUploadTemp(UploadTemp uploadTemp) async {
   final Database db = await database;
   uploadTemp.id = await db.update(UPLOADTEMP, uploadTemp.toMap(),
       where: 'id = ?', whereArgs: [uploadTemp.id]);

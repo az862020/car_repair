@@ -100,7 +100,7 @@ class FireBaseUtils {
       UserUpdateInfo info, int type) async {
     if (Config.user == null) return null;
     await Config.user.updateProfile(info);
-    if (type == PHOTOURL)
+    if (type == PHOTOURL && Config.user.photoUrl != null)
       FirebaseStorage.instance
           .ref()
           .child(Config.user.photoUrl.replaceAll(RegExp(Config.AppBucket), ''))
@@ -113,7 +113,7 @@ class FireBaseUtils {
   }
 
   ///文件已上传, 开始更新广场信息.
-  static Future<Null> updateFireStore(int taskID, {Function(bool) done}) async {
+  static Future<Null> updateFireStore(int taskID, String squarePath, {Function(bool) done}) async {
     //all file had uploaded, update the data.
     List<UploadTemp> temps = await getUploadTemps(taskID);
     print('!!! ${temps.first.toMap().toString()}');
@@ -136,15 +136,21 @@ class FireBaseUtils {
 //    square.id = Uuid().v1();
     print('!!! ${square.toJson().toString()}');
 
-    Config.store
-        .collection(FileUploadRecord.STOR_SQUARE_PATH)
-        .document()
-        .setData(square.toJson())
-//        .add(square.toJson())
-        .whenComplete(() {
+    FireStoreUtils.addSquare(square, squarePath).then((data) {
       if (done != null) done(true);
-    }).catchError(() {
+    }).catchError((err) {
       if (done != null) done(false);
     });
+
+//    Config.store
+//        .collection(FileUploadRecord.STOR_SQUARE_PATH)
+//        .document()
+//        .setData(square.toJson())
+////        .add(square.toJson())
+//        .whenComplete(() {
+//      if (done != null) done(true);
+//    }).catchError(() {
+//      if (done != null) done(false);
+//    });
   }
 }

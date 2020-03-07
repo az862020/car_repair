@@ -49,7 +49,7 @@ class FileUploadRecord {
 //              if (done != null) {
 //                done(true);
 //              }
-              FireBaseUtils.updateFireStore(temp.tasktID, done: done);
+              FireBaseUtils.updateFireStore(temp.tasktID, square, done: done);
             }
           });
         });

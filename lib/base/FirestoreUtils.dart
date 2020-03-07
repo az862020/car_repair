@@ -1,6 +1,9 @@
+import 'package:car_repair/entity/Square.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:car_repair/entity/UserInfo.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 
 
@@ -9,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// 需要一套 增删改查.
 class FireStoreUtils {
   static String STORE_USERINFO = 'userinfo'; //云端头像文件存放路径
+  static String STORAGE_SQUARE = 'square'; //广场记录的存储路径
 
 
   static final int PHOTOURL = 0; //头像
@@ -48,7 +52,17 @@ class FireStoreUtils {
   /**********************Square****************************/
 
   /// Square 增
-  static addSquare(String path) {}
+  static Future<DocumentReference> addSquare(Square square, String squarePath) {
+    String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
+    CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$squarePath/$day');
+    print('!!! CollectionReference get');
+    return collectionReference.add(square.toJson());
+//    DocumentReference documentReference = collectionReference.document(user.uid);
+//    print('!!! DocumentReference get');
+//    documentReference.setData({'displayName':user.displayName, 'photoUrl':user.photoUrl});
+
+
+  }
 
   /// Square 删
   deleteSquare(String path) {}

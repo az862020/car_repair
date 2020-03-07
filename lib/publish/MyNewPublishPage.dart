@@ -25,7 +25,7 @@ class MyNewPublishPage extends StatelessWidget {
         ),
         body: MyNewPublish(),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.publish), onPressed: () => publish(mContext, radioValue)),
+            child: Icon(Icons.publish), onPressed: () => publish(context, radioValue)),
       ),
     );
   }
@@ -43,12 +43,13 @@ publish(BuildContext context, var radioValue) async {
         uploadFiles,
         FileUploadRecord.mediaType_picture,
         FileUploadRecord.type_square,
-        titleControl.text, radioValue,
-        describeControl.text, done: (ok) {
-      Navigator.pop(context);
+        titleControl.text, describeControl.text,
+        radioValue, done: (ok) {
+        Navigator.of(context, rootNavigator: true).pop();
 
       if (ok) {
-        Navigator.of(context, rootNavigator: true).pop();
+        print('!!! 上传成功');
+        Navigator.pop(context);
       } else {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('上传失败')));
       }
