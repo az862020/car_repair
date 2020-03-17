@@ -8,7 +8,6 @@ import 'package:car_repair/utils/FireBaseUtils.dart';
 
 import 'package:car_repair/Account/MyImagePick/MyCropPage.dart';
 
-BuildContext _context;
 
 class MyImagePickerPage extends StatelessWidget {
   final String mTitle = 'ImagePicker';
@@ -18,7 +17,6 @@ class MyImagePickerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
     return ImagePickerPage(mTitle, user);
   }
 }
@@ -46,7 +44,7 @@ class _MyImagePick extends State<ImagePickerPage> {
         leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(_context);
+              Navigator.pop(context);
             }),
         actions: <Widget>[
           Offstage(

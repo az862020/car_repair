@@ -51,11 +51,10 @@ class FireBaseUtils {
         if (event.type == StorageTaskEventType.success) {
           if (CouldPath == STORAGE_PHOTOURL_PATH) {
             //photoUrl
-            updateUserInfo(
-                    Config.storage.storageBucket + reference.path, PHOTOURL)
+            updateUserInfo(Config.storage.storageBucket + reference.path, PHOTOURL)
                 .then((user) {
-              Navigator.of(context, rootNavigator: true).pop(user);
-              Navigator.of(context).pop(user);
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.pop(context);
             });
           }
         } else if (event.type == StorageTaskEventType.failure) {

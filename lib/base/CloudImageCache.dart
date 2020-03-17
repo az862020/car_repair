@@ -45,7 +45,7 @@ class CloudImageCache
       scale: key.scale,
 // TODO enable information collector on next stable release of flutter
       informationCollector: () sync* {
-        yield DiagnosticsProperty<ImageProvider>(
+        yield DiagnosticsProperty<CloudImageCache>(
           'Image provider: $this \n Image key: $key',
           this,
           style: DiagnosticsTreeStyle.errorProperty,
