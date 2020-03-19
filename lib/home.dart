@@ -71,10 +71,15 @@ class _HomeState extends State<HomeState> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return ListView(
-      padding: const EdgeInsets.only(top: 20.0),
-      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-    );
+//    return ListView(
+//      padding: const EdgeInsets.only(top: 20.0),
+//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+//    );
+      return ListView.builder(itemBuilder: (context, i){
+          if(i >= snapshot.length) return null;
+          return _buildListItem(context, snapshot[i]);
+      });
+    
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
