@@ -5,6 +5,7 @@ import 'package:car_repair/base/CloudImageCache.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
+import 'package:car_repair/widget/SquareCard.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -63,18 +64,9 @@ class _HomeState extends State<HomeState> {
         return _buildList(context, snapshot.data.documents);
       },
     );
-      return Column(
-      children: <Widget>[
-        Text('ddddddd \n ${widget.user.displayName??widget.user.uid}\n--${widget.user.photoUrl}\n --${widget.user.email}\n'),
-      ],
-    );
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-//    return ListView(
-//      padding: const EdgeInsets.only(top: 20.0),
-//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-//    );
       return ListView.builder(itemBuilder: (context, i){
           if(i >= snapshot.length) return null;
           return _buildListItem(context, snapshot[i]);
@@ -87,19 +79,8 @@ class _HomeState extends State<HomeState> {
 
     return Padding(
       key: ValueKey(square.id),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Image(image: CloudImageProvider(square.pics[0])),
-//        child: ListTile(
-//          title: Text(square.title),
-//          trailing: Image(image: CloudImageProvider(square.pics[0])),
-//          onTap: () => print(square),
-//        ),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      child: SquareCard(square),
     );
   }
 
