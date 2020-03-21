@@ -5,14 +5,17 @@ part 'Square.g.dart';
 @JsonSerializable()
 class Square {
   String id;
-  final BigInt favorate;
+  int click = 0;
+  int favorate = 0;
   final String title;
   final String note;
+  final String userID;
   String video;
   List<String> pics;
+  int date;
 
-  Square(this.favorate, this.title, this.note,
-      {this.video, this.pics, this.id});
+  Square(this.title, this.note, this.userID,
+      {this.video, this.pics, this.id, this.favorate, this.click, this.date});
 
   factory Square.fromJson(Map<String, dynamic> json) => _$SquareFromJson(json);
 
@@ -20,6 +23,6 @@ class Square {
 
   @override
   String toString() {
-    return 'Square{ ${id ?? ''}, favorate:$favorate, title:$title, note:$note, video:$video, pics:$pics} ';
+    return 'Square{ ${id ?? ''}, favorate:$favorate, title:$title, note:$note, video:$video, pics:$pics, click:$click} ';
   }
 }

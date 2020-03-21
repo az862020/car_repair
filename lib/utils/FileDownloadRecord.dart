@@ -33,6 +33,7 @@ class FileDownloadRecord {
       if (!exists) {
         await proxyFile.create(recursive: true);
       }
+      print('!!! start download file. $url');
       StorageReference reference = FirebaseStorage.instance.ref().child(url);
       var task = reference.writeToFile(proxyFile);
       var count = (await task.future).totalByteCount;

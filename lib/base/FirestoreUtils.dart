@@ -53,6 +53,7 @@ class FireStoreUtils {
 
   /// Square 增
   static Future<DocumentReference> addSquare(Square square, String squarePath) {
+    square.date = DateTime.now().millisecondsSinceEpoch;
     String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
     CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$squarePath/$day');
     print('!!! CollectionReference get');
@@ -74,6 +75,6 @@ class FireStoreUtils {
   static Stream<QuerySnapshot> querySquare(String path) {
     String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
     CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$path/$day');
-    return collectionReference.snapshots();
+    return collectionReference.orderBy('date', descending: true).snapshots();
   }
 }

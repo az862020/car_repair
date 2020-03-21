@@ -84,14 +84,15 @@ class FileUploadRecord {
       print('!!! 需要上传, 新建云端文件!');
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
-      var reference =
-          FirebaseStorage.instance.ref().child(STORAGE_SQUARE_PATH + '$square/'+ filename);
+      var reference = FirebaseStorage.instance
+          .ref()
+          .child(STORAGE_SQUARE_PATH + '$square/' + filename);
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {
           //4. update to db
           print('!!! 上传文件成功');
-          entityFinish(temp, entity, file).then((temp) {
+          entityFinish(temp, entity, square, file).then((temp) {
             print('!!! 上传文件成功, 数据库记录状态更新成功.');
             callback(temp);
           }).catchError((e) => callback(temp));
@@ -117,9 +118,9 @@ class FileUploadRecord {
   }
 
   static Future<UploadTemp> entityFinish(
-      UploadTemp temp, UploadEntity entity, File file) async {
+      UploadTemp temp, UploadEntity entity, String square, File file) async {
     int length = await file.length();
-    var url = STORAGE_SQUARE_PATH + basename(entity.proxyPath);
+    var url = '$STORAGE_SQUARE_PATH$square/${basename(entity.proxyPath)}';
     entity.cloudPath = url;
     await updateUploadEntity(entity);
     await insertFile(DownloadFile(url, entity.proxyPath, length));

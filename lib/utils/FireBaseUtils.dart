@@ -123,7 +123,7 @@ class FireBaseUtils {
       res.add(temps[i].cloudPath);
     }
     Square square =
-        Square(BigInt.from(0), uploadtask.title, uploadtask.describe);
+        Square(uploadtask.title, uploadtask.describe, Config.user.uid);
     if (res.length > 0) {
       if (uploadtask.type == FileUploadRecord.mediaType_video) {
         square.video = res.first;

@@ -5,9 +5,7 @@ import 'package:car_repair/entity/Square.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
-class SquareCard extends StatefulWidget{
-
+class SquareCard extends StatefulWidget {
   Square square;
 
   SquareCard(this.square);
@@ -16,11 +14,9 @@ class SquareCard extends StatefulWidget{
   State<StatefulWidget> createState() {
     return _SquareCard(square);
   }
-
 }
 
-class _SquareCard extends State<SquareCard>{
-
+class _SquareCard extends State<SquareCard> {
   Square square;
 
   _SquareCard(this.square);
@@ -38,17 +34,17 @@ class _SquareCard extends State<SquareCard>{
           Stack(
             alignment: FractionalOffset(0.5, 1.0),
             children: <Widget>[
-              Image(image: CloudImageProvider(square.pics[0]),
+              Image(
+                image: CloudImageProvider(square.pics[0]),
                 fit: BoxFit.cover,
                 height: 200,
                 width: 600,
-                ),
+              ),
               Container(
                 color: Color(0x66000000),
                 height: 32,
                 width: 600,
-              )
-              ,
+              ),
               Text(
                 square.title,
                 style: TextStyle(
@@ -58,27 +54,45 @@ class _SquareCard extends State<SquareCard>{
               ),
             ],
           ),
-//          ButtonTheme.bar(
-//            child: Container(
-//              margin: EdgeInsets.all(10),
-//              height: 25,
-//              child: Row(
-//                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                children: <Widget>[
-//                  _createButtonIcon(Icons.remove_red_eye, '75134'),
-//                  Row(
-//                    children: <Widget>[
-//                      _createButtonIcon(Icons.comment, '31123'),
-//                      _createButtonIcon(Icons.thumb_up, '98133'),
-//                    ],
-//                  ),
-//                ],
-//              ),
-//            ),
-//          ),
+          Container(
+            margin: EdgeInsets.all(10),
+            height: 25,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                _createButtonIcon(Icons.remove_red_eye, '${square.click}'),
+                Row(
+                  children: <Widget>[
+                    _createButtonIcon(Icons.comment, '0'),
+                    _createButtonIcon(Icons.thumb_up, '${square.favorate}'),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-    );;
+    );
   }
 
+  Widget _createButtonIcon(IconData icon, String text) {
+    return Row(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(left: 5),
+          child: Icon(
+            icon,
+            color: Colors.grey,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.grey),
+          ),
+        )
+      ],
+    );
+  }
 }
