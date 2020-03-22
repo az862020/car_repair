@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:car_repair/Square/SquareDetails.dart';
 import 'package:car_repair/base/CloudImageCache.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/Square.dart';
@@ -58,7 +59,7 @@ class _HomeState extends State<HomeState> {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FireStoreUtils.querySquare('default'),
-      builder: (context, snapshot){
+      builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
         return _buildList(context, snapshot.data.documents);
@@ -67,11 +68,10 @@ class _HomeState extends State<HomeState> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-      return ListView.builder(itemBuilder: (context, i){
-          if(i >= snapshot.length) return null;
-          return _buildListItem(context, snapshot[i]);
-      });
-    
+    return ListView.builder(itemBuilder: (context, i) {
+      if (i >= snapshot.length) return null;
+      return _buildListItem(context, snapshot[i]);
+    });
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -80,7 +80,10 @@ class _HomeState extends State<HomeState> {
     return Padding(
       key: ValueKey(square.id),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      child: SquareCard(square),
+      child: SquareCard(square, (square) {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => SquareDetails(square)));
+      }),
     );
   }
 
@@ -88,7 +91,4 @@ class _HomeState extends State<HomeState> {
   void initState() {
     super.initState();
   }
-
-
-
 }
