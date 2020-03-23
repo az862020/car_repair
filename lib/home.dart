@@ -84,6 +84,8 @@ class _HomeState extends State<HomeState> {
       child: SquareCard(square, (square) {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => SquareDetails(square)));
+        print('!!!!! ${data.reference.path}');
+        data.reference.updateData({'click': FieldValue.increment(1)});
       }),
     );
   }
