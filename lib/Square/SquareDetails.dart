@@ -37,7 +37,7 @@ class SquareDetails extends StatelessWidget {
                     centerTitle: true,
                     title: Text(mTitle),
                     background: Hero(
-                        tag: '${square.pics[0]}',
+                        tag: '${square.id}',
                         child: Image(
                             image: CloudImageProvider(square.pics[0]),
                             fit: BoxFit.cover)),

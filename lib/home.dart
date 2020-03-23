@@ -76,6 +76,7 @@ class _HomeState extends State<HomeState> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final square = Square.fromJson(data.data);
+    square.id = data.documentID;
 
     return Padding(
       key: ValueKey(square.id),

@@ -44,7 +44,7 @@ class _SquareCard extends State<SquareCard> {
                 Hero(
                   tag: '${square.pics[0]}',
                   child: Image(
-                      image: CloudImageProvider(square.pics[0]),
+                      image: CloudImageProvider(square.id),
                       fit: BoxFit.cover,
                       height: 200,
                       width: 600,
