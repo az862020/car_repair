@@ -42,9 +42,9 @@ class _SquareCard extends State<SquareCard> {
               alignment: FractionalOffset(0.5, 1.0),
               children: <Widget>[
                 Hero(
-                  tag: '${square.pics[0]}',
+                  tag: '${square.id}',
                   child: Image(
-                      image: CloudImageProvider(square.id),
+                      image: CloudImageProvider(square.pics[0]),
                       fit: BoxFit.cover,
                       height: 200,
                       width: 600,
