@@ -55,6 +55,9 @@ class HomeState extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeState> {
+
+
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -68,10 +71,14 @@ class _HomeState extends State<HomeState> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-    return ListView.builder(itemBuilder: (context, i) {
-      if (i >= snapshot.length) return null;
-      return _buildListItem(context, snapshot[i]);
-    });
+//    return ListView.builder(itemBuilder: (context, i) {
+////      if (i >= snapshot.length) return null;
+////      return _buildListItem(context, snapshot[i]);
+////    });
+
+    return ListView(
+      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+    );
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -85,7 +92,9 @@ class _HomeState extends State<HomeState> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => SquareDetails(square)));
         print('!!!!! ${data.reference.path}');
-        data.reference.updateData({'click': FieldValue.increment(1)});
+        data.reference.updateData({'click': FieldValue.increment(1)}).whenComplete((){
+
+        });
       }),
     );
   }
