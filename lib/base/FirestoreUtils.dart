@@ -72,7 +72,7 @@ class FireStoreUtils {
   static updateSquare(String path) {}
 
   /// Square 查
-  static Stream<QuerySnapshot> querySquare(String path) {
+  static Stream<QuerySnapshot> querySquareByType(String path) {
     String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
     CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$path/$day');
     return collectionReference.orderBy('date', descending: true).snapshots();

@@ -30,16 +30,21 @@ class FileDownloadRecord {
       String newPath = Config.AppDirCache + url;
       proxyFile = new File(newPath);
       bool exists = await proxyFile.exists();
+      if(exists){
+        await proxyFile.delete();
+      }
       if (!exists) {
         await proxyFile.create(recursive: true);
       }
-      print('!!! start download file. $url');
+      print('!!! create file ${proxyFile.absolute}');
       StorageReference reference = FirebaseStorage.instance.ref().child(url);
+      print('!!! start download file. $url');
       var task = reference.writeToFile(proxyFile);
+      print('!!! down load task start. ');
       var count = (await task.future).totalByteCount;
       //Save the file in DB.
+      print('!!! download finish. count ${count}');
       insertFile(DownloadFile(url, newPath, count));
-      print('!!! download file and save record. ${downloadFile.filePath}');
     }
 
     final String tempFileContents = String.fromCharCodes(proxyFile.readAsBytesSync());

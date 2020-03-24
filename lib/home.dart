@@ -58,7 +58,7 @@ class _HomeState extends State<HomeState> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FireStoreUtils.querySquare('default'),
+      stream: FireStoreUtils.querySquareByType('default'),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 

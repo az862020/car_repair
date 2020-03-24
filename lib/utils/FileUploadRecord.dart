@@ -69,10 +69,25 @@ class FileUploadRecord {
     //1. encodejpeg
     if (entity.proxyPath == null) {
       print('!!! 需要压缩, 新建压缩文件!');
-      var name = '${Uuid().v1()}.jpg';
-      String jpegPath = '${Config.AppDirCache}$name';
-      String path = await ImageJpeg.encodeJpeg(
-          entity.localPath, jpegPath, 80, 1920, 1080);
+      var name = Uuid().v1() + (temp.filePath.endsWith('.gif')?'.gif': '.jpg');
+      String target = '${Config.AppDirCache}$name';
+      String path = target;
+      if(temp.filePath.endsWith('.gif')){
+        //gif
+        File targetFile = File(target);
+        bool exist = await targetFile.exists();
+        if( !exist) targetFile.create(recursive: true);
+        await File(temp.filePath).copy(target).then((file){
+          path = file.path;
+        }).catchError((e){
+          path = temp.filePath;
+        });
+
+      }else{
+        //jpg png
+        path = await ImageJpeg.encodeJpeg(
+            entity.localPath, target, 80, 1920, 1080);
+      }
       print('!!! encodeJpge result: $path');
       entity.proxyPath = path;
       //2 save to db

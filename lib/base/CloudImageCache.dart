@@ -39,11 +39,11 @@ class CloudImageCache
   }
 
   @override
-  ImageStreamCompleter load(CloudImageCache key, code) {
+  ImageStreamCompleter load(
+      CloudImageCache key, DecoderCallback decode) {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key),
       scale: key.scale,
-// TODO enable information collector on next stable release of flutter
       informationCollector: () sync* {
         yield DiagnosticsProperty<CloudImageCache>(
           'Image provider: $this \n Image key: $key',
