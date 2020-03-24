@@ -69,6 +69,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
               padding: EdgeInsets.only(top: 30.0),
               child: IconButton(
                   icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
                   onPressed: () {
                     Navigator.pop(context);
                   }),
