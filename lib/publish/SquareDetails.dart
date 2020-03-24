@@ -1,16 +1,17 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/entity/Square.dart';
-import 'package:car_repair/publish/PhotoGallery.dart';
 import 'package:flutter/material.dart';
 
 import 'GalleryPhotoViewWrapper.dart';
 
-int photoIndex = 0;
+
 
 class SquareDetails extends StatelessWidget {
   Square square;
 
   SquareDetails(this.square);
+
+  int photoIndex = 0;
 
   @override
   Widget build(BuildContext context1) {
@@ -43,7 +44,7 @@ class SquareDetails extends StatelessWidget {
                                 fit: BoxFit.cover),
                           ),
                           onTap: () {
-                            preview(context1, square);
+                            preview(context1, square, photoIndex);
                           },
                         )),
                   )),
@@ -56,14 +57,14 @@ class SquareDetails extends StatelessWidget {
   }
 }
 
-preview(BuildContext context, Square square) {
+preview(BuildContext context, Square square, int index) {
   //todo open gallery or play video.
   Navigator.push(
     context,
     MaterialPageRoute(
       builder: (context) => GalleryPhotoViewWrapper(
         photos: square,
-        initialIndex: photoIndex,
+        initialIndex: index,
       ),
     ),
   );
@@ -95,12 +96,6 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     );
   }
 
-
-  @override
-  void dispose() {
-    super.dispose();
-    photoIndex = 0;
-  }
 
 
 }
