@@ -143,7 +143,7 @@ Future<List<UploadTemp>> getUploadTemps(int taskID) async {
       await db.query(UPLOADTEMP, where: 'tasktID = ?', whereArgs: [taskID]);
   List<UploadTemp> result = List();
   for (int i = 0; i < data.length; i++) {
-    result.add(UploadTemp.fromMap(data.first));
+    result.add(UploadTemp.fromMap(data[i]));
   }
   return result;
 }
