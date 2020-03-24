@@ -58,11 +58,6 @@ class SquareDetails extends StatelessWidget {
 
 preview(BuildContext context, Square square) {
   //todo open gallery or play video.
-//  Navigator.push(
-//      context,
-//      MaterialPageRoute(
-//          builder: (context) =>
-//              PhotoGallery(photo: square.pics, index: photoIndex)));
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -100,6 +95,12 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     );
   }
 
+
   @override
-  void initState() {}
+  void dispose() {
+    super.dispose();
+    photoIndex = 0;
+  }
+
+
 }
