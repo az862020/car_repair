@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:car_repair/publish/SquareDetails.dart';
-import 'package:car_repair/base/CloudImageCache.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
@@ -10,7 +9,6 @@ import 'package:car_repair/widget/SquareCard.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'base/CloudImageProvider.dart';
 import 'widget/MyDrawer.dart';
 
 import 'package:http/http.dart' as http;
