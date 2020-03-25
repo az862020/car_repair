@@ -1,10 +1,12 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
+import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:car_repair/utils/FireBaseUtils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'GalleryPhotoViewWrapper.dart';
-
-
 
 class SquareDetails extends StatelessWidget {
   Square square;
@@ -22,7 +24,6 @@ class SquareDetails extends StatelessWidget {
           headerSliverBuilder: (context, isS) {
             return <Widget>[
               SliverAppBar(
-                  primary: true,
                   leading: IconButton(
                       icon: Icon(Icons.arrow_back),
                       onPressed: () => Navigator.pop(context1)),
@@ -77,25 +78,46 @@ class SquareDetailsPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _SquareDetailsPage(square);
+    return _SquareDetailsPage();
   }
 }
 
 class _SquareDetailsPage extends State<SquareDetailsPage> {
-  Square square;
-
-  _SquareDetailsPage(this.square);
+  FireUserInfo creater;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(
-        '${square.pics[0]}',
-        style: TextStyle(fontSize: 20.0),
-      ),
-    );
+        child: Column(
+      children: <Widget>[
+        Text(
+          '${widget.square.pics[0]}',
+          style: TextStyle(fontSize: 20.0),
+        ),
+        Row(
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: creater == null || creater.photoUrl == null
+                  ? AssetImage('assets/images/account_box.png')
+//                      ? Image.file(File(''))
+                  : CloudImageProvider(creater.photoUrl),
+            ),
+            Text(creater == null ? '' : creater.displayName),
+          ],
+        )
+      ],
+    ));
   }
 
-
-
+  @override
+  void initState() {
+    super.initState();
+    FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
+      setState(() {
+        FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
+        userInfo.uid = snapshot.documentID;
+        creater = userInfo;
+      });
+    });
+  }
 }

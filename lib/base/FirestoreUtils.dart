@@ -1,6 +1,6 @@
 import 'package:car_repair/entity/Square.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:car_repair/entity/UserInfo.dart';
+import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +47,14 @@ class FireStoreUtils {
   }
 
   /// Userinfo 查
-  static queryUserinfo(String path) {}
+  static Future<DocumentSnapshot> queryUserinfo(String path){
+//    QuerySnapshot snapshot = await Firestore.instance.collection(path).getDocuments();
+//    DocumentSnapshot sd = snapshot.documents.first;
+//    FireUserInfo userInfo = FireUserInfo.fromJson(sd.data);
+//    userInfo.uid = sd.documentID;
+//    return userInfo;
+    return Firestore.instance.collection('$STORE_USERINFO').document(path).get();
+  }
 
   /**********************Square****************************/
 

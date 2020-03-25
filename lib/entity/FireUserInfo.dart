@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'UserInfo.g.dart';
+part 'FireUserInfo.g.dart';
 
 @JsonSerializable()
 class FireUserInfo {
-  final String uid;
+  String uid;
   final String photoUrl;
   final String displayName;
   String sex;
