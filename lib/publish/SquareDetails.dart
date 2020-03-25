@@ -3,6 +3,7 @@ import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/utils/FireBaseUtils.dart';
+import 'package:car_repair/widget/CardBottomIcon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -59,7 +60,6 @@ class SquareDetails extends StatelessWidget {
 }
 
 preview(BuildContext context, Square square, int index) {
-  //todo open gallery or play video.
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -90,21 +90,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     return Container(
         child: Column(
       children: <Widget>[
-        Text(
-          '${widget.square.pics[0]}',
-          style: TextStyle(fontSize: 20.0),
-        ),
-        Row(
-          children: <Widget>[
-            CircleAvatar(
-              backgroundImage: creater == null || creater.photoUrl == null
-                  ? AssetImage('assets/images/account_box.png')
-//                      ? Image.file(File(''))
-                  : CloudImageProvider(creater.photoUrl),
-            ),
-            Text(creater == null ? '' : creater.displayName),
-          ],
-        )
+        CardBottomIcon(widget.square, ()=>likeClick()),
       ],
     ));
   }
@@ -119,5 +105,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         creater = userInfo;
       });
     });
+  }
+
+  likeClick() {
+
   }
 }

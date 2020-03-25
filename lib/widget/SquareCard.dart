@@ -28,7 +28,6 @@ class _SquareCard extends State<SquareCard> {
     return GestureDetector(
       onTap: () {
         click(square);
-        //todo +1
       },
       child: Card(
         elevation: 10.0,
@@ -64,7 +63,7 @@ class _SquareCard extends State<SquareCard> {
               ],
             ),
             Container(
-              margin: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
               height: 25,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
