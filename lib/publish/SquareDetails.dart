@@ -94,7 +94,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   final commentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  int commentStep = 1;
+  int commentStep = 20;
   bool isSend = false;
   bool isLoading = false;
   bool isEnd = false;
@@ -130,10 +130,12 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Container(
+        child: Column(
       children: <Widget>[
         CardBottomIcon(widget.square, () => _likeClick()),
-        Row(
+        Flex(
+          direction: Axis.horizontal,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -141,7 +143,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
                   backgroundImage:
                   CloudImageProvider(Config.user.photoUrl)),
             ),
-            Form(
+            Expanded(
+              flex: 1,
+              child: Form(
               key: _formKey,
               child: TextFormField(
                 controller: commentController,
@@ -152,7 +156,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
                 decoration: InputDecoration(
                     labelText: 'Enter your commnet',
                     hintText: 'Just input any you want say.'),
-              ),
+                  ),),
             ),
           ],
         ),
@@ -166,21 +170,22 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
             onPressed: () => _sendComment(),
           ),
         ),
-//        Padding(
-//          padding: EdgeInsets.all(8),
-//          child: RefreshIndicator(
-//            onRefresh: _refreshData,
-//            child: ListView.builder(
-//              itemBuilder: _renderRow,
-//              itemCount: dataList.length == 0
-//                  ? 0
-//                  : dataList.length + (isEnd ? 0 : 1),
-//              controller: _scrollController,
-//            ),
-//          ),
-//        ),
+        Container(
+          margin: EdgeInsets.all(5),
+          height: 1080,
+          child: RefreshIndicator(
+            onRefresh: _refreshData,
+            child: ListView.builder(
+              itemBuilder: _renderRow,
+              itemCount: dataList.length == 0
+                  ? 0
+                  : dataList.length + (isEnd ? 0 : 1),
+              controller: _scrollController,
+            ),
+          ),
+        ),
       ],
-    );
+    ));
   }
 
   _likeClick() {
