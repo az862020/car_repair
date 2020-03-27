@@ -130,62 +130,23 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      children: <Widget>[
-        CardBottomIcon(widget.square, () => _likeClick()),
-        Flex(
-          direction: Axis.horizontal,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                  backgroundImage:
-                  CloudImageProvider(Config.user.photoUrl)),
-            ),
-            Expanded(
-              flex: 1,
-              child: Form(
-              key: _formKey,
-              child: TextFormField(
-                controller: commentController,
-                validator: (string) {
-                  if (string.isEmpty) return 'commnet can\'t be empty.';
-                  return null;
-                },
-                decoration: InputDecoration(
-                    labelText: 'Enter your commnet',
-                    hintText: 'Just input any you want say.'),
-                  ),),
-            ),
-          ],
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: RaisedButton(
-            color: Colors.blue[400],
-            child: Container(
-              child: Text(isSend ? 'sending...' : 'send'),
-            ),
-            onPressed: () => _sendComment(),
+    return
+      Container(
+        margin: EdgeInsets.all(5),
+        height: 1080,
+        child: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: ListView.builder(
+            itemBuilder: _renderRow,
+            itemCount: dataList.length == 0
+                ? 1
+                : dataList.length + (isEnd ? 1 : 2),
+            controller: _scrollController,
           ),
         ),
-        Container(
-          margin: EdgeInsets.all(5),
-          height: 1080,
-          child: RefreshIndicator(
-            onRefresh: _refreshData,
-            child: ListView.builder(
-              itemBuilder: _renderRow,
-              itemCount: dataList.length == 0
-                  ? 0
-                  : dataList.length + (isEnd ? 0 : 1),
-              controller: _scrollController,
-            ),
-          ),
-        ),
-      ],
-    ));
+      );
+
+
   }
 
   _likeClick() {
@@ -231,9 +192,59 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     });
   }
 
+  Widget getTop(){
+    return Container(
+        child: Column(
+          children: <Widget>[
+            CardBottomIcon(widget.square, () => _likeClick()),
+            Flex(
+              direction: Axis.horizontal,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                      backgroundImage:
+                      CloudImageProvider(Config.user.photoUrl)),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: commentController,
+                      validator: (string) {
+                        if (string.isEmpty) return 'commnet can\'t be empty.';
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'Enter your commnet',
+                          hintText: 'Just input any you want say.'),
+                    ),),
+                ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: RaisedButton(
+                color: Colors.blue[400],
+                child: Container(
+                  child: Text(isSend ? 'sending...' : 'send'),
+                ),
+                onPressed: () => _sendComment(),
+              ),
+            ),
+
+          ],
+        ));
+  }
+
   Widget _renderRow(BuildContext context, int index) {
-    if (index < dataList.length) {
-      return buildItem(context: context, index: index);
+    if(index == 0){
+      return getTop();
+    }
+
+    if (index < dataList.length +1) {
+      return buildItem(context: context, index: index -1);
     }
     return Offstage(
       offstage: !isEnd,
