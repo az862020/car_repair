@@ -1,8 +1,8 @@
+
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
-import 'package:car_repair/utils/FireBaseUtils.dart';
 import 'package:car_repair/widget/CardBottomIcon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +11,8 @@ import 'GalleryPhotoViewWrapper.dart';
 
 class SquareDetails extends StatelessWidget {
   Square square;
-
-  SquareDetails(this.square);
+  String squarePath;
+  SquareDetails(this.square, this.squarePath);
 
   int photoIndex = 0;
 
@@ -52,7 +52,7 @@ class SquareDetails extends StatelessWidget {
                   )),
             ];
           },
-          body: SquareDetailsPage(square),
+          body: SquareDetailsPage(square, squarePath),
         ),
       ),
     );
@@ -73,8 +73,8 @@ preview(BuildContext context, Square square, int index) {
 
 class SquareDetailsPage extends StatefulWidget {
   Square square;
-
-  SquareDetailsPage(this.square);
+  String squarePath;
+  SquareDetailsPage(this.square, this.squarePath);
 
   @override
   State<StatefulWidget> createState() {
@@ -85,12 +85,36 @@ class SquareDetailsPage extends StatefulWidget {
 class _SquareDetailsPage extends State<SquareDetailsPage> {
   FireUserInfo creater;
 
+  final commentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isSend = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Column(
       children: <Widget>[
-        CardBottomIcon(widget.square, ()=>likeClick()),
+        CardBottomIcon(widget.square, () => _likeClick()),
+        Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: commentController,
+              validator: (string) {
+                if (string.isEmpty) return 'commnet can\'t be empty.';
+                return null;
+              },
+              decoration: InputDecoration(
+                  labelText: 'Enter your commnet',
+                  hintText: 'Just can not be empty, input any you want say.',
+                  icon: Icon(Icons.add_comment)),
+            )),
+        RaisedButton(
+          color: Colors.blue[400],
+          child: Container(
+            child: Text('send'),
+          ),
+          onPressed: () => _sendComment(),
+        )
       ],
     ));
   }
@@ -105,9 +129,24 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         creater = userInfo;
       });
     });
+    FireStoreUtils.getCommentsByPath(widget.squarePath).then((query){
+      List<DocumentSnapshot> list = query.documents;
+      print('!!! documents size ${list.length}');
+      for(DocumentSnapshot snapshot in list){
+        print('!!!!! ${snapshot.data} ');
+      }
+    });
   }
 
-  likeClick() {
+  _likeClick() {
+    print('!!! likeClick!');
+  }
 
+
+  _sendComment() {
+    if(!isSend && _formKey.currentState.validate()){
+      print('!!! _sendComment');
+      FireStoreUtils.addComment(widget.squarePath, commentController.text);
+    }
   }
 }

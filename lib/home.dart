@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/publish/SquareDetails.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/Square.dart';
@@ -57,22 +58,24 @@ class _HomeState extends State<HomeState> {
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FireStoreUtils.querySquareByType('default'),
+//      stream: FireStoreUtils.querySquareByUser('${Config.user.uid}', 'default'),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return LinearProgressIndicator();
-
+        if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+//        if (!snapshot.hasData) return LinearProgressIndicator();
+        if(snapshot.connectionState == ConnectionState.none) return Text('No data!');
         return _buildList(context, snapshot.data.documents);
       },
     );
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
-//    return ListView.builder(itemBuilder: (context, i) {
-////      if (i >= snapshot.length) return null;
-////      return _buildListItem(context, snapshot[i]);
-////    });
-    return ListView(
-      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
-    );
+    return ListView.builder(itemBuilder: (context, i) {
+      if (i >= snapshot.length) return null;
+      return _buildListItem(context, snapshot[i]);
+    });
+//    return ListView(
+//      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+//    );
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
@@ -83,7 +86,7 @@ class _HomeState extends State<HomeState> {
       key: ValueKey(square.id),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: SquareCard(square, (square) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square, data.reference.path)));
         data.reference.updateData({'click': FieldValue.increment(1)});
       }),
     );

@@ -11,8 +11,9 @@ import 'package:flutter/material.dart';
 /// 区分 Userinfo 和 Square.
 /// 需要一套 增删改查.
 class FireStoreUtils {
-  static String STORE_USERINFO = 'userinfo'; //云端头像文件存放路径
-  static String STORAGE_SQUARE = 'square'; //广场记录的存储路径
+  static String STORE_USERINFO = 'userinfo'; //用户信息数据位置
+  static String STORE_SQUARE = 'square'; //广场记录的数据位置
+  static String STORE_COMMENTS = '/comments'; //广场记录的评论的数据位置
 
 
   static final int PHOTOURL = 0; //头像
@@ -62,13 +63,12 @@ class FireStoreUtils {
   static Future<DocumentReference> addSquare(Square square, String squarePath) {
     square.date = DateTime.now().millisecondsSinceEpoch;
     String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
-    CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$squarePath/$day');
+    CollectionReference collectionReference = Firestore.instance.collection('$STORE_SQUARE/$squarePath/$day');
     print('!!! CollectionReference get');
     return collectionReference.add(square.toJson());
 //    DocumentReference documentReference = collectionReference.document(user.uid);
 //    print('!!! DocumentReference get');
 //    documentReference.setData({'displayName':user.displayName, 'photoUrl':user.photoUrl});
-
 
   }
 
@@ -81,7 +81,26 @@ class FireStoreUtils {
   /// Square 查
   static Stream<QuerySnapshot> querySquareByType(String path) {
     String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
-    CollectionReference collectionReference = Firestore.instance.collection('$STORAGE_SQUARE/$path/$day');
+    CollectionReference collectionReference = Firestore.instance.collection('$STORE_SQUARE/$path/$day');
     return collectionReference.orderBy('date', descending: true).snapshots();
+  }
+
+  static querySquareByUser(String userID, String path){
+    String day =DateUtil.getDateStrByDateTime(DateTime.now(), format: DateFormat.YEAR_MONTH);
+    CollectionReference collectionReference = Firestore.instance.collection('$STORE_SQUARE/$path/$day');
+    collectionReference.orderBy('date', descending: true).snapshots();
+  }
+
+
+  static addComment(String path, String content){
+    CollectionReference collectionReference = Firestore.instance.collection('$path$STORE_COMMENTS');
+    collectionReference.document().setData(null);
+  }
+
+  static Future<QuerySnapshot> getCommentsByPath(String path){
+    String compath = path + STORE_COMMENTS;
+    print('!!! compath $compath');
+    CollectionReference collectionReference = Firestore.instance.collection('$compath');
+    return collectionReference.orderBy('time', descending: true).getDocuments();
   }
 }
