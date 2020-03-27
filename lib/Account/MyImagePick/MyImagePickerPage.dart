@@ -21,7 +21,7 @@ class MyImagePickerPage extends StatelessWidget {
   }
 }
 
-bool isLoading = false;
+//bool isLoading = false;
 
 class ImagePickerPage extends StatefulWidget {
   final String mTitle;

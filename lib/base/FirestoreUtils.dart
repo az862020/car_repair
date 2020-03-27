@@ -94,6 +94,8 @@ class FireStoreUtils {
   }
 
 
+  /**********************Comment****************************/
+
   static Future<DocumentReference> addComment(String path, String content){
     String compath = path + STORE_COMMENTS;
     CollectionReference collectionReference = Firestore.instance.collection('$compath');
@@ -101,10 +103,15 @@ class FireStoreUtils {
     return collectionReference.add(com.toJson());
   }
 
-  static Future<QuerySnapshot> getCommentsByPath(String path){
+  static Future<QuerySnapshot> getCommentsByPath(String path, DocumentSnapshot last, {int itemCount}){
     String compath = path + STORE_COMMENTS;
     print('!!! compath $compath');
     CollectionReference collectionReference = Firestore.instance.collection('$compath');
-    return collectionReference.orderBy('time', descending: true).getDocuments();
+    var query = collectionReference.orderBy('time', descending: true);
+    if(last != null)
+      query = query.startAfterDocument(last);
+    print('!!! request itemCount is ${itemCount??20}');
+    query.limit(itemCount??20);
+    return query.getDocuments();
   }
 }

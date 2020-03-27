@@ -35,42 +35,51 @@ class _CardBottomIcon extends State<CardBottomIcon> {
               ),
               child: Container(
                   margin: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
                     children: <Widget>[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          CircleAvatar(
-                            backgroundImage: creater == null ||
-                                    creater.photoUrl == null
-                                ? AssetImage('assets/images/account_box.png')
-                                : CloudImageProvider(creater.photoUrl),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              CircleAvatar(
+                                backgroundImage:
+                                    creater == null || creater.photoUrl == null
+                                        ? AssetImage(
+                                            'assets/images/account_box.png')
+                                        : CloudImageProvider(creater.photoUrl),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 5),
+                                child: Text(
+                                  creater == null ? '' : creater.displayName,
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            margin: EdgeInsets.only(left: 5),
-                            child: Text(
-                              creater == null ? '' : creater.displayName,
-                              style: TextStyle(
-                                  fontSize: 18.0, fontWeight: FontWeight.w500),
-                            ),
+                          Row(
+                            children: <Widget>[
+                              _createButtonIcon(
+                                  Icons.remove_red_eye, '${square.click}'),
+                              _createButtonIcon(Icons.comment, '0'),
+                              GestureDetector(
+                                child: _createButtonIcon(
+                                    Icons.thumb_up, '${square.favorate}'),
+                                onTap: () {
+                                  widget.likeClick();
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Row(
-                        children: <Widget>[
-                          _createButtonIcon(
-                              Icons.remove_red_eye, '${square.click}'),
-                          _createButtonIcon(Icons.comment, '0'),
-
-                          GestureDetector(
-                            child: _createButtonIcon(
-                                Icons.thumb_up, '${square.favorate}'),
-                            onTap: (){
-                              widget.likeClick();
-                            },
-                          ),
-                        ],
+                      Offstage(
+                        offstage: square.note.isEmpty,
+                        child: Text('${square.note}'),
                       ),
                     ],
                   )),
