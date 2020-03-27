@@ -1,4 +1,6 @@
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:car_repair/entity/comment_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:common_utils/common_utils.dart';
@@ -92,9 +94,11 @@ class FireStoreUtils {
   }
 
 
-  static addComment(String path, String content){
-    CollectionReference collectionReference = Firestore.instance.collection('$path$STORE_COMMENTS');
-    collectionReference.document().setData(null);
+  static Future<DocumentReference> addComment(String path, String content){
+    String compath = path + STORE_COMMENTS;
+    CollectionReference collectionReference = Firestore.instance.collection('$compath');
+    var com = CommentEntity(content: content, userID: Config.user.uid, time: DateTime.now().millisecondsSinceEpoch);
+    return collectionReference.add(com.toJson());
   }
 
   static Future<QuerySnapshot> getCommentsByPath(String path){

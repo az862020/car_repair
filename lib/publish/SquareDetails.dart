@@ -1,8 +1,11 @@
 
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:car_repair/entity/comment_entity.dart';
+import 'package:car_repair/generated/json/comment_entity_helper.dart';
 import 'package:car_repair/widget/CardBottomIcon.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -95,26 +98,42 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         child: Column(
       children: <Widget>[
         CardBottomIcon(widget.square, () => _likeClick()),
-        Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: commentController,
-              validator: (string) {
-                if (string.isEmpty) return 'commnet can\'t be empty.';
-                return null;
-              },
-              decoration: InputDecoration(
-                  labelText: 'Enter your commnet',
-                  hintText: 'Just can not be empty, input any you want say.',
-                  icon: Icon(Icons.add_comment)),
-            )),
-        RaisedButton(
-          color: Colors.blue[400],
-          child: Container(
-            child: Text('send'),
-          ),
-          onPressed: () => _sendComment(),
-        )
+
+        Flex(
+          direction: Axis.horizontal,
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: CloudImageProvider(Config.user.photoUrl),
+            ),
+            Expanded(
+              flex: 1,
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: commentController,
+                  validator: (string) {
+                    if (string.isEmpty) return 'commnet can\'t be empty.';
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Enter your commnet',
+                    hintText: 'Just input any you want say.',
+//                  icon: Icon(Icons.add_comment)
+                  ),
+                )),),
+
+            RaisedButton(
+              color: Colors.blue[400],
+              child: Container(
+                child: Text(isSend?'sending...':'send'),
+              ),
+              onPressed: () => _sendComment(),
+            )
+
+          ],
+        ),
+
+
       ],
     ));
   }
@@ -133,7 +152,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
       List<DocumentSnapshot> list = query.documents;
       print('!!! documents size ${list.length}');
       for(DocumentSnapshot snapshot in list){
-        print('!!!!! ${snapshot.data} ');
+        CommentEntity entity = commentEntityFromJson(CommentEntity(), snapshot.data);
+        entity.id = snapshot.documentID;
+        print('!!!!! ${entity.toJson()} ');
       }
     });
   }
@@ -146,7 +167,15 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
   _sendComment() {
     if(!isSend && _formKey.currentState.validate()){
       print('!!! _sendComment');
-      FireStoreUtils.addComment(widget.squarePath, commentController.text);
+      setState(() =>isSend = true);
+//        isSend = true;
+      FireStoreUtils.addComment(widget.squarePath, commentController.text).then((doc){
+        commentController.text = '';
+        setState(() =>isSend = false);
+        _refreshData();
+      });
     }
   }
+
+  void _refreshData() {}
 }
