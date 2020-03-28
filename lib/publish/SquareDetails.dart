@@ -149,10 +149,6 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   }
 
-  _likeClick() {
-    print('!!! likeClick!');
-  }
-
   _sendComment() {
     if (!isSend && _formKey.currentState.validate()) {
       print('!!! _sendComment');
@@ -196,7 +192,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     return Container(
         child: Column(
           children: <Widget>[
-            CardBottomIcon(widget.square, () => _likeClick()),
+            CardBottomIcon(widget.square, widget.squarePath),
             Flex(
               direction: Axis.horizontal,
               children: <Widget>[

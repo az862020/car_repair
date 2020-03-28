@@ -2,14 +2,15 @@ import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CardBottomIcon extends StatefulWidget {
   Square square;
-  Function() likeClick;
+  String squarePath;
 
-  CardBottomIcon(this.square, this.likeClick);
+  CardBottomIcon(this.square, this.squarePath);
 
   @override
   State<StatefulWidget> createState() {
@@ -68,9 +69,9 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                               _createButtonIcon(Icons.comment, '0'),
                               GestureDetector(
                                 child: _createButtonIcon(
-                                    Icons.thumb_up, '${square.favorate}'),
+                                    Icons.thumb_up, '${square.favorate}', colors: isFavorate?Colors.blue:Colors.grey),
                                 onTap: () {
-                                  widget.likeClick();
+                                  _toggleFavorate();
                                 },
                               ),
                             ],
@@ -88,26 +89,31 @@ class _CardBottomIcon extends State<CardBottomIcon> {
         ));
   }
 
-  Widget _createButtonIcon(IconData icon, String text) {
+  Widget _createButtonIcon(IconData icon, String text,{Color colors}) {
     return Row(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(left: 5),
           child: Icon(
             icon,
-            color: Colors.grey,
+            color: colors??Colors.grey,
           ),
         ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: 5),
           child: Text(
             text,
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: colors??Colors.grey),
           ),
         )
       ],
     );
   }
+
+  DocumentReference reference;
+  Map<String, dynamic> dataMap;
+  bool isFavorate = false;
+  bool isCommiting = false;
 
   @override
   void initState() {
@@ -117,7 +123,46 @@ class _CardBottomIcon extends State<CardBottomIcon> {
         FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
+
+        snapshot.data.containsKey('123');
       });
     });
+    _getFavorateState();
+  }
+
+  _getFavorateState() {
+    reference = FireStoreUtils.getMyFavoratedList();
+    reference.get().then((value) {
+      if (value.data == null) {
+        dataMap = Map();
+      } else {
+        dataMap = value.data;
+      }
+      setState(() {
+        isFavorate = FireStoreUtils.isSquareFavorate(dataMap, widget.square.id);
+      });
+    });
+  }
+
+  void _toggleFavorate() {
+    if (reference != null && dataMap != null && !isCommiting) {
+      isCommiting = true;
+      FireStoreUtils.toggleFavorate(widget.squarePath, widget.square.id,
+              reference, dataMap, isFavorate)
+          .then((Null) {
+        setState(() {
+          isFavorate = !isFavorate;
+          isCommiting = false;
+          if (isFavorate !=
+              FireStoreUtils.isSquareFavorate(dataMap, widget.square.id)) {
+            print('!!!  data is different, need refresh.');
+            _getFavorateState();
+          }
+        });
+      }).catchError((e) {
+        isCommiting = false;
+        print('!!! error');
+      });
+    }
   }
 }

@@ -93,6 +93,58 @@ class FireStoreUtils {
     collectionReference.orderBy('date', descending: true).snapshots();
   }
 
+  /**********************Favorite****************************/
+
+  static Future<void> toggleFavorate(String squarePath, String squareID, DocumentReference documentReference, Map<String, dynamic> lists, bool currentFavoStatae){
+    String listName = squarePath.replaceAll(squareID, '');
+    List<String> ids;
+    if(lists.containsKey(listName)){
+      ids = (lists[listName] as List)?.map((e) => e as String)?.toList();
+    }else
+      ids = List();
+
+    if(currentFavoStatae){
+      if(ids.contains(squareID))
+        ids.remove(squareID);
+    }else{
+      ids.add(squareID);
+    }
+    bool useMarge = false;
+    if(useMarge){
+      List list2 = List();
+      list2.add(ids);
+      Map<String, dynamic> map = Map();
+      map[listName] = list2;
+      return documentReference.setData(map, merge: true);
+    }else{
+      lists[listName] = ids;
+      return documentReference.setData(lists);
+    }
+
+  }
+
+  static bool isSquareFavorate(Map<String, dynamic> lists, String squareID){
+    if(lists.length == 0) return false;
+    List<String> keys = lists.keys.toList();
+//    (json['pics'] as List)?.map((e) => e as String)?.toList()
+    for(String key in keys){
+      List<String> ids = (lists[key] as List)?.map((e) => e as String)?.toList();
+      if(ids.contains(squareID))
+        return true;
+    }
+    return false;
+  }
+
+  //DocumentReference use get can get data, if nodata will return null.
+  static DocumentReference getMyFavoratedList(){
+    String path = '$STORE_USERINFO/${Config.user.uid}/list';
+    CollectionReference collectionReference = Firestore.instance.collection(path);
+    DocumentReference doc =  collectionReference.document('favorateList');
+    return doc;
+  }
+
+
+
 
   /**********************Comment****************************/
 
