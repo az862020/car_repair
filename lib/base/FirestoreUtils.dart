@@ -109,17 +109,8 @@ class FireStoreUtils {
     }else{
       ids.add(squareID);
     }
-    bool useMarge = false;
-    if(useMarge){
-      List list2 = List();
-      list2.add(ids);
-      Map<String, dynamic> map = Map();
-      map[listName] = list2;
-      return documentReference.setData(map, merge: true);
-    }else{
-      lists[listName] = ids;
-      return documentReference.setData(lists);
-    }
+    lists[listName] = ids;
+    return documentReference.setData(lists);
 
   }
 
