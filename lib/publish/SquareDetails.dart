@@ -16,9 +16,9 @@ import 'GalleryPhotoViewWrapper.dart';
 
 class SquareDetails extends StatelessWidget {
   Square square;
-  String squarePath;
+  DocumentReference squareReference;
 
-  SquareDetails(this.square, this.squarePath);
+  SquareDetails(this.square, this.squareReference);
 
   int photoIndex = 0;
 
@@ -58,7 +58,7 @@ class SquareDetails extends StatelessWidget {
                   )),
             ];
           },
-          body: SquareDetailsPage(square, squarePath),
+          body: SquareDetailsPage(square, squareReference),
         ),
       ),
     );
@@ -79,9 +79,9 @@ class SquareDetails extends StatelessWidget {
 
 class SquareDetailsPage extends StatefulWidget {
   Square square;
-  String squarePath;
+  DocumentReference squareReference;
 
-  SquareDetailsPage(this.square, this.squarePath);
+  SquareDetailsPage(this.square, this.squareReference);
 
   @override
   State<StatefulWidget> createState() {
@@ -130,23 +130,19 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      Container(
-        margin: EdgeInsets.all(5),
-        height: 1080,
-        child: RefreshIndicator(
-          onRefresh: _refreshData,
-          child: ListView.builder(
-            itemBuilder: _renderRow,
-            itemCount: dataList.length == 0
-                ? 1
-                : dataList.length + (isEnd ? 1 : 2),
-            controller: _scrollController,
-          ),
+    return Container(
+      margin: EdgeInsets.all(5),
+      height: 1080,
+      child: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: ListView.builder(
+          itemBuilder: _renderRow,
+          itemCount:
+              dataList.length == 0 ? 1 : dataList.length + (isEnd ? 1 : 2),
+          controller: _scrollController,
         ),
-      );
-
-
+      ),
+    );
   }
 
   _sendComment() {
@@ -154,10 +150,15 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
       print('!!! _sendComment');
       setState(() => isSend = true);
 //        isSend = true;
-      FireStoreUtils.addComment(widget.squarePath, commentController.text)
+      FireStoreUtils.addComment(
+              widget.squareReference.path, commentController.text)
           .then((doc) {
-        commentController.text = '';
-        setState(() => isSend = false);
+        setState(() {
+          commentController.text = '';
+          isSend = false;
+          widget.square.comment+=1;
+        });
+        widget.squareReference.updateData({'comment':FieldValue.increment(1)});
         _refreshData();
       });
     }
@@ -175,7 +176,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     isLoading = true;
 
     var query = await FireStoreUtils.getCommentsByPath(
-        widget.squarePath, dataList.length > 0 ? dataList.last : null,
+        widget.squareReference.path, dataList.length > 0 ? dataList.last : null,
         itemCount: commentStep);
     List<DocumentSnapshot> list = query.documents;
     print('!!! documents size ${list.length}');
@@ -188,59 +189,58 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     });
   }
 
-  Widget getTop(){
+  Widget getTop() {
     return Container(
         child: Column(
+      children: <Widget>[
+        CardBottomIcon(widget.square, widget.squareReference),
+        Flex(
+          direction: Axis.horizontal,
           children: <Widget>[
-            CardBottomIcon(widget.square, widget.squarePath),
-            Flex(
-              direction: Axis.horizontal,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                      backgroundImage:
-                      CloudImageProvider(Config.user.photoUrl)),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: commentController,
-                      validator: (string) {
-                        if (string.isEmpty) return 'commnet can\'t be empty.';
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          labelText: 'Enter your commnet',
-                          hintText: 'Just input any you want say.'),
-                    ),),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                  backgroundImage: CloudImageProvider(Config.user.photoUrl)),
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: RaisedButton(
-                color: Colors.blue[400],
-                child: Container(
-                  child: Text(isSend ? 'sending...' : 'send'),
+            Expanded(
+              flex: 1,
+              child: Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: commentController,
+                  validator: (string) {
+                    if (string.isEmpty) return 'commnet can\'t be empty.';
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                      labelText: 'Enter your commnet',
+                      hintText: 'Just input any you want say.'),
                 ),
-                onPressed: () => _sendComment(),
               ),
             ),
-
           ],
-        ));
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: RaisedButton(
+            color: Colors.blue[400],
+            child: Container(
+              child: Text(isSend ? 'sending...' : 'send'),
+            ),
+            onPressed: () => _sendComment(),
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _renderRow(BuildContext context, int index) {
-    if(index == 0){
+    if (index == 0) {
       return getTop();
     }
 
-    if (index < dataList.length +1) {
-      return buildItem(context: context, index: index -1);
+    if (index < dataList.length + 1) {
+      return buildItem(context: context, index: index - 1);
     }
     return Offstage(
       offstage: !isEnd,

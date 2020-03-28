@@ -71,7 +71,7 @@ class _SquareCard extends State<SquareCard> {
                   _createButtonIcon(Icons.remove_red_eye, '${square.click}'),
                   Row(
                     children: <Widget>[
-                      _createButtonIcon(Icons.comment, '0'),
+                      _createButtonIcon(Icons.comment, '${square.comment??0}'),
                       _createButtonIcon(Icons.thumb_up, '${square.favorate}'),
                     ],
                   ),

@@ -86,7 +86,8 @@ class _HomeState extends State<HomeState> {
       key: ValueKey(square.id),
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: SquareCard(square, (square) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square, data.reference.path)));
+        square.click += 1;
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square, data.reference)));
         data.reference.updateData({'click': FieldValue.increment(1)});
       }),
     );

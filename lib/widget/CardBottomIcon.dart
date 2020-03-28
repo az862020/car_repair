@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 
 class CardBottomIcon extends StatefulWidget {
   Square square;
-  String squarePath;
+  DocumentReference squareReference;
 
-  CardBottomIcon(this.square, this.squarePath);
+  CardBottomIcon(this.square, this.squareReference);
 
   @override
   State<StatefulWidget> createState() {
@@ -66,10 +66,12 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                             children: <Widget>[
                               _createButtonIcon(
                                   Icons.remove_red_eye, '${square.click}'),
-                              _createButtonIcon(Icons.comment, '0'),
+                              _createButtonIcon(Icons.comment, '${square.comment}'),
                               GestureDetector(
                                 child: _createButtonIcon(
-                                    Icons.thumb_up, '${square.favorate}', colors: isFavorate?Colors.blue:Colors.grey),
+                                    Icons.thumb_up, '${square.favorate}',
+                                    colors:
+                                        isFavorate ? Colors.blue : Colors.grey),
                                 onTap: () {
                                   _toggleFavorate();
                                 },
@@ -89,21 +91,21 @@ class _CardBottomIcon extends State<CardBottomIcon> {
         ));
   }
 
-  Widget _createButtonIcon(IconData icon, String text,{Color colors}) {
+  Widget _createButtonIcon(IconData icon, String text, {Color colors}) {
     return Row(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(left: 5),
           child: Icon(
             icon,
-            color: colors??Colors.grey,
+            color: colors ?? Colors.grey,
           ),
         ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: 5),
           child: Text(
             text,
-            style: TextStyle(color: colors??Colors.grey),
+            style: TextStyle(color: colors ?? Colors.grey),
           ),
         )
       ],
@@ -147,7 +149,7 @@ class _CardBottomIcon extends State<CardBottomIcon> {
   void _toggleFavorate() {
     if (reference != null && dataMap != null && !isCommiting) {
       isCommiting = true;
-      FireStoreUtils.toggleFavorate(widget.squarePath, widget.square.id,
+      FireStoreUtils.toggleFavorate(widget.squareReference, widget.square.id,
               reference, dataMap, isFavorate)
           .then((Null) {
         setState(() {
@@ -158,6 +160,9 @@ class _CardBottomIcon extends State<CardBottomIcon> {
             print('!!!  data is different, need refresh.');
             _getFavorateState();
           }
+          widget.square.favorate += isFavorate ? 1 : -1;
+          widget.squareReference.updateData(
+              {'favorate': FieldValue.increment(isFavorate ? 1 : -1)});
         });
       }).catchError((e) {
         isCommiting = false;
