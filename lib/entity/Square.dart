@@ -6,6 +6,7 @@ part 'Square.g.dart';
 class Square {
   String id;
   int click = 0;
+  int comment = 0;
   int favorate = 0;
   final String title;
   final String note;
@@ -15,7 +16,7 @@ class Square {
   int date;
 
   Square(this.title, this.note, this.userID,
-      {this.video, this.pics, this.id, this.favorate, this.click, this.date});
+      {this.video, this.pics, this.id, this.favorate, this.click, this.comment, this.date});
 
   factory Square.fromJson(Map<String, dynamic> json) => _$SquareFromJson(json);
 
@@ -23,6 +24,6 @@ class Square {
 
   @override
   String toString() {
-    return 'Square{ ${id ?? ''}, favorate:$favorate, title:$title, note:$note, video:$video, pics:$pics, click:$click} ';
+    return 'Square{ ${id ?? ''}, favorate:$favorate, title:$title, note:$note, video:$video, pics:$pics, click:$click, comment:$comment} ';
   }
 }
