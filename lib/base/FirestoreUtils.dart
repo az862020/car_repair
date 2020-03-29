@@ -29,6 +29,13 @@ class FireStoreUtils {
     'background'
   ];
 
+  static getUserlistDocumentReferenece(String type) {
+    String path = '$STORE_USERINFO/${Config.user.uid}/list';
+    var collectionReference = Firestore.instance.collection(path);
+    DocumentReference doc = collectionReference.document(type);
+    return doc;
+  }
+
   /**********************Userinfo****************************/
 
   /// Userinfo 增- 注册
@@ -36,8 +43,7 @@ class FireStoreUtils {
     CollectionReference collectionReference =
         Firestore.instance.collection(STORE_USERINFO);
     print('!!! CollectionReference get');
-    DocumentReference documentReference =
-        collectionReference.document(user.uid);
+    var documentReference = collectionReference.document(user.uid);
     print('!!! DocumentReference get');
     documentReference
         .setData({'displayName': user.displayName, 'photoUrl': user.photoUrl});
@@ -57,11 +63,6 @@ class FireStoreUtils {
 
   /// Userinfo 查
   static Future<DocumentSnapshot> queryUserinfo(String path) {
-//    QuerySnapshot snapshot = await Firestore.instance.collection(path).getDocuments();
-//    DocumentSnapshot sd = snapshot.documents.first;
-//    FireUserInfo userInfo = FireUserInfo.fromJson(sd.data);
-//    userInfo.uid = sd.documentID;
-//    return userInfo;
     return Firestore.instance
         .collection('$STORE_USERINFO')
         .document(path)
@@ -71,17 +72,37 @@ class FireStoreUtils {
   /**********************Square****************************/
 
   /// Square 增
-  static Future<DocumentReference> addSquare(Square square, String squarePath) {
+  static Future<void> addSquare(
+      Square square, String squarePath) async {
     square.date = DateTime.now().millisecondsSinceEpoch;
     String day = DateUtil.getDateStrByDateTime(DateTime.now(),
         format: DateFormat.YEAR_MONTH);
-    CollectionReference collectionReference =
+    var collectionReference =
         Firestore.instance.collection('$STORE_SQUARE/$squarePath/$day');
     print('!!! CollectionReference get');
-    return collectionReference.add(square.toJson());
+    var squareReference = await collectionReference.add(square.toJson());
+    String listName = squareReference.path.replaceAll(squareReference.documentID, '');
+    var userReference = getMySquareList();
+    Map<String, dynamic> lists =
+    (await userReference.get()).data;
+    if(lists ==null) lists = Map();
+    List<String> ids;
+    if (lists.containsKey(listName)) {
+      ids = (lists[listName] as List)?.map((e) => e as String)?.toList();
+    } else
+      ids = List();
+
+    ids.add(squareReference.documentID);
+    lists[listName] = ids;
+
+    return userReference.setData(lists);
 //    DocumentReference documentReference = collectionReference.document(user.uid);
 //    print('!!! DocumentReference get');
 //    documentReference.setData({'displayName':user.displayName, 'photoUrl':user.photoUrl});
+  }
+
+  static DocumentReference getMySquareList() {
+    return getUserlistDocumentReferenece('publishList');
   }
 
   /// Square 删
@@ -102,7 +123,7 @@ class FireStoreUtils {
   static querySquareByUser(String userID, String path) {
     String day = DateUtil.getDateStrByDateTime(DateTime.now(),
         format: DateFormat.YEAR_MONTH);
-    CollectionReference collectionReference =
+    var collectionReference =
         Firestore.instance.collection('$STORE_SQUARE/$path/$day');
     collectionReference.orderBy('date', descending: true).snapshots();
   }
@@ -156,11 +177,7 @@ class FireStoreUtils {
 
   //DocumentReference use get can get data, if nodata will return null.
   static DocumentReference getMyFavoratedList() {
-    String path = '$STORE_USERINFO/${Config.user.uid}/list';
-    CollectionReference collectionReference =
-        Firestore.instance.collection(path);
-    DocumentReference doc = collectionReference.document('favorateList');
-    return doc;
+    return getUserlistDocumentReferenece('favorateList');
   }
 
   /**********************Comment****************************/
