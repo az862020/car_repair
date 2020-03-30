@@ -1,6 +1,7 @@
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
+import 'package:car_repair/utils/MonthUtil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:common_utils/common_utils.dart';
@@ -36,15 +37,16 @@ class FireStoreUtils {
     return doc;
   }
 
-  static Future<List<DocumentSnapshot>> getMyDataByList(Map<String, dynamic> lists) async{
+  static Future<List<DocumentSnapshot>> getMyDataByList(
+      Map<String, dynamic> lists) async {
     List<DocumentSnapshot> datas = List();
     List<String> keys = lists.keys.toList();
     for (String key in keys) {
       List<String> ids =
-      (lists[key] as List)?.map((e) => e as String)?.toList();
+          (lists[key] as List)?.map((e) => e as String)?.toList();
 
       QuerySnapshot snapshot = await Firestore.instance
-          .collection(key.substring(0, key.length-1))
+          .collection(key.substring(0, key.length - 1))
           .where(FieldPath.documentId, whereIn: ids)
           .getDocuments();
 
@@ -93,8 +95,7 @@ class FireStoreUtils {
   /// Square 增
   static Future<void> addSquare(Square square, String squarePath) async {
     square.date = DateTime.now().millisecondsSinceEpoch;
-    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
-        format: DateFormat.YEAR_MONTH);
+    String day = MonthUtil.getCurrentData();
     var collectionReference =
         Firestore.instance.collection('$STORE_SQUARE/$squarePath/$day');
     var squareReference = await collectionReference.add(square.toJson());
@@ -125,12 +126,23 @@ class FireStoreUtils {
   static updateSquare(String path) {}
 
   /// Square 查
-  static Stream<QuerySnapshot> querySquareByType(String path) {
-    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
-        format: DateFormat.YEAR_MONTH);
+  static Stream<QuerySnapshot> querySquareByType(String path, String date) {
     CollectionReference collectionReference =
-        Firestore.instance.collection('$STORE_SQUARE/$path/$day');
+        Firestore.instance.collection('$STORE_SQUARE/$path/$date');
     return collectionReference.orderBy('date', descending: true).snapshots();
+  }
+
+  static Future<List<DocumentSnapshot>> querySquareByTypeMore(
+      String path, String date, DocumentSnapshot last,
+      {int itemCount}) async {
+    CollectionReference collectionReference =
+        Firestore.instance.collection('$STORE_SQUARE/$path/$date');
+    var query = collectionReference.orderBy('date', descending: true);
+    if (last != null) query = query.startAfterDocument(last);
+    print('!!! request itemCount is ${itemCount ?? 20}');
+    query.limit(itemCount ?? 20);
+
+    return (await query.getDocuments()).documents;
   }
 
 //  static querySquareByUser(String userID, String path) {
@@ -149,8 +161,6 @@ class FireStoreUtils {
 //        .where('userID', isEqualTo: Config.user.uid)
 //        .getDocuments();
 //  }
-
-
 
   /**********************Favorite****************************/
 

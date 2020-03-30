@@ -242,10 +242,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     if (index < dataList.length + 1) {
       return buildItem(context: context, index: index - 1);
     }
-    return Offstage(
-      offstage: !isEnd,
-      child: BottomMore.getMoreWidget(),
-    );
+    return BottomMore.getMoreWidget(isEnd);
   }
 
   Widget buildItem({BuildContext context, int index}) {

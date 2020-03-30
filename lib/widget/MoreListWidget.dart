@@ -70,10 +70,7 @@ abstract class MoreListWidget extends State {
     if (index < dataList.length ) {
       return _buildListItem(context: context, index: index);
     }
-    return Offstage(
-      offstage: isEnd,
-      child: BottomMore.getMoreWidget(),
-    );
+    return BottomMore.getMoreWidget(isEnd);
   }
 
   Widget _buildListItem({BuildContext context, int index}) {
