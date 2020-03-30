@@ -36,6 +36,25 @@ class FireStoreUtils {
     return doc;
   }
 
+  static Future<List<DocumentSnapshot>> getMyDataByList(Map<String, dynamic> lists) async{
+    List<DocumentSnapshot> datas = List();
+    List<String> keys = lists.keys.toList();
+    for (String key in keys) {
+      List<String> ids =
+      (lists[key] as List)?.map((e) => e as String)?.toList();
+
+      QuerySnapshot snapshot = await Firestore.instance
+          .collection(key.substring(0, key.length-1))
+          .where(FieldPath.documentId, whereIn: ids)
+          .getDocuments();
+
+      datas.addAll(snapshot.documents);
+      print('!!! doc lenght :${snapshot.documents.length}');
+    }
+
+    return datas;
+  }
+
   /**********************Userinfo****************************/
 
   /// Userinfo 增- 注册
@@ -72,20 +91,18 @@ class FireStoreUtils {
   /**********************Square****************************/
 
   /// Square 增
-  static Future<void> addSquare(
-      Square square, String squarePath) async {
+  static Future<void> addSquare(Square square, String squarePath) async {
     square.date = DateTime.now().millisecondsSinceEpoch;
     String day = DateUtil.getDateStrByDateTime(DateTime.now(),
         format: DateFormat.YEAR_MONTH);
     var collectionReference =
         Firestore.instance.collection('$STORE_SQUARE/$squarePath/$day');
-    print('!!! CollectionReference get');
     var squareReference = await collectionReference.add(square.toJson());
-    String listName = squareReference.path.replaceAll(squareReference.documentID, '');
+    String listName =
+        squareReference.path.replaceAll(squareReference.documentID, '');
     var userReference = getMySquareList();
-    Map<String, dynamic> lists =
-    (await userReference.get()).data;
-    if(lists ==null) lists = Map();
+    Map<String, dynamic> lists = (await userReference.get()).data;
+    if (lists == null) lists = Map();
     List<String> ids;
     if (lists.containsKey(listName)) {
       ids = (lists[listName] as List)?.map((e) => e as String)?.toList();
@@ -94,11 +111,7 @@ class FireStoreUtils {
 
     ids.add(squareReference.documentID);
     lists[listName] = ids;
-
     return userReference.setData(lists);
-//    DocumentReference documentReference = collectionReference.document(user.uid);
-//    print('!!! DocumentReference get');
-//    documentReference.setData({'displayName':user.displayName, 'photoUrl':user.photoUrl});
   }
 
   static DocumentReference getMySquareList() {
@@ -120,13 +133,24 @@ class FireStoreUtils {
     return collectionReference.orderBy('date', descending: true).snapshots();
   }
 
-  static querySquareByUser(String userID, String path) {
-    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
-        format: DateFormat.YEAR_MONTH);
-    var collectionReference =
-        Firestore.instance.collection('$STORE_SQUARE/$path/$day');
-    collectionReference.orderBy('date', descending: true).snapshots();
-  }
+//  static querySquareByUser(String userID, String path) {
+//    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
+//        format: DateFormat.YEAR_MONTH);
+//    var collectionReference =
+//        Firestore.instance.collection('$STORE_SQUARE/$path/$day');
+//    collectionReference.orderBy('date', descending: true).snapshots();
+//  }
+
+//  static Future<QuerySnapshot> getMyPublishList() {
+//    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
+//        format: DateFormat.YEAR_MONTH);
+//    return Firestore.instance
+//        .collection('$STORE_SQUARE/default/$day')
+//        .where('userID', isEqualTo: Config.user.uid)
+//        .getDocuments();
+//  }
+
+
 
   /**********************Favorite****************************/
 
@@ -166,7 +190,6 @@ class FireStoreUtils {
   static bool isSquareFavorate(Map<String, dynamic> lists, String squareID) {
     if (lists.length == 0) return false;
     List<String> keys = lists.keys.toList();
-//    (json['pics'] as List)?.map((e) => e as String)?.toList()
     for (String key in keys) {
       List<String> ids =
           (lists[key] as List)?.map((e) => e as String)?.toList();

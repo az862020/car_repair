@@ -1,3 +1,6 @@
+import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/widget/MoreListWidget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -40,7 +43,15 @@ class FavoritePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _FavoriteState();
+    return MyFavorateList();
+//    return MoreListWidget();
+  }
+}
+
+class MyFavorateList extends MoreListWidget {
+  @override
+  DocumentReference getListMap() {
+    return FireStoreUtils.getMyFavoratedList();
   }
 }
 

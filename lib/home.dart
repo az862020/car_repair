@@ -96,5 +96,20 @@ class _HomeState extends State<HomeState> {
   @override
   void initState() {
     super.initState();
+//    FireStoreUtils.getMyPublishList().then((query){
+//      if(query == null){
+//        print('!!! getMyPublishList result is null');
+//      }else{
+//        List<DocumentSnapshot> list = query.documents;
+//        print('!!! getMyPublishList ${list.length}');
+//      }
+//    }).catchError((e){
+//      print('!!! $e');
+//    });
+//
+//    FireStoreUtils.getMyPublishList2().then((data){
+//      print('!!! getMyPublishList2 ${data.length}');
+//    });
+
   }
 }
