@@ -70,7 +70,7 @@ class FireStoreUtils {
     var documentReference = collectionReference.document(user.uid);
     print('!!! DocumentReference get');
     documentReference
-        .setData({'displayName': user.displayName, 'photoUrl': user.photoUrl});
+        .setData({'displayName': user.displayName??user.email, 'photoUrl': user.photoUrl});
     print('!!! DocumentReference set ok ');
   }
 

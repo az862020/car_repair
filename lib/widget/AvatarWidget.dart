@@ -30,7 +30,7 @@ class _AvatarWidget extends State<AvatarWidget> {
         Container(
           margin: EdgeInsets.only(left: 5),
           child: Text(
-            creater == null ? '' : creater.displayName,
+            creater == null ? '' : creater.displayName??'',
             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
           ),
         ),
