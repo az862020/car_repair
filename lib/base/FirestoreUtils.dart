@@ -244,19 +244,18 @@ class FireStoreUtils {
 
   /**********************CHAT****************************/
 
-  static Future<QuerySnapshot> getConversationList(String userID) {
+  static Future<QuerySnapshot> getConversationList() {
     var query = Firestore.instance
         .collection(STORE_CONVERSATION)
-        .where('user', arrayContains: userID)
+        .where('user', arrayContains: Config.user.uid)
         .orderBy('updateTime', descending: true);
     return query.getDocuments();
   }
 
-  static Future<ConversationEntity> getConversation(
-      String userID, String targetID) async {
+  static Future<ConversationEntity> getConversation(String targetID) async {
     var query = Firestore.instance
         .collection(STORE_CONVERSATION)
-        .where('user', arrayContains: userID)
+        .where('user', arrayContains: Config.user.uid)
         .orderBy('updateTime', descending: true);
 
     var querySnapshot = await query.getDocuments();
