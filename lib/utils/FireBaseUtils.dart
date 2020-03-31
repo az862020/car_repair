@@ -123,7 +123,7 @@ class FireBaseUtils {
       res.add(temps[i].cloudPath);
     }
     Square square =
-        Square(uploadtask.title, uploadtask.describe, Config.user.uid);
+        Square(uploadtask.title, uploadtask.describe, Config.user.uid, type: squarePath);
     if (res.length > 0) {
       if (uploadtask.type == FileUploadRecord.mediaType_video) {
         square.video = res.first;
@@ -135,7 +135,7 @@ class FireBaseUtils {
 //    square.id = Uuid().v1();
     print('!!! ${square.toJson().toString()}');
 
-    FireStoreUtils.addSquare(square, squarePath).then((data) {
+    FireStoreUtils.addSquare(square).then((data) {
       if (done != null) done(true);
     }).catchError((err) {
       if (done != null) done(false);

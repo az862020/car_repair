@@ -1,4 +1,5 @@
 import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/widget/MoreListWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class MyPublishListPage extends StatelessWidget {
             onPressed: () {
               print('float button on tip.');
               //TODO XO up load and publish photo/video.
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> MyNewPublish()));
             }),
       ),
     );

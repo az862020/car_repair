@@ -12,7 +12,9 @@ Square _$SquareFromJson(Map<String, dynamic> json) {
     json['note'] as String,
     json['userID'] as String,
   );
+  json['type'] = 'default';
   if (json.containsKey('id')) square.id = json['id'] as String;
+  if (json.containsKey('type')) square.id = json['type'] as String;
   if (json.containsKey('favorate')) square.favorate = json['favorate'] as int;
   if (json.containsKey('click')) square.click = json['click'] as int;
   if (json.containsKey('comment')) square.comment = json['comment'] as int;
@@ -34,6 +36,7 @@ Map<String, dynamic> _$SquareToJson(Square instance) {
   map['favorate'] = instance.favorate??0;
   map['comment'] = instance.comment??0;
   map['date'] = instance.date??0;
+  map['type'] = instance.type??'default';
   if (instance.video != null) map['video'] = instance.video;
   if (instance.pics != null) map['pics'] = instance.pics;
   return map;

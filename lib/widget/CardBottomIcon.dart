@@ -155,14 +155,13 @@ class _CardBottomIcon extends State<CardBottomIcon> {
         setState(() {
           isFavorate = !isFavorate;
           isCommiting = false;
+          widget.square.favorate += isFavorate ? 1 : -1;
           if (isFavorate !=
               FireStoreUtils.isSquareFavorate(dataMap, widget.square.id)) {
             print('!!!  data is different, need refresh.');
             _getFavorateState();
           }
-          widget.square.favorate += isFavorate ? 1 : -1;
-          widget.squareReference.updateData(
-              {'favorate': FieldValue.increment(isFavorate ? 1 : -1)});
+
         });
       }).catchError((e) {
         isCommiting = false;

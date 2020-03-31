@@ -11,12 +11,13 @@ class Square {
   final String title;
   final String note;
   final String userID;
+  String type;
   String video;
   List<String> pics;
   int date;
 
   Square(this.title, this.note, this.userID,
-      {this.video, this.pics, this.id, this.favorate, this.click, this.comment, this.date});
+      {this.video, this.pics, this.id, this.favorate, this.click, this.comment, this.date, this.type});
 
   factory Square.fromJson(Map<String, dynamic> json) => _$SquareFromJson(json);
 

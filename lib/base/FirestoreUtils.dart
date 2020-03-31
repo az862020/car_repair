@@ -15,6 +15,9 @@ class FireStoreUtils {
   static String STORE_USERINFO = 'userinfo'; //用户信息数据位置
   static String STORE_SQUARE = 'square'; //广场记录的数据位置
   static String STORE_COMMENTS = '/comments'; //广场记录的评论的数据位置
+  static String STORE_PUBISH = 'publishList'; //广场记录的评论的数据位置
+  static String STORE_FAVORATE = 'favorate'; //广场记录的评论的数据位置
+  static String STORE_CHAT = 'chat'; //聊天数据位置
 
   static final int PHOTOURL = 0; //头像
   static final int DISPLAYName = 1; //昵称
@@ -93,11 +96,10 @@ class FireStoreUtils {
   /**********************Square****************************/
 
   /// Square 增
-  static Future<void> addSquare(Square square, String squarePath) async {
+  static Future<void> addSquare(Square square) async {
     square.date = DateTime.now().millisecondsSinceEpoch;
-    String day = MonthUtil.getCurrentData();
-    var collectionReference =
-        Firestore.instance.collection('$STORE_SQUARE/$squarePath/$day');
+//    String day = MonthUtil.getCurrentData();
+    var collectionReference = Firestore.instance.collection('$STORE_SQUARE');
     var squareReference = await collectionReference.add(square.toJson());
     String listName =
         squareReference.path.replaceAll(squareReference.documentID, '');
@@ -116,7 +118,7 @@ class FireStoreUtils {
   }
 
   static DocumentReference getMySquareList() {
-    return getUserlistDocumentReferenece('publishList');
+    return getUserlistDocumentReferenece(STORE_PUBISH);
   }
 
   /// Square 删
@@ -126,21 +128,23 @@ class FireStoreUtils {
   static updateSquare(String path) {}
 
   /// Square 查
-  static Stream<QuerySnapshot> querySquareByType(String path, String date) {
-    CollectionReference collectionReference =
-        Firestore.instance.collection('$STORE_SQUARE/$path/$date');
-    return collectionReference.orderBy('date', descending: true).snapshots();
+  static Stream<QuerySnapshot> querySquareByType(
+      {String type, DocumentSnapshot last, int itemCount}) {
+    var collectionReference = Firestore.instance.collection(STORE_SQUARE);
+    var query = collectionReference.orderBy('date', descending: true);
+    if (type != null) query = query.where('type', isEqualTo: type);
+    if (last != null) query = query.startAfterDocument(last);
+    if (itemCount != null) query.limit(itemCount);
+    return query.snapshots();
   }
 
   static Future<List<DocumentSnapshot>> querySquareByTypeMore(
-      String path, String date, DocumentSnapshot last,
-      {int itemCount}) async {
-    CollectionReference collectionReference =
-        Firestore.instance.collection('$STORE_SQUARE/$path/$date');
+      {String type, DocumentSnapshot last, int itemCount}) async {
+    var collectionReference = Firestore.instance.collection(STORE_SQUARE);
     var query = collectionReference.orderBy('date', descending: true);
+    if (type != null) query = query.where('type', isEqualTo: type);
     if (last != null) query = query.startAfterDocument(last);
-    print('!!! request itemCount is ${itemCount ?? 20}');
-    query.limit(itemCount ?? 20);
+    if (itemCount != null) query.limit(itemCount);
 
     return (await query.getDocuments()).documents;
   }
@@ -169,7 +173,7 @@ class FireStoreUtils {
       String squareID,
       DocumentReference documentReference,
       Map<String, dynamic> lists,
-      bool currentFavoStatae) {
+      bool currentFavoStatae) async {
     String listName = squareReference.path.replaceAll(squareID, '');
     List<String> ids;
     if (lists.containsKey(listName)) {
@@ -178,23 +182,16 @@ class FireStoreUtils {
       ids = List();
 
     if (currentFavoStatae) {
+      //ture, make false; remove
       if (ids.contains(squareID)) ids.remove(squareID);
     } else {
+      //false make true; add
       ids.add(squareID);
     }
     lists[listName] = ids;
-//    return Firestore.instance.runTransaction((transacation) async {
-//      await transacation.update(documentReference, lists);
-//      var snapshot = await transacation.get(squareReference);
-//      var square = Square.fromJson(snapshot.data);
-//      square.id = snapshot.documentID;
-//      square.favorate+=(currentFavoStatae? -1:1);
-//      if(square.favorate<1) square.favorate = 0;
-//      await transacation.update(squareReference,
-//          {'favorate': square.favorate});
-//    });
-
-    return documentReference.setData(lists);
+    await documentReference.setData(lists);
+    return squareReference.updateData(//ture, make false; remove
+        {'favorate': FieldValue.increment(currentFavoStatae ? -1 : 1)});
   }
 
   static bool isSquareFavorate(Map<String, dynamic> lists, String squareID) {
@@ -210,7 +207,7 @@ class FireStoreUtils {
 
   //DocumentReference use get can get data, if nodata will return null.
   static DocumentReference getMyFavoratedList() {
-    return getUserlistDocumentReferenece('favorateList');
+    return getUserlistDocumentReferenece(STORE_FAVORATE);
   }
 
   /**********************Comment****************************/
@@ -237,6 +234,16 @@ class FireStoreUtils {
     if (last != null) query = query.startAfterDocument(last);
     print('!!! request itemCount is ${itemCount ?? 20}');
     query.limit(itemCount ?? 20);
+    return query.getDocuments();
+  }
+
+  /**********************CHAT****************************/
+
+  static Future<QuerySnapshot> getConversations(String userID) {
+    var query = Firestore.instance
+        .collection(STORE_CHAT)
+        .where('user', arrayContains: userID)
+        .orderBy('updateTime', descending: true);
     return query.getDocuments();
   }
 }
