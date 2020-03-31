@@ -270,7 +270,7 @@ class FireStoreUtils {
     entity.chattype = 0;
     entity.updateTime = DateUtil.getNowDateMs();
     List<String> ids = List();
-    ids.add(userID);
+    ids.add(Config.user.uid);
     ids.add(targetID);
     entity.user = ids;
     var doc = Firestore.instance.collection(STORE_CONVERSATION).document();
