@@ -19,22 +19,25 @@ class _AvatarWidget extends State<AvatarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        CircleAvatar(
-          backgroundImage: creater == null || creater.photoUrl == null
-              ? AssetImage('assets/images/account_box.png')
-              : CloudImageProvider(creater.photoUrl),
-        ),
-        Container(
-          margin: EdgeInsets.only(left: 5),
-          child: Text(
-            creater == null ? '' : creater.displayName??'',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+    return GestureDetector(
+      onTap: _chatToUser,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          CircleAvatar(
+            backgroundImage: creater == null || creater.photoUrl == null
+                ? AssetImage('assets/images/account_box.png')
+                : CloudImageProvider(creater.photoUrl),
           ),
-        ),
-      ],
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            child: Text(
+              creater == null ? '' : creater.displayName??'',
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -47,5 +50,12 @@ class _AvatarWidget extends State<AvatarWidget> {
         creater = userInfo;
       });
     });
+  }
+
+  _chatToUser(){
+    if(creater != null){
+      //TODO goto chat page.
+    }
+
   }
 }

@@ -1,6 +1,9 @@
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
+import 'package:car_repair/entity/conversation_entity.dart';
+import 'package:car_repair/entity/fire_message_entity.dart';
+import 'package:car_repair/generated/json/conversation_entity_helper.dart';
 import 'package:car_repair/utils/MonthUtil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
@@ -17,7 +20,7 @@ class FireStoreUtils {
   static String STORE_COMMENTS = '/comments'; //广场记录的评论的数据位置
   static String STORE_PUBISH = 'publishList'; //广场记录的评论的数据位置
   static String STORE_FAVORATE = 'favorate'; //广场记录的评论的数据位置
-  static String STORE_CHAT = 'chat'; //聊天数据位置
+  static String STORE_CONVERSATION = 'conversation'; //会话数据位置
 
   static final int PHOTOURL = 0; //头像
   static final int DISPLAYName = 1; //昵称
@@ -69,8 +72,10 @@ class FireStoreUtils {
     print('!!! CollectionReference get');
     var documentReference = collectionReference.document(user.uid);
     print('!!! DocumentReference get');
-    documentReference
-        .setData({'displayName': user.displayName??user.email, 'photoUrl': user.photoUrl});
+    documentReference.setData({
+      'displayName': user.displayName ?? user.email,
+      'photoUrl': user.photoUrl
+    });
     print('!!! DocumentReference set ok ');
   }
 
@@ -239,11 +244,52 @@ class FireStoreUtils {
 
   /**********************CHAT****************************/
 
-  static Future<QuerySnapshot> getConversations(String userID) {
+  static Future<QuerySnapshot> getConversationList(String userID) {
     var query = Firestore.instance
-        .collection(STORE_CHAT)
+        .collection(STORE_CONVERSATION)
         .where('user', arrayContains: userID)
         .orderBy('updateTime', descending: true);
     return query.getDocuments();
+  }
+
+  static Future<ConversationEntity> getConversation(
+      String userID, String targetID) async {
+    var query = Firestore.instance
+        .collection(STORE_CONVERSATION)
+        .where('user', arrayContains: userID)
+        .orderBy('updateTime', descending: true);
+
+    var querySnapshot = await query.getDocuments();
+    var list = querySnapshot.documents;
+    for (DocumentSnapshot doc in list) {
+      var entity = conversationEntityFromJson(ConversationEntity(), doc.data);
+      if (entity.user.length == 2 && entity.user.contains(targetID)) {
+        return entity;
+      }
+    }
+    var entity = ConversationEntity();
+    entity.chattype = 0;
+    entity.updateTime = DateUtil.getNowDateMs();
+    List<String> ids = List();
+    ids.add(userID);
+    ids.add(targetID);
+    entity.user = ids;
+    var doc = Firestore.instance.collection(STORE_CONVERSATION).document();
+    await doc.setData(entity.toJson());
+    entity.id = doc.documentID;
+    return entity;
+  }
+
+  static Stream<QuerySnapshot> getMessageList(String conversationID)  {
+    var col = Firestore.instance
+        .collection('$STORE_CONVERSATION/$conversationID/contentlist');
+
+    return  col.snapshots();
+  }
+
+  static addMessageToConversation(String conversationID, FireMessageEntity entity) {
+    Firestore.instance
+        .collection('$STORE_CONVERSATION/$conversationID/contentlist')
+        .add(entity.toJson());
   }
 }

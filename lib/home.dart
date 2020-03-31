@@ -39,8 +39,20 @@ class HomePage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.publish),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyNewPublishPage()));
+//              Navigator.push(context,
+//                  MaterialPageRoute(builder: (context) => MyNewPublishPage()));
+
+//              FireStoreUtils.getConversationList('111').then((value){
+//                var list = value.documents;
+//                print('!!! getConversation size: ${list.length}');
+//                for(DocumentSnapshot doc in list){
+//                  print('!!! chat data : ${doc.data}');
+//                }
+//              });
+//              FireStoreUtils.getConversation('111','222').then((entity){
+//
+//                FireStoreUtils.getMessageList(entity.id);
+//              });
             }),
       ),
     );
@@ -78,14 +90,6 @@ class _HomeState extends State<HomeState> {
     });
     date = MonthUtil.getCurrentData();
     dataSteam = FireStoreUtils.querySquareByType();
-
-    FireStoreUtils.getConversations('111').then((value){
-      var list = value.documents;
-      print('!!! getConversation size: ${list.length}');
-      for(DocumentSnapshot doc in list){
-        print('!!! chat data : ${doc.data}');
-      }
-    });
   }
 
   @override
