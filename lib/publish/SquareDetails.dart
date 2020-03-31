@@ -156,9 +156,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         setState(() {
           commentController.text = '';
           isSend = false;
-          widget.square.comment+=1;
+          widget.square.comment += 1;
         });
-        widget.squareReference.updateData({'comment':FieldValue.increment(1)});
+        widget.squareReference.updateData({'comment': FieldValue.increment(1)});
         _refreshData();
       });
     }
@@ -200,7 +200,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                  backgroundImage: CloudImageProvider(Config.user.photoUrl)),
+                  backgroundImage: Config.user.photoUrl == null
+                      ? AssetImage('assets/images/account_box.png')
+                      : CloudImageProvider(Config.user.photoUrl)),
             ),
             Expanded(
               flex: 1,
