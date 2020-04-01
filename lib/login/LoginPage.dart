@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:car_repair/base/conf.dart';
-import 'package:car_repair/home.dart';
+import 'package:car_repair/home/home.dart';
 import 'package:car_repair/register/RegisterPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

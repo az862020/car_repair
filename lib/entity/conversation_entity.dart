@@ -5,4 +5,7 @@ class ConversationEntity with JsonConvert<ConversationEntity> {
 	int chattype;//type 0 = private; type 1 = group;
 	int updateTime;
 	List<String> user;
+	String content;//display in conversation list;
+	String displayName;
+	String photoUrl;
 }

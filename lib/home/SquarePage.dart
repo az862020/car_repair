@@ -1,64 +1,22 @@
-import 'dart:io';
-import 'dart:typed_data';
-
-import 'package:car_repair/base/conf.dart';
-import 'package:car_repair/publish/SquareDetails.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/Square.dart';
-import 'package:car_repair/publish/MyNewPublishPage.dart';
+import 'package:car_repair/publish/SquareDetails.dart';
 import 'package:car_repair/utils/MonthUtil.dart';
 import 'package:car_repair/widget/BottomMore.dart';
-import 'package:car_repair/widget/SquareCard.dart';
-import 'package:common_utils/common_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:car_repair/home/SquareCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'widget/MyDrawer.dart';
-import 'dart:async';
-import 'package:async/async.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-import 'package:http/http.dart' as http;
-
-class HomePage extends StatelessWidget {
-  final String mTitle = 'home';
-
-  final FirebaseUser user;
-
-  const HomePage({Key key, @required this.user}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: mTitle,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(mTitle),
-        ),
-        body: HomeState(user),
-        drawer: MyDrawer(),
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.publish),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyNewPublishPage()));
-            }),
-      ),
-    );
-  }
-}
-
-class HomeState extends StatefulWidget {
-  final FirebaseUser user;
-
-  HomeState(this.user);
+class SquarePage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _HomeState();
+    return _SquareState();
   }
 }
 
-class _HomeState extends State<HomeState> {
+class _SquareState extends State<SquarePage> {
   Stream<QuerySnapshot> dataSteam;
   ScrollController _scrollController = ScrollController();
   String date;
@@ -111,14 +69,13 @@ class _HomeState extends State<HomeState> {
         itemCount: snapshot.length,
         itemBuilder: (context, i) {
           if (i > snapshot.length || snapshot.length == 0) return null;
-          if (i == snapshot.length)
-            return BottomMore.getMoreWidget(isEnd);
+          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
           return _buildListItem(context, snapshot[i]);
         });
   }
 
   Widget _buildListMore(BuildContext context, List<DocumentSnapshot> snapshot) {
-    if(snapshot.length == 0 ) _getData();
+    if (snapshot.length == 0) _getData();
     snapshot.addAll(moreData);
     return RefreshIndicator(
         onRefresh: _onRefersh,
@@ -127,8 +84,7 @@ class _HomeState extends State<HomeState> {
             itemCount: snapshot.length == 0 ? 0 : snapshot.length + 1,
             itemBuilder: (context, i) {
               if (i > snapshot.length || snapshot.length == 0) return null;
-              if (i == snapshot.length)
-                return BottomMore.getMoreWidget(isEnd);
+              if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
               return _buildListItem(context, snapshot[i]);
             }));
   }
@@ -151,7 +107,7 @@ class _HomeState extends State<HomeState> {
     );
   }
 
-  Future<Null> _onRefersh() async{
+  Future<Null> _onRefersh() async {
     moreData.clear();
     date = null;
     dataSteam = null;
@@ -159,7 +115,7 @@ class _HomeState extends State<HomeState> {
     _getData();
   }
 
-  Future _getData() async{
+  Future _getData() async {
     if (isLoading || isEnd) return;
     if (date == null) {
       setState(() {
@@ -178,6 +134,4 @@ class _HomeState extends State<HomeState> {
 
     print('!!! 加载数据.$date');
   }
-
-
 }

@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 part 'FireUserInfo.g.dart';
 
@@ -10,9 +9,12 @@ class FireUserInfo {
   final String displayName;
   String sex;
   String signature;
+  bool chat;
+  bool map;
+  bool square;
 
   FireUserInfo(this.uid, this.photoUrl, this.displayName,
-      {this.sex, this.signature});
+      {this.sex, this.signature, this.chat, this.map, this.square});
 
   //json
   factory FireUserInfo.fromJson(Map<String, dynamic> json) =>

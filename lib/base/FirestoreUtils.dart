@@ -91,10 +91,10 @@ class FireStoreUtils {
   }
 
   /// Userinfo 查
-  static Future<DocumentSnapshot> queryUserinfo(String path) {
+  static Future<DocumentSnapshot> queryUserinfo(String uid) {
     return Firestore.instance
         .collection('$STORE_USERINFO')
-        .document(path)
+        .document(uid)
         .get();
   }
 
@@ -244,14 +244,15 @@ class FireStoreUtils {
 
   /**********************CHAT****************************/
 
-  static Future<QuerySnapshot> getConversationList() {
+  static Stream<QuerySnapshot> getConversationList() {
     var query = Firestore.instance
         .collection(STORE_CONVERSATION)
         .where('user', arrayContains: Config.user.uid)
         .orderBy('updateTime', descending: true);
-    return query.getDocuments();
+    return query.snapshots();
   }
 
+  /// get conversation by targetID, if none will create one.
   static Future<ConversationEntity> getConversation(String targetID) async {
     var query = Firestore.instance
         .collection(STORE_CONVERSATION)
@@ -261,8 +262,9 @@ class FireStoreUtils {
     var querySnapshot = await query.getDocuments();
     var list = querySnapshot.documents;
     for (DocumentSnapshot doc in list) {
-      var entity = conversationEntityFromJson(ConversationEntity(), doc.data);
+      ConversationEntity entity = conversationEntityFromJson(ConversationEntity(), doc.data);
       if (entity.user.length == 2 && entity.user.contains(targetID)) {
+        entity.id = doc.documentID;
         return entity;
       }
     }
@@ -281,12 +283,13 @@ class FireStoreUtils {
 
   static Stream<QuerySnapshot> getMessageList(String conversationID)  {
     var col = Firestore.instance
-        .collection('$STORE_CONVERSATION/$conversationID/contentlist');
+        .collection('$STORE_CONVERSATION/$conversationID/contentlist')
+        .orderBy('time', descending: true);
 
     return  col.snapshots();
   }
 
-  static addMessageToConversation(String conversationID, FireMessageEntity entity) {
+  static Future<DocumentReference> addMessageToConversation(String conversationID, FireMessageEntity entity) {
     Firestore.instance
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .add(entity.toJson());

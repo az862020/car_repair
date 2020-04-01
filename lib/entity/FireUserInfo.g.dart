@@ -12,6 +12,9 @@ FireUserInfo _$FireUserInfoFromJson(Map<String, dynamic> json) {
       json['displayName'] as String);
   if(json.containsKey('sex')) userinfo.sex = json['sex'];
   if(json.containsKey('signature')) userinfo.sex = json['signature'];
+  if(json.containsKey('chat')) userinfo.sex = json['chat'];
+  if(json.containsKey('map')) userinfo.sex = json['map'];
+  if(json.containsKey('square')) userinfo.sex = json['square'];
   return userinfo;
 }
 
@@ -23,7 +26,9 @@ Map<String, dynamic> _$FireUserInfoToJson(FireUserInfo instance) {
   };
   if (instance.sex != null) map['sex'] = instance.sex;
   if (instance.signature != null) map['signature'] = instance.signature;
-
+  map['chat'] = instance.chat??false;
+  map['map'] = instance.map??false;
+  map['square'] = instance.square??true;
   return map;
 }
 

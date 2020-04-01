@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'BottomMore.dart';
-import 'SquareCard.dart';
+import '../home/SquareCard.dart';
 
 abstract class MoreListWidget extends State {
 
