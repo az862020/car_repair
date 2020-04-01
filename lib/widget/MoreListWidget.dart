@@ -42,10 +42,10 @@ abstract class MoreListWidget extends State {
 
   @override
   void dispose() {
-    super.dispose();
     lists = null;
     dataList.clear();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override

@@ -42,8 +42,8 @@ class _CropPageState extends State<CropPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _sample?.delete();
+    super.dispose();
   }
 
   @override

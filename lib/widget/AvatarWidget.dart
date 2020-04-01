@@ -26,28 +26,45 @@ class AvatarWidget extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _AvatarWidget();
   }
+
+  String name;
+  String photo;
+
+   chatToUser(BuildContext context) {
+    if (conversation != null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatPage(conversation, name)));
+    } else {
+      //private
+      FireStoreUtils.getConversation(userID).then((entity) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ChatPage(entity, name)));
+      });
+    }
+  }
 }
 
 class _AvatarWidget extends State<AvatarWidget> {
-  String name;
-  String photo;
+
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _chatToUser,
+      onTap: ()=>widget.chatToUser(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           CircleAvatar(
-            backgroundImage: photo.isEmpty
+            backgroundImage: widget.photo.isEmpty
                 ? AssetImage('assets/images/account_box.png')
-                : CloudImageProvider(photo),
+                : CloudImageProvider(widget.photo),
           ),
           Container(
             margin: EdgeInsets.only(left: 5),
             child: Text(
-              name ?? '',
+              widget.name ?? '',
               style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
             ),
           ),
@@ -70,8 +87,8 @@ class _AvatarWidget extends State<AvatarWidget> {
         _initByUserID(ids.first);
       } else {
         setState(() {
-          name = widget.conversation.displayName ?? '';
-          photo = widget.conversation.photoUrl ?? '';
+          widget.name = widget.conversation.displayName ?? '';
+          widget.photo = widget.conversation.photoUrl ?? '';
         });
       }
     }
@@ -81,24 +98,11 @@ class _AvatarWidget extends State<AvatarWidget> {
     FireStoreUtils.queryUserinfo(uid).then((snapshot) {
       setState(() {
         FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
-        name = userInfo.displayName;
-        photo = userInfo.photoUrl ?? '';
+        widget.name = userInfo.displayName;
+        widget.photo = userInfo.photoUrl ?? '';
       });
     });
   }
 
-  _chatToUser() {
-    if (widget.conversation != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChatPage(widget.conversation)));
-    } else {
-      //private
-      FireStoreUtils.getConversation(widget.userID).then((entity) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ChatPage(entity)));
-      });
-    }
-  }
+
 }

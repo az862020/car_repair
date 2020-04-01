@@ -18,12 +18,17 @@ class ConversationCard extends StatefulWidget {
 }
 
 class _ConversationCardState extends State<ConversationCard> {
+  Function _chat;
+
   @override
   Widget build(BuildContext context) {
+    AvatarWidget avatar = AvatarWidget(widget.entity.id, conversation: widget.entity);
+
     return GestureDetector(
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ChatPage(widget.entity)));
+          avatar.chatToUser(context);
+//          Navigator.push(context,
+//              MaterialPageRoute(builder: (context) => ChatPage(widget.entity, )));
         },
         child: Card(
           elevation: 10.0,
@@ -38,7 +43,7 @@ class _ConversationCardState extends State<ConversationCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    AvatarWidget(widget.entity.id, conversation: widget.entity),
+                    avatar,
                     Text(
                       '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(widget.entity.updateTime))}',
                       style: TextStyle(fontSize: 16),

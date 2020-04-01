@@ -27,13 +27,15 @@ class FireStoreUtils {
   static final int SIX = 2; //性别
   static final int SIGNATURE = 3; //签名
   static final int BACKGROUND = 4; //头像背景
+  static final int CHAT = 5; //是否显示聊天
 
   static final keys = [
     'photoUrl',
     'displayName',
     'sex',
     'signature',
-    'background'
+    'background',
+    'chat'
   ];
 
   static getUserlistDocumentReferenece(String type) {
@@ -83,7 +85,7 @@ class FireStoreUtils {
   deleteUserinfo(String path) {}
 
   /// Userinfo 改 - 修改 昵称, 头像, 签名, 性别
-  static updateUserinfo(String value, int type, FirebaseUser user) {
+  static updateUserinfo(var value, int type, FirebaseUser user) {
     var document =
         Firestore.instance.collection(STORE_USERINFO).document(user.uid);
 

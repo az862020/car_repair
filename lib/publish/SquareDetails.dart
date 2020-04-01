@@ -122,10 +122,10 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
 
   @override
   void dispose() {
-    super.dispose();
     creater = null;
     dataList.clear();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override

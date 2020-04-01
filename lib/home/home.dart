@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
+import 'package:car_repair/event/StartChatEvent.dart';
 import 'package:car_repair/home/Conversation.dart';
 import 'package:car_repair/home/MapPage.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'SquarePage.dart';
@@ -41,23 +46,27 @@ class _HomePage extends StatefulWidget {
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
   FireUserInfo userInfo;
+  static final String squareString = 'Funny mud pee';
+  static final String chatString = 'Balabala';
+  static final String mapString = 'Map';
 
-  List<String> tabs = ["Funny mud pee"];
+  List<String> tabs = ['$squareString'];
   List<Widget> tabViews = [SquarePage()];
   TabController _tabController;
+  StreamSubscription startChat;
 
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(length: tabs.length, vsync: this);
     if (userInfo = null)
-      FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
-        setState(() {
-          userInfo = FireUserInfo.fromJson(value.data);
-          tabs.clear();
-          tabViews.clear();
-          initTabs();
-        });
-      });
+      _refreshHomeState();
+  }
+
+  @override
+  void dispose() {
+    startChat?.cancel();
+    super.dispose();
   }
 
   @override
@@ -77,19 +86,18 @@ class _HomePageState extends State<_HomePage>
 
   initTabs() {
     if (!(userInfo.chat != null && !userInfo.chat)) {
-      tabs.add('Funny mud pee');
+      tabs.add(squareString);
       tabViews.add(SquarePage());
     }
-    tabs = ['Funny mud pee'];
+//    tabs = ['Funny mud pee'];
     if (userInfo.chat != null && userInfo.chat) {
-      tabs.add('Balabala');
+      tabs.add(chatString);
       tabViews.add(ConversationPage());
     }
     if (userInfo.map != null && userInfo.map) {
-      tabs.add('map');
+      tabs.add(mapString);
       tabViews.add(MapPage());
     }
-    ;
   }
 
   Widget _getAppBar() {
@@ -123,5 +131,33 @@ class _HomePageState extends State<_HomePage>
         children: tabViews.toList(),
       );
     }
+  }
+
+  _refreshHomeState(){
+    FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
+      setState(() {
+        userInfo = FireUserInfo.fromJson(value.data);
+        Config.userInfo = userInfo;
+        tabs.clear();
+        tabViews.clear();
+        initTabs();
+        startChat =
+            EventBus().on<StartChatEvent>().listen((event) => _startChat);
+      });
+    });
+  }
+
+  _startChat() {
+    if(userInfo != null && !(userInfo.chat??false)){
+      userInfo.chat = true;
+      tabs.clear();
+      tabViews.clear();
+      initTabs();
+      _tabController.animateTo(tabs.indexOf(chatString));
+      FireStoreUtils.updateUserinfo(true, FireStoreUtils.CHAT, Config.user);
+    }else{
+      _tabController.animateTo(tabs.indexOf(chatString));
+    }
+
   }
 }
