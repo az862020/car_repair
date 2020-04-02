@@ -32,7 +32,7 @@ class AvatarWidget extends StatefulWidget {
   String photo;
 
    chatToUser(BuildContext context) {
-    if(donotClick) return;
+    if(donotClick|| userID == Config.user.uid) return;
     if (conversation != null) {
       Navigator.push(
           context,
@@ -59,7 +59,7 @@ class _AvatarWidget extends State<AvatarWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           CircleAvatar(
-            backgroundImage: widget.photo.isEmpty
+            backgroundImage: widget.photo==null || widget.photo.isEmpty
                 ? AssetImage('assets/images/account_box.png')
                 : CloudImageProvider(widget.photo),
           ),

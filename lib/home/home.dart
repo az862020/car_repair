@@ -15,7 +15,7 @@ import 'SquarePage.dart';
 import 'drawer/MyDrawer.dart';
 
 class HomePage extends StatelessWidget {
-  final String mTitle = 'home';
+
 
   final FirebaseUser user;
 
@@ -23,11 +23,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: mTitle,
-      home: _HomePage(
-        user: user,
-      ),
+    return _HomePage(
+      user: user,
     );
   }
 }
@@ -45,6 +42,7 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
+  final String mTitle = 'home';
   FireUserInfo userInfo;
   static final String squareString = 'Funny mud pee';
   static final String chatString = 'Balabala';
@@ -59,8 +57,7 @@ class _HomePageState extends State<_HomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: tabs.length, vsync: this);
-    if (userInfo = null)
-      _refreshHomeState();
+    if (userInfo == null) _refreshHomeState();
   }
 
   @override
@@ -71,7 +68,9 @@ class _HomePageState extends State<_HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+        title: mTitle,
+        home:Scaffold(
       appBar: _getAppBar(),
       body: _getBodyWidget(),
       drawer: MyDrawer(),
@@ -81,7 +80,7 @@ class _HomePageState extends State<_HomePage>
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => MyNewPublishPage()));
           }),
-    );
+    ));
   }
 
   initTabs() {
@@ -133,7 +132,7 @@ class _HomePageState extends State<_HomePage>
     }
   }
 
-  _refreshHomeState(){
+  _refreshHomeState() {
     FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
       setState(() {
         userInfo = FireUserInfo.fromJson(value.data);
@@ -148,16 +147,15 @@ class _HomePageState extends State<_HomePage>
   }
 
   _startChat() {
-    if(userInfo != null && !(userInfo.chat??false)){
+    if (userInfo != null && !(userInfo.chat ?? false)) {
       userInfo.chat = true;
       tabs.clear();
       tabViews.clear();
       initTabs();
       _tabController.animateTo(tabs.indexOf(chatString));
       FireStoreUtils.updateUserinfo(true, FireStoreUtils.CHAT, Config.user);
-    }else{
+    } else {
       _tabController.animateTo(tabs.indexOf(chatString));
     }
-
   }
 }

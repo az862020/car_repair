@@ -2,6 +2,7 @@ import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:car_repair/home/ChatPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -41,26 +42,34 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              CircleAvatar(
-                                backgroundImage:
-                                    creater == null || creater.photoUrl == null
-                                        ? AssetImage(
-                                            'assets/images/account_box.png')
-                                        : CloudImageProvider(creater.photoUrl),
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                child: Text(
-                                  creater == null ? '' : creater.displayName,
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w500),
+                          GestureDetector(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  backgroundImage:
+                                      creater == null || creater.photoUrl == null
+                                          ? AssetImage(
+                                              'assets/images/account_box.png')
+                                          : CloudImageProvider(creater.photoUrl),
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    creater == null ? '' : creater.displayName,
+                                    style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onTap: (){
+                              FireStoreUtils.getConversation(creater.uid).then((entity) {
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => ChatPage(entity, creater.displayName??'')));
+                              });
+                            },
                           ),
                           Row(
                             children: <Widget>[
