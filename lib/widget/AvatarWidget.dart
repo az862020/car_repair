@@ -19,8 +19,9 @@ import 'package:flutter/material.dart';
 class AvatarWidget extends StatefulWidget {
   String userID;
   ConversationEntity conversation;
+  bool donotClick =false;
 
-  AvatarWidget(this.userID, {ConversationEntity conversation});
+  AvatarWidget(this.userID, {ConversationEntity conversation, bool donotClick});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,6 +32,7 @@ class AvatarWidget extends StatefulWidget {
   String photo;
 
    chatToUser(BuildContext context) {
+    if(donotClick) return;
     if (conversation != null) {
       Navigator.push(
           context,

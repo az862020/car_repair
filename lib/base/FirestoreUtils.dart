@@ -286,7 +286,8 @@ class FireStoreUtils {
   static Stream<QuerySnapshot> getMessageList(String conversationID)  {
     var col = Firestore.instance
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
-        .orderBy('time', descending: true);
+        .orderBy('time', descending: true)
+        .limit(30);
 
     return  col.snapshots();
   }

@@ -7,9 +7,6 @@ fireMessageEntityFromJson(FireMessageEntity data, Map<String, dynamic> json) {
 	if (json['sendID'] != null) {
 		data.sendID = json['sendID']?.toString();
 	}
-	if (json['targetID'] != null) {
-		data.targetID = json['targetID']?.toString();
-	}
 	if (json['time'] != null) {
 		data.time = json['time']?.toInt();
 	}
@@ -26,7 +23,6 @@ Map<String, dynamic> fireMessageEntityToJson(FireMessageEntity entity) {
 	final Map<String, dynamic> data = new Map<String, dynamic>();
 	data['id'] = entity.id;
 	data['sendID'] = entity.sendID;
-	data['targetID'] = entity.targetID;
 	data['time'] = entity.time;
 	data['type'] = entity.type;
 	data['content'] = entity.content;

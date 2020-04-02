@@ -15,14 +15,16 @@ class GalleryPhotoViewWrapper extends StatefulWidget {
     this.maxScale,
     this.initialIndex,
     @required this.photos,
-  }) : pageController = PageController(initialPage: initialIndex);
+    this.hoerID
+  }) : pageController = PageController(initialPage: initialIndex??0);
 
   final LoadingBuilder loadingBuilder;
   final dynamic minScale;
   final dynamic maxScale;
   final int initialIndex;
   final PageController pageController;
-  final Square photos;
+  final List<String> photos;
+  final String hoerID;
 
   @override
   State<StatefulWidget> createState() {
@@ -35,7 +37,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
 
   @override
   void initState() {
-    currentIndex = widget.initialIndex;
+    currentIndex = widget.initialIndex??0;
     super.initState();
   }
 
@@ -58,7 +60,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
             PhotoViewGallery.builder(
               scrollPhysics: const BouncingScrollPhysics(),
               builder: _buildItem,
-              itemCount: widget.photos.pics.length,
+              itemCount: widget.photos.length,
               loadingBuilder: widget.loadingBuilder,
               backgroundDecoration: widget.backgroundDecoration,
               pageController: widget.pageController,
@@ -83,11 +85,11 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
 //    final GalleryExampleItem item = widget.galleryItems[index];
     return PhotoViewGalleryPageOptions(
-      imageProvider: CloudImageProvider(widget.photos.pics[index]),
+      imageProvider: CloudImageProvider(widget.photos[index]),
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
       maxScale: PhotoViewComputedScale.covered * 2.0,
-      heroAttributes: PhotoViewHeroAttributes(tag: widget.photos.id),
+      heroAttributes: PhotoViewHeroAttributes(tag: widget.hoerID??widget.photos[index]),
     );
   }
 }
