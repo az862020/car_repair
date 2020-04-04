@@ -262,7 +262,7 @@ class _ChatPageState extends State<ChatPageState> {
       msg.time = DateUtil.getNowDateMs();
 
       FireStoreUtils.addMessageToConversation(widget.conversation.id, msg)
-          .then((onValue) {
+          .then((Null) {
         listScrollController.animateTo(0.0,
             duration: Duration(milliseconds: 300), curve: Curves.easeOut);
       });

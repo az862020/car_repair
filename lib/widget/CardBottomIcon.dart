@@ -1,7 +1,8 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
-import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
+import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/ChatPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +21,7 @@ class CardBottomIcon extends StatefulWidget {
 }
 
 class _CardBottomIcon extends State<CardBottomIcon> {
-  FireUserInfo creater;
+  FireUserInfoEntity creater;
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +132,7 @@ class _CardBottomIcon extends State<CardBottomIcon> {
     super.initState();
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
-        FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
+        FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
 

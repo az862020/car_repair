@@ -1,10 +1,11 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
-import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/comment_entity_helper.dart';
+import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:car_repair/widget/BottomMore.dart';
 import 'package:car_repair/widget/CardBottomIcon.dart';
@@ -91,7 +92,7 @@ class SquareDetailsPage extends StatefulWidget {
 }
 
 class _SquareDetailsPage extends State<SquareDetailsPage> {
-  FireUserInfo creater;
+  FireUserInfoEntity creater;
 
   final commentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -107,7 +108,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     super.initState();
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
-        FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
+        FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(),snapshot.data);
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
       });

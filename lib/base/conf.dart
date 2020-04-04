@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:car_repair/entity/FireUserInfo.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/widget/MyLoadingDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,7 +28,7 @@ class Config {
       'gs://carrepair-16710.appspot.com/'; //google storage bucket.
 
   static FirebaseUser user;
-  static FireUserInfo userInfo;
+  static FireUserInfoEntity userInfo;
 
   static FirebaseStorage storage;
   static FirebaseAuth auth;

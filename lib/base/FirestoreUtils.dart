@@ -4,12 +4,9 @@ import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
 import 'package:car_repair/generated/json/conversation_entity_helper.dart';
-import 'package:car_repair/utils/MonthUtil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 /// FireStore 远程数据库.带基础搜索功能.
 /// 区分 Userinfo 和 Square.

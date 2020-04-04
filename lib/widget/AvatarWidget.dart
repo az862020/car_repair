@@ -1,8 +1,9 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
-import 'package:car_repair/entity/FireUserInfo.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
+import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/ChatPage.dart';
 import 'package:car_repair/utils/FireBaseUtils.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,8 +87,10 @@ class _AvatarWidget extends State<AvatarWidget> {
         //private
         List<String> ids = widget.conversation.user;
         ids.remove(Config.user.uid);
+        print('!!! ids -- $ids');
+        print('!!! ids.first -- ${ids.first}');
         _initByUserID(ids.first);
-      } else {
+      } else {//group
         setState(() {
           widget.name = widget.conversation.displayName ?? '';
           widget.photo = widget.conversation.photoUrl ?? '';
@@ -97,12 +100,15 @@ class _AvatarWidget extends State<AvatarWidget> {
   }
 
   _initByUserID(String uid) {
+    print('!!! uid -- $uid');
     FireStoreUtils.queryUserinfo(uid).then((snapshot) {
-      setState(() {
-        FireUserInfo userInfo = FireUserInfo.fromJson(snapshot.data);
-        widget.name = userInfo.displayName;
-        widget.photo = userInfo.photoUrl ?? '';
-      });
+      if(snapshot.data != null){
+        setState(() {
+          FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
+          widget.name = userInfo.displayName;
+          widget.photo = userInfo.photoUrl ?? '';
+        });
+      }
     });
   }
 

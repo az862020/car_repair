@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
-import 'package:car_repair/entity/FireUserInfo.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/event/StartChatEvent.dart';
+import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/Conversation.dart';
 import 'package:car_repair/home/MapPage.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +43,7 @@ class _HomePage extends StatefulWidget {
 class _HomePageState extends State<_HomePage>
     with SingleTickerProviderStateMixin {
   final String mTitle = 'home';
-  FireUserInfo userInfo;
+  FireUserInfoEntity userInfo;
   static final String squareString = 'Funny mud pee';
   static final String chatString = 'Balabala';
   static final String mapString = 'Map';
@@ -57,6 +57,8 @@ class _HomePageState extends State<_HomePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: tabs.length, vsync: this);
+    startChat =
+        EventBus().on<StartChatEvent>().listen((event) => _startChat);
     if (userInfo == null) _refreshHomeState();
   }
 
@@ -135,18 +137,18 @@ class _HomePageState extends State<_HomePage>
   _refreshHomeState() {
     FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
       setState(() {
-        userInfo = FireUserInfo.fromJson(value.data);
+        userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(),value.data);
         Config.userInfo = userInfo;
         tabs.clear();
         tabViews.clear();
         initTabs();
-        startChat =
-            EventBus().on<StartChatEvent>().listen((event) => _startChat);
+
       });
     });
   }
 
   _startChat() {
+    print('!!! start show chat in home.');
     if (userInfo != null && !(userInfo.chat ?? false)) {
       userInfo.chat = true;
       tabs.clear();
