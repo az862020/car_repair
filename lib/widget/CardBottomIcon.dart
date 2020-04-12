@@ -1,5 +1,6 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
@@ -66,6 +67,7 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                               ],
                             ),
                             onTap: (){
+                              if(creater.uid == Config.user.uid) return;
                               FireStoreUtils.getConversation(creater.uid).then((entity) {
                                 Navigator.push(
                                     context, MaterialPageRoute(builder: (context) => ChatPage(entity, creater.displayName??'')));
@@ -136,7 +138,6 @@ class _CardBottomIcon extends State<CardBottomIcon> {
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
 
-        snapshot.data.containsKey('123');
       });
     });
     _getFavorateState();

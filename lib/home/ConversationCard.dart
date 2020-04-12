@@ -18,7 +18,6 @@ class ConversationCard extends StatefulWidget {
 }
 
 class _ConversationCardState extends State<ConversationCard> {
-  Function _chat;
 
   @override
   Widget build(BuildContext context) {

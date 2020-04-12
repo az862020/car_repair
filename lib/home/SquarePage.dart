@@ -43,6 +43,7 @@ class _SquareState extends State<SquarePage> {
     date = null;
     moreData.clear();
     _scrollController.dispose();
+    super.dispose();
   }
 
   @override

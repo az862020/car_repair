@@ -22,7 +22,7 @@ class AvatarWidget extends StatefulWidget {
   ConversationEntity conversation;
   bool donotClick =false;
 
-  AvatarWidget(this.userID, {ConversationEntity conversation, bool donotClick});
+  AvatarWidget(this.userID, {this.conversation, this.donotClick});
 
   @override
   State<StatefulWidget> createState() {
@@ -78,14 +78,17 @@ class _AvatarWidget extends State<AvatarWidget> {
 
   @override
   void initState() {
-    if (widget.conversation == null) {
-      //private
+    if (widget.conversation == null) {//private
+
+      print('!!! private conversation');
       _initByUserID(widget.userID);
     } else {
       // private and group
-      if (widget.conversation.chattype == 0) {
-        //private
+      if (widget.conversation.chattype == 0) {//private
+
+        print('!!! private conversation and is not null.');
         List<String> ids = widget.conversation.user;
+        print('!!! ids -- $ids');
         ids.remove(Config.user.uid);
         print('!!! ids -- $ids');
         print('!!! ids.first -- ${ids.first}');
