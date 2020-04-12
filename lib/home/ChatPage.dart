@@ -17,8 +17,9 @@ class ChatPage extends StatelessWidget {
 
   ConversationEntity conversation;
   String conversationName;
+  String conversationPhoto;
 
-  ChatPage(this.conversation, this.conversationName);
+  ChatPage(this.conversation, this.conversationName, this.conversationPhoto);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,11 @@ class ChatPage extends StatelessWidget {
       title: mTitle,
       home: Scaffold(
         appBar: AppBar(
-          title: AvatarWidget(conversation.id, conversation: conversation,),
+          title: AvatarWidget(
+            conversation.id,
+            conversation: conversation,
+            donotClick: true,
+          ),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
@@ -162,7 +167,7 @@ class _ChatPageState extends State<ChatPageState> {
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
               var entity = fireMessageEntityFromJson(
                   FireMessageEntity(), snapshot[i].data);
-              return MessageItem(entity, widget.conversation, i == 0 );
+              return MessageItem(entity, widget.conversation, i == 0);
             }));
   }
 

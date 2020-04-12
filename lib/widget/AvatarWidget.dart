@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 class AvatarWidget extends StatefulWidget {
   String userID;
   ConversationEntity conversation;
-  bool donotClick =false;
+  bool donotClick = false;
 
   AvatarWidget(this.userID, {this.conversation, this.donotClick});
 
@@ -32,35 +32,35 @@ class AvatarWidget extends StatefulWidget {
   String name;
   String photo;
 
-   chatToUser(BuildContext context) {
-    if(donotClick|| userID == Config.user.uid) return;
+  chatToUser(BuildContext context) {
+    if (donotClick || userID == Config.user.uid) return;
     if (conversation != null) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ChatPage(conversation, name)));
+              builder: (context) => ChatPage(conversation, name, photo)));
     } else {
       //private
       FireStoreUtils.getConversation(userID).then((entity) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ChatPage(entity, name)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChatPage(entity, name, photo)));
       });
     }
   }
 }
 
 class _AvatarWidget extends State<AvatarWidget> {
-
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: ()=>widget.chatToUser(context),
+      onTap: () => widget.chatToUser(context),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           CircleAvatar(
-            backgroundImage: widget.photo==null || widget.photo.isEmpty
+            backgroundImage: widget.photo == null || widget.photo.isEmpty
                 ? AssetImage('assets/images/account_box.png')
                 : CloudImageProvider(widget.photo),
           ),
@@ -78,13 +78,15 @@ class _AvatarWidget extends State<AvatarWidget> {
 
   @override
   void initState() {
-    if (widget.conversation == null) {//private
+    if (widget.conversation == null) {
+      //private
 
       print('!!! private conversation');
       _initByUserID(widget.userID);
     } else {
       // private and group
-      if (widget.conversation.chattype == 0) {//private
+      if (widget.conversation.chattype == 0) {
+        //private
 
         print('!!! private conversation and is not null.');
         List<String> ids = widget.conversation.user;
@@ -93,7 +95,8 @@ class _AvatarWidget extends State<AvatarWidget> {
         print('!!! ids -- $ids');
         print('!!! ids.first -- ${ids.first}');
         _initByUserID(ids.first);
-      } else {//group
+      } else {
+        //group
         setState(() {
           widget.name = widget.conversation.displayName ?? '';
           widget.photo = widget.conversation.photoUrl ?? '';
@@ -105,15 +108,14 @@ class _AvatarWidget extends State<AvatarWidget> {
   _initByUserID(String uid) {
     print('!!! uid -- $uid');
     FireStoreUtils.queryUserinfo(uid).then((snapshot) {
-      if(snapshot.data != null){
+      if (snapshot.data != null) {
         setState(() {
-          FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
+          FireUserInfoEntity userInfo =
+              fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
           widget.name = userInfo.displayName;
           widget.photo = userInfo.photoUrl ?? '';
         });
       }
     });
   }
-
-
 }

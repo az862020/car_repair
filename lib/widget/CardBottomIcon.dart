@@ -49,11 +49,11 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 CircleAvatar(
-                                  backgroundImage:
-                                      creater == null || creater.photoUrl == null
-                                          ? AssetImage(
-                                              'assets/images/account_box.png')
-                                          : CloudImageProvider(creater.photoUrl),
+                                  backgroundImage: creater == null ||
+                                          creater.photoUrl == null
+                                      ? AssetImage(
+                                          'assets/images/account_box.png')
+                                      : CloudImageProvider(creater.photoUrl),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 5),
@@ -66,11 +66,17 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                                 ),
                               ],
                             ),
-                            onTap: (){
-                              if(creater.uid == Config.user.uid) return;
-                              FireStoreUtils.getConversation(creater.uid).then((entity) {
+                            onTap: () {
+                              if (creater.uid == Config.user.uid) return;
+                              FireStoreUtils.getConversation(creater.uid)
+                                  .then((entity) {
                                 Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => ChatPage(entity, creater.displayName??'')));
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                            entity,
+                                            creater.displayName ?? '',
+                                            creater.photoUrl ?? '')));
                               });
                             },
                           ),
@@ -78,7 +84,8 @@ class _CardBottomIcon extends State<CardBottomIcon> {
                             children: <Widget>[
                               _createButtonIcon(
                                   Icons.remove_red_eye, '${square.click}'),
-                              _createButtonIcon(Icons.comment, '${square.comment}'),
+                              _createButtonIcon(
+                                  Icons.comment, '${square.comment}'),
                               GestureDetector(
                                 child: _createButtonIcon(
                                     Icons.thumb_up, '${square.favorate}',
@@ -134,10 +141,10 @@ class _CardBottomIcon extends State<CardBottomIcon> {
     super.initState();
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
-        FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
+        FireUserInfoEntity userInfo =
+            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
-
       });
     });
     _getFavorateState();
@@ -172,7 +179,6 @@ class _CardBottomIcon extends State<CardBottomIcon> {
             print('!!!  data is different, need refresh.');
             _getFavorateState();
           }
-
         });
       }).catchError((e) {
         isCommiting = false;
