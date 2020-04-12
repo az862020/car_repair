@@ -1,8 +1,8 @@
+import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
-import 'package:car_repair/event/StartChatEvent.dart';
 import 'package:car_repair/generated/json/fire_message_entity_helper.dart';
 import 'package:car_repair/home/MessageItem.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
@@ -71,7 +71,7 @@ class _ChatPageState extends State<ChatPageState> {
 
   @override
   void dispose() {
-    EventBus().fire(StartChatEvent()); //send a event to home. want show chat.
+    eventBus.fire(StartChatEvent()); //send a event to home. want show chat.
     super.dispose();
   }
 

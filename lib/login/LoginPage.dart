@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
+import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/home.dart';
 import 'package:car_repair/register/RegisterPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,31 +108,30 @@ class _LoginPageFormState extends State<LoginPageForm> {
               height: 1.0,
             ),
             RaisedButton(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
 //                    crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Offstage(
-                      offstage: !isLoading,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Container(
-                          width: 12.0,
-                          height: 12.0,
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.red),
-                            strokeWidth: 2.0,
-                          ),
+                children: <Widget>[
+                  Offstage(
+                    offstage: !isLoading,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 12.0,
+                        height: 12.0,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                          strokeWidth: 2.0,
                         ),
                       ),
                     ),
-                    Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    'Login',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
               onPressed: () {
                 //如果验证通过
                 if (_formKey.currentState.validate()) {
@@ -219,7 +221,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         email: usernameController.text, password: passwordController.text);
 
     final FirebaseUser user =
-    (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+        (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.email);
 
     Config.user = await FirebaseAuth.instance.currentUser();
@@ -240,7 +242,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
     final FirebaseUser user =
-    (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+        (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.displayName);
     FirebaseUser userD = await FirebaseAuth.instance.currentUser();
     print('!!! userD = user ${userD.uid == user.uid}');
@@ -255,24 +257,34 @@ class _LoginPageFormState extends State<LoginPageForm> {
         .then((user) {
       if (user != null) {
         print('!!! get user in loginpage  $user');
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(user: user),
-            ),
-            (route) => route == null);
+        FireStoreUtils.queryUserinfo(user.uid).then((value) {
+          FireUserInfoEntity userInfo =
+              fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
+          Config.userInfo = userInfo;
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(user: user),
+              ),
+              (route) => route == null);
+        });
       }
     });
   }
 
   //登录成功,获取到了用户信息,携带user跳转home.
   gotoHome(FirebaseUser user, BuildContext context) {
-    Navigator.pop(context);
+    FireStoreUtils.queryUserinfo(user.uid).then((value) {
+      FireUserInfoEntity userInfo =
+          fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
+      Config.userInfo = userInfo;
+      Navigator.pop(context);
 
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage(user: user)),
-        (route) => route == null);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage(user: user)),
+          (route) => route == null);
+    });
   }
 
   //获取是否记住账号密码.

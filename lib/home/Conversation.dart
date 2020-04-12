@@ -49,7 +49,7 @@ class _ConversationPageState extends State<ConversationPage> {
             itemBuilder: (context, i) {
               if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
-              var entity = conversationEntityFromJson(
+              ConversationEntity entity = conversationEntityFromJson(
                   ConversationEntity(), snapshot[i].data);
               return ConversationCard(entity);
             }));
