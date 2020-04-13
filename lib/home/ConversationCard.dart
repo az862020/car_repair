@@ -4,7 +4,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'ChatPage.dart';
+import '../chat/ChatPage.dart';
 
 class ConversationCard extends StatefulWidget {
   ConversationEntity entity;

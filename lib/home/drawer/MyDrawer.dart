@@ -3,7 +3,7 @@ import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';
-import 'package:car_repair/settings/MySettingsPage.dart';
+import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/Account/MySettingsPage.dart';
 import 'package:car_repair/Account/MyEditDisplayNamePage.dart';
 import 'package:flutter/material.dart';
 

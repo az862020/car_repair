@@ -4,7 +4,7 @@ import 'package:car_repair/base/conf.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
-import 'package:car_repair/home/ChatPage.dart';
+import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/chat/ChatPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

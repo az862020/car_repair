@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'base/conf.dart';
-import 'login/LoginPage.dart';
+import 'Account/LoginPage.dart';
 
 void main() async {
   runApp(LoginPage());
