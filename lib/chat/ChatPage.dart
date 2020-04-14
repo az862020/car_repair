@@ -1,9 +1,11 @@
 import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/chat/ChatInputWidget.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
 import 'package:car_repair/generated/json/fire_message_entity_helper.dart';
+import 'ChatStickerWidget.dart';
 import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/chat/MessageItem.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,6 +27,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: mTitle,
+      theme: ThemeData(scaffoldBackgroundColor: Colors.grey[300]),
       home: Scaffold(
         appBar: AppBar(
           title: AvatarWidget(
@@ -91,10 +94,10 @@ class _ChatPageState extends State<ChatPageState> {
               buildListMessage(),
 
               // Sticker
-              (isShowSticker ? buildSticker() : Container()),
+              (isShowSticker ? ChatStickerWidget() : Container()),
 
               // Input content
-              buildInput(),
+              ChatInputWidget(onSendMessage, focusNode, isShowSticker),
             ],
           ),
 
@@ -115,14 +118,6 @@ class _ChatPageState extends State<ChatPageState> {
       Navigator.pop(context);
     }
     return Future.value(false);
-  }
-
-  void getSticker() {
-    // Hide keyboard when sticker appear
-    focusNode.unfocus();
-    setState(() {
-      isShowSticker = !isShowSticker;
-    });
   }
 
   void onFocusChange() {
@@ -165,79 +160,16 @@ class _ChatPageState extends State<ChatPageState> {
             itemBuilder: (context, i) {
               if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
-              var entity = fireMessageEntityFromJson(
-                  FireMessageEntity(), snapshot[i].data);
-              return MessageItem(entity, widget.conversation, i == 0);
+              var entity = fireMessageEntityFromJson(FireMessageEntity(), snapshot[i].data);
+              entity.id = snapshot[i].documentID;
+              bool isLast = (i == snapshot.length-1);
+              if(!isLast){
+                var entity2 = fireMessageEntityFromJson(FireMessageEntity(), snapshot[i+1].data);
+                if(entity.sendID != entity2.sendID) isLast = true;
+              }
+              return MessageItem(entity, widget.conversation, isLast);
             }));
   }
-
-  buildInput() {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          // Button send image
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.image),
-                onPressed: getImage,
-//                color: primaryColor,
-              ),
-            ),
-            color: Colors.white,
-          ),
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.face),
-                onPressed: getSticker,
-//                color: primaryColor,
-              ),
-            ),
-            color: Colors.white,
-          ),
-
-          // Edit text
-          Flexible(
-            child: Container(
-              child: TextField(
-                style: TextStyle(fontSize: 15.0),
-                controller: textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
-//                  hintStyle: TextStyle(color: greyColor),
-                ),
-                focusNode: focusNode,
-              ),
-            ),
-          ),
-
-          // Button send message
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
-              child: new IconButton(
-                icon: new Icon(Icons.send),
-                onPressed: () => onSendMessage(textEditingController.text, 0),
-//                color: primaryColor,
-              ),
-            ),
-            color: Colors.white,
-          ),
-        ],
-      ),
-      width: double.infinity,
-      height: 50.0,
-      decoration: new BoxDecoration(
-          border:
-              new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
-          color: Colors.white),
-    );
-  }
-
-  buildSticker() {}
 
   buildLoading() {
     return Positioned(
@@ -252,8 +184,6 @@ class _ChatPageState extends State<ChatPageState> {
           : Container(),
     );
   }
-
-  void getImage() {}
 
   onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker

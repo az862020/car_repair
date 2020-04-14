@@ -22,7 +22,7 @@ class AvatarWidget extends StatefulWidget {
   ConversationEntity conversation;
   bool donotClick = false;
 
-  AvatarWidget(this.userID, {this.conversation, this.donotClick});
+  AvatarWidget(this.userID, {this.conversation, this.donotClick = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -57,7 +57,7 @@ class _AvatarWidget extends State<AvatarWidget> {
     return GestureDetector(
       onTap: () => widget.chatToUser(context),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           CircleAvatar(
             backgroundImage: widget.photo == null || widget.photo.isEmpty
