@@ -34,8 +34,7 @@ class _headWidget extends State<StatefulWidget> {
   void initState() {
     if (photo == null) {
       FireStoreUtils.queryUserinfo(uid).then((value) {
-        FireUserInfoEntity user;
-        user = fireUserInfoEntityFromJson(user, value.data);
+        var user = fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
         photo = user.photoUrl ?? '';
         name = user.displayName ?? '';
         setState(() {});

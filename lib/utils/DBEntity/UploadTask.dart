@@ -1,7 +1,7 @@
 /// UploadTask, Mulite files upload. single upload entity 's papa.
 class UploadTask {
   int tasktID;
-  int type; //0: square
+  int type; //0: square 1:chat
   int mediaType; //0: picture; 1:video
   String title;
   String describe;

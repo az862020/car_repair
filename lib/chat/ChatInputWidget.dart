@@ -1,7 +1,12 @@
 
 
+import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/publish/MyNewPublishPage.dart';
+import 'package:car_repair/utils/FileUploadRecord.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:photo/photo.dart';
 
 class ChatInputWidget extends StatefulWidget{
 
@@ -34,7 +39,7 @@ class _chatInputWidget extends State<ChatInputWidget>{
               margin: new EdgeInsets.symmetric(horizontal: 1.0),
               child: new IconButton(
                 icon: new Icon(Icons.image),
-                onPressed: getImage,
+                onPressed: ()=>getImage(context),
 //                color: primaryColor,
               ),
             ),
@@ -98,9 +103,36 @@ class _chatInputWidget extends State<ChatInputWidget>{
     });
   }
 
-  void getImage() {
+   getImage(BuildContext context) async{
+    var result = await PhotoPicker.pickAsset(
+      context: context,
+      rowCount: 3,
 
-
+      /// The following are optional parameters.
+      themeColor: Colors.blue,
+      // the title color and bottom color
+      provider: I18nProvider.english,
+      // i18n provider ,default is chinese. , you can custom I18nProvider or use ENProvider()
+      textColor: Colors.white,
+      sortDelegate: SortDelegate.common,
+      // default is common ,or you make custom delegate to sort your gallery
+      checkBoxBuilderDelegate: DefaultCheckBoxBuilderDelegate(
+        activeColor: Colors.white,
+        unselectedColor: Colors.white,
+        checkColor: Colors.blue,
+      ),
+      pickType: PickType.all,
+    );
+    if (result.length > 0) {
+      for(int i = 0; i<result.length; i++){
+        print('!!! IMG MSG ${result[i]}');
+        List<String> photos = List();
+        photos.add(result[i].id);
+        FileUploadRecord.uploadFiles(context, photos, 1, 0, '', result[i].id, Config.user.uid, done2: (coludPath){
+          widget.sendMessage(coludPath, 1);
+        });
+      }
+    }
   }
 
 }

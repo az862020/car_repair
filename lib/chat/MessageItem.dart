@@ -25,10 +25,10 @@ class MessageItem extends StatefulWidget {
 class _messageItemState extends State<MessageItem> {
   @override
   Widget build(BuildContext context) {
-    return buildItem(widget.msg.sendID == Config.user.uid);
+    return buildItem(widget.msg.sendID == Config.user.uid, context);
   }
 
-  Widget buildItem(bool isRight) {
+  Widget buildItem(bool isRight, BuildContext context) {
     if (widget.msg.sendID == Config.user.uid) {
       // Right (my message)
       return Row(
@@ -38,61 +38,7 @@ class _messageItemState extends State<MessageItem> {
               ? getTextWidget(true)
               : widget.msg.type == 1
                   // Image
-                  ? Container(
-                      child: FlatButton(
-                        child: Material(
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) => Container(
-                              child: CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.blue),
-                              ),
-                              width: 200.0,
-                              height: 200.0,
-                              padding: EdgeInsets.all(70.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Material(
-                              child: Image.asset(
-                                'images/img_not_available.jpeg',
-                                width: 200.0,
-                                height: 200.0,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(8.0),
-                              ),
-                              clipBehavior: Clip.hardEdge,
-                            ),
-                            imageUrl: widget.msg.content,
-                            cacheManager: CloudCacheManager(),
-                            width: 200.0,
-                            height: 200.0,
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          clipBehavior: Clip.hardEdge,
-                        ),
-                        onPressed: () {
-                          List<String> photo = [widget.msg.content];
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GalleryPhotoViewWrapper(
-                                        photos: photo,
-                                      )));
-                        },
-                        padding: EdgeInsets.all(0),
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: widget.islast && isRight ? 20.0 : 10.0,
-                          right: 10.0),
-                    )
+                  ? getPhotoWidget(isRight, context)
                   // Sticker
                   : Container(
                       child: new Image.asset(
@@ -121,62 +67,7 @@ class _messageItemState extends State<MessageItem> {
                 widget.msg.type == 0
                     ? getTextWidget(false)
                     : widget.msg.type == 1
-                        ? Container(
-                            child: FlatButton(
-                              child: Material(
-                                child: CachedNetworkImage(
-                                  placeholder: (context, url) => Container(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.blue),
-                                    ),
-                                    width: 200.0,
-                                    height: 200.0,
-                                    padding: EdgeInsets.all(70.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(8.0),
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Material(
-                                    child: Image.asset(
-                                      'images/img_not_available.jpeg',
-                                      width: 200.0,
-                                      height: 200.0,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(8.0),
-                                    ),
-                                    clipBehavior: Clip.hardEdge,
-                                  ),
-                                  imageUrl: widget.msg.content,
-                                  cacheManager: CloudCacheManager(),
-                                  width: 200.0,
-                                  height: 200.0,
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                                clipBehavior: Clip.hardEdge,
-                              ),
-                              onPressed: () {
-                                List<String> photo = [widget.msg.content];
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            GalleryPhotoViewWrapper(
-                                              photos: photo,
-                                            )));
-                              },
-                              padding: EdgeInsets.all(0),
-                            ),
-                            margin: EdgeInsets.only(left: 10.0),
-                          )
+                        ? getPhotoWidget(isRight, context)
                         : Container(
                             child: new Image.asset(
                               'images/${widget.msg.content}.gif',
@@ -231,8 +122,59 @@ class _messageItemState extends State<MessageItem> {
     );
   }
 
-  Widget getPhotoWidget(){
-
+  Widget getPhotoWidget(bool isRight, BuildContext context) {
+    return Container(
+            child: FlatButton(
+              child: Material(
+                child: CachedNetworkImage(
+                  placeholder: (context, url) => Container(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    ),
+                    width: 200.0,
+                    height: 200.0,
+                    padding: EdgeInsets.all(70.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Material(
+                    child: Image.asset(
+                      'images/img_not_available.jpg',
+                      width: 200.0,
+                      height: 200.0,
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                  ),
+                  imageUrl: widget.msg.content,
+                  cacheManager: CloudCacheManager(),
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                clipBehavior: Clip.hardEdge,
+              ),
+              onPressed: () {
+                List<String> photo = [widget.msg.content];
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GalleryPhotoViewWrapper(
+                              photos: photo,
+                            )));
+              },
+              padding: EdgeInsets.all(0),
+            ),
+            margin: EdgeInsets.only(
+                bottom: widget.islast && isRight ? 20.0 : 10.0, right: 10.0, left: 10.0),
+          );
   }
-
 }

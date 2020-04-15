@@ -17,8 +17,10 @@ import 'FireBaseUtils.dart';
 
 class FileUploadRecord {
   static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
+  static String STORAGE_CHAT_PATH = 'chat/'; //云端聊天文件存放路径
   static String STOR_SQUARE_PATH = 'Square'; //云端广场文档记录路径
   static int type_square = 0;
+  static int type_chat = 1;
 
   static int mediaType_picture = 0;
   static int mediaType_video = 1;
@@ -27,14 +29,16 @@ class FileUploadRecord {
 
   static uploadFiles(BuildContext context, List<String> paths, int type,
       int mediaType, String title, String describe, String square,
-      {Function(bool) done}) {
+      {Function(bool) done, Function(String) done2}) {
     // multi file upload task.
     if (paths == null || paths.length == 0)
       throw Exception('Can not find files to upload.');
     bool hasCallBack = false;
     DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {
+      print('!!! $temps');
       for (var i = 0; i < temps.length; i++) {
-        uploadFile(context, temps[i], square, (temp) {
+        print('!!! ${temps[i]}');
+        uploadFile(context, temps[i], square, type, (temp) {
           // check is all upload finish.
           print('!!! has callback: $hasCallBack');
           if (hasCallBack) return;
@@ -46,10 +50,13 @@ class FileUploadRecord {
           DBUtil.isTaskAllDone(temp.tasktID).then((isOK) {
             if (isOK) {
               hasCallBack = true;
-//              if (done != null) {
-//                done(true);
-//              }
-              FireBaseUtils.updateFireStore(temp.tasktID, square, done: done);
+              if (type == 0) {
+                FireBaseUtils.updateFireStore(temp.tasktID, square, done: done);
+              } else {
+                if (done2 != null) {
+                  done2(temp.cloudPath);
+                }
+              }
             }
           });
         });
@@ -57,9 +64,10 @@ class FileUploadRecord {
     });
   }
 
-  static uploadFile(BuildContext context, UploadTemp temp, String square,
+  static uploadFile(BuildContext context, UploadTemp temp, String square, int type,
       Function(UploadTemp) callback) async {
     // single upload task
+    print('!!! ready to upload file ${temp.filePath}');
     UploadEntity entity = await getUploadEntity(temp.filePath);
     if (entity == null) {
       print('!!! 需要新建上传文件记录!');
@@ -69,21 +77,21 @@ class FileUploadRecord {
     //1. encodejpeg
     if (entity.proxyPath == null) {
       print('!!! 需要压缩, 新建压缩文件!');
-      var name = Uuid().v1() + (temp.filePath.endsWith('.gif')?'.gif': '.jpg');
+      var name =
+          Uuid().v1() + (temp.filePath.endsWith('.gif') ? '.gif' : '.jpg');
       String target = '${Config.AppDirCache}$name';
       String path = target;
-      if(temp.filePath.endsWith('.gif')){
+      if (temp.filePath.endsWith('.gif')) {
         //gif
         File targetFile = File(target);
         bool exist = await targetFile.exists();
-        if( !exist) targetFile.create(recursive: true);
-        await File(temp.filePath).copy(target).then((file){
+        if (!exist) targetFile.create(recursive: true);
+        await File(temp.filePath).copy(target).then((file) {
           path = file.path;
-        }).catchError((e){
+        }).catchError((e) {
           path = temp.filePath;
         });
-
-      }else{
+      } else {
         //jpg png
         path = await ImageJpeg.encodeJpeg(
             entity.localPath, target, 80, 1920, 1080);
@@ -99,9 +107,14 @@ class FileUploadRecord {
       print('!!! 需要上传, 新建云端文件!');
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
+
       var reference = FirebaseStorage.instance
-          .ref()
-          .child(STORAGE_SQUARE_PATH + '$square/' + filename);
+          .ref();
+      if(type == type_square){
+          reference.child(STORAGE_SQUARE_PATH + '$square/' + filename);
+      }else if (type == type_chat){
+          reference.child(STORAGE_CHAT_PATH + '$square/' + filename);
+      }
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {

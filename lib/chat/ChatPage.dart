@@ -131,19 +131,22 @@ class _ChatPageState extends State<ChatPageState> {
 
   buildListMessage() {
     return Flexible(
-        child: StreamBuilder(
-            stream: dataStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
-                return LinearProgressIndicator();
-              if (snapshot.connectionState == ConnectionState.none)
-                return Center(
-                    child: Text(
-                  'No data!',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                ));
-              return _buildList(context, snapshot.data.documents);
-            }));
+        child: Padding(
+      padding: EdgeInsets.all(5.0),
+      child: StreamBuilder(
+          stream: dataStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return LinearProgressIndicator();
+            if (snapshot.connectionState == ConnectionState.none)
+              return Center(
+                  child: Text(
+                'No data!',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ));
+            return _buildList(context, snapshot.data.documents);
+          }),
+    ));
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
@@ -160,12 +163,14 @@ class _ChatPageState extends State<ChatPageState> {
             itemBuilder: (context, i) {
               if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
-              var entity = fireMessageEntityFromJson(FireMessageEntity(), snapshot[i].data);
+              var entity = fireMessageEntityFromJson(
+                  FireMessageEntity(), snapshot[i].data);
               entity.id = snapshot[i].documentID;
-              bool isLast = (i == snapshot.length-1);
-              if(!isLast){
-                var entity2 = fireMessageEntityFromJson(FireMessageEntity(), snapshot[i+1].data);
-                if(entity.sendID != entity2.sendID) isLast = true;
+              bool isLast = (i == snapshot.length - 1);
+              if (!isLast) {
+                var entity2 = fireMessageEntityFromJson(
+                    FireMessageEntity(), snapshot[i + 1].data);
+                if (entity.sendID != entity2.sendID) isLast = true;
               }
               return MessageItem(entity, widget.conversation, isLast);
             }));
@@ -197,7 +202,7 @@ class _ChatPageState extends State<ChatPageState> {
       msg.time = DateUtil.getNowDateMs();
 
       FireStoreUtils.addMessageToConversation(widget.conversation.id, msg)
-          .then((Null) {
+          .then((value) {
         listScrollController.animateTo(0.0,
             duration: Duration(milliseconds: 300), curve: Curves.easeOut);
       });

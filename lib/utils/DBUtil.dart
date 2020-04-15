@@ -8,6 +8,7 @@ class DBUtil {
   static addTask(List<String> paths, int type, int mediaType, String title,
       String describe, Function(List<UploadTemp>) callback) async {
     UploadTask task = UploadTask(type, mediaType, title, describe);
+    print('!!! task $task');
     task = await insertTask(task);
     List<UploadTemp> temps = List();
     int entity = 0;
