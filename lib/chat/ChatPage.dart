@@ -163,16 +163,19 @@ class _ChatPageState extends State<ChatPageState> {
             itemBuilder: (context, i) {
               if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
-              var entity = fireMessageEntityFromJson(
+              FireMessageEntity entity = fireMessageEntityFromJson(
                   FireMessageEntity(), snapshot[i].data);
               entity.id = snapshot[i].documentID;
+              FireMessageEntity entity2 = null;
+
               bool isLast = (i == snapshot.length - 1);
               if (!isLast) {
-                var entity2 = fireMessageEntityFromJson(
+                entity2 = fireMessageEntityFromJson(
                     FireMessageEntity(), snapshot[i + 1].data);
+                entity2.id = snapshot[i + 1].documentID;
                 if (entity.sendID != entity2.sendID) isLast = true;
               }
-              return MessageItem(entity, widget.conversation, isLast);
+              return MessageItem(entity, widget.conversation, entity2);
             }));
   }
 

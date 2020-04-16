@@ -12,9 +12,15 @@ import 'package:flutter/material.dart';
 class MessageItem extends StatefulWidget {
   FireMessageEntity msg;
   ConversationEntity conversation;
-  bool islast;
+  FireMessageEntity lastMsg;
+  bool islast = false;
+  bool showTime = false;
+  int timeStep = 30 * 60 * 1000;
 
-  MessageItem(this.msg, this.conversation, this.islast);
+  MessageItem(this.msg, this.conversation, this.lastMsg) {
+    if (lastMsg == null || lastMsg.sendID != msg.sendID) islast = true;
+    if (lastMsg == null || msg.time - lastMsg.time > timeStep) showTime = true;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -29,78 +35,46 @@ class _messageItemState extends State<MessageItem> {
   }
 
   Widget buildItem(bool isRight, BuildContext context) {
-    if (widget.msg.sendID == Config.user.uid) {
-      // Right (my message)
-      return Row(
-        children: <Widget>[
-          widget.msg.type == 0
-              // Text
-              ? getTextWidget(true)
-              : widget.msg.type == 1
-                  // Image
-                  ? getPhotoWidget(isRight, context)
-                  // Sticker
-                  : Container(
-                      child: new Image.asset(
-                        'images/${widget.msg.content}.gif',
-                        width: 100.0,
-                        height: 100.0,
-                        fit: BoxFit.cover,
-                      ),
-                      margin: EdgeInsets.only(
-                          bottom: widget.islast && isRight ? 20.0 : 10.0,
-                          right: 10.0),
-                    ),
-        ],
-        mainAxisAlignment: MainAxisAlignment.end,
-      );
-    } else {
-      // Left (peer message)
-      return Container(
-        child: Column(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        widget.showTime
+            ? Container(
+                child: Text(
+                  DateUtil.formatDate(
+                      DateTime.fromMillisecondsSinceEpoch(widget.msg.time)),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12.0,
+                      fontStyle: FontStyle.italic),
+                ),
+                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+              )
+            : Container(),
+        Row(
+          mainAxisAlignment:
+              isRight ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                widget.islast && !isRight
-                    ? HeadWidget(widget.msg.sendID, showName: true)
-                    : Container(width: 35.0),
-                widget.msg.type == 0
-                    ? getTextWidget(false)
-                    : widget.msg.type == 1
-                        ? getPhotoWidget(isRight, context)
-                        : Container(
-                            child: new Image.asset(
-                              'images/${widget.msg.content}.gif',
-                              width: 100.0,
-                              height: 100.0,
-                              fit: BoxFit.cover,
-                            ),
-                            margin: EdgeInsets.only(
-                                bottom: widget.islast && !isRight ? 20.0 : 10.0,
-                                right: 10.0),
-                          ),
-              ],
-            ),
-
-            // Time
-            widget.islast && !isRight
-                ? Container(
-                    child: Text(
-                      DateUtil.formatDate(
-                          DateTime.fromMillisecondsSinceEpoch(widget.msg.time)),
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.0,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-                  )
-                : Container()
+            HeadWidget(
+                widget.msg.sendID, widget.showTime && widget.msg.type == 0,
+                isRight: isRight,
+                child: Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: getMessageContentWidget(isRight, context))),
           ],
-          crossAxisAlignment: CrossAxisAlignment.start,
-        ),
-        margin: EdgeInsets.only(bottom: 10.0),
-      );
+        )
+      ],
+    );
+  }
+
+  Widget getMessageContentWidget(bool isRight, BuildContext context) {
+    switch (widget.msg.type) {
+      case 0:
+        return getTextWidget(isRight);
+      case 1:
+        return getPhotoWidget(isRight, context);
+      case 2:
+        return getStickWidget(isRight);
     }
   }
 
@@ -124,57 +98,72 @@ class _messageItemState extends State<MessageItem> {
 
   Widget getPhotoWidget(bool isRight, BuildContext context) {
     return Container(
-            child: FlatButton(
-              child: Material(
-                child: CachedNetworkImage(
-                  placeholder: (context, url) => Container(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                    ),
-                    width: 200.0,
-                    height: 200.0,
-                    padding: EdgeInsets.all(70.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(8.0),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Material(
-                    child: Image.asset(
-                      'images/img_not_available.jpg',
-                      width: 200.0,
-                      height: 200.0,
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                  ),
-                  imageUrl: widget.msg.content,
-                  cacheManager: CloudCacheManager(),
-                  width: 200.0,
-                  height: 200.0,
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                clipBehavior: Clip.hardEdge,
+      child: FlatButton(
+        child: Material(
+          child: CachedNetworkImage(
+            placeholder: (context, url) => Container(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
               ),
-              onPressed: () {
-                List<String> photo = [widget.msg.content];
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GalleryPhotoViewWrapper(
-                              photos: photo,
-                            )));
-              },
-              padding: EdgeInsets.all(0),
+              width: 200.0,
+              height: 200.0,
+              padding: EdgeInsets.all(70.0),
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
             ),
-            margin: EdgeInsets.only(
-                bottom: widget.islast && isRight ? 20.0 : 10.0, right: 10.0, left: 10.0),
-          );
+            errorWidget: (context, url, error) => Material(
+              child: Image.asset(
+                'images/img_not_available.jpg',
+                width: 200.0,
+                height: 200.0,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(8.0),
+              ),
+              clipBehavior: Clip.hardEdge,
+            ),
+            imageUrl: widget.msg.content,
+            cacheManager: CloudCacheManager(),
+            width: 200.0,
+            height: 200.0,
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          clipBehavior: Clip.hardEdge,
+        ),
+        onPressed: () {
+          List<String> photo = [widget.msg.content];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GalleryPhotoViewWrapper(
+                        photos: photo,
+                      )));
+        },
+        padding: EdgeInsets.all(0),
+      ),
+      margin: EdgeInsets.only(
+          bottom: widget.islast && isRight ? 20.0 : 10.0,
+          right: 10.0,
+          left: 10.0),
+    );
+  }
+
+  Widget getStickWidget(bool isRight) {
+    return Container(
+      child: new Image.asset(
+        'images/${widget.msg.content}.gif',
+        width: 100.0,
+        height: 100.0,
+        fit: BoxFit.cover,
+      ),
+      margin: EdgeInsets.only(
+          bottom: widget.islast && !isRight ? 20.0 : 10.0, right: 10.0),
+    );
   }
 }
