@@ -49,14 +49,8 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () {
-          print('!!! back in gallery');
-          Navigator.pop(context);
-          return Future.value(false);
-        },
-        child: Scaffold(
-          body: Container(
+    return Scaffold(
+      body: Container(
           decoration: widget.backgroundDecoration,
           constraints: BoxConstraints.expand(
             height: MediaQuery.of(context).size.height,
@@ -85,7 +79,6 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
             ],
           ),
         ),
-      ),
     );
   }
 
