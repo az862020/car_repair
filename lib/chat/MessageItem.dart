@@ -13,11 +13,12 @@ class MessageItem extends StatefulWidget {
   FireMessageEntity msg;
   ConversationEntity conversation;
   FireMessageEntity lastMsg;
+  BuildContext context1;
   bool islast = false;
   bool showTime = false;
   int timeStep = 30 * 60 * 1000;
 
-  MessageItem(this.msg, this.conversation, this.lastMsg) {
+  MessageItem(this.msg, this.conversation, this.lastMsg, this.context1) {
     if (lastMsg == null || lastMsg.sendID != msg.sendID) islast = true;
     if (lastMsg == null || msg.time - lastMsg.time > timeStep) showTime = true;
   }
@@ -87,14 +88,9 @@ class _messageItemState extends State<MessageItem> {
           style: TextStyle(color: Colors.black),
         ),
         padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
-
         decoration: BoxDecoration(
             color: isRight ? Colors.blue[300] : Colors.white,
             borderRadius: BorderRadius.circular(8.0)),
-//      margin: EdgeInsets.only(
-//          bottom: widget.showTime ? 20.0 : 10.0,
-//          right: isRight ? 0 : 10.0,
-//          left: isRight ? 10.0 : 0),
       ),
     );
   }
@@ -103,57 +99,56 @@ class _messageItemState extends State<MessageItem> {
     return Container(
       child: FlatButton(
         child: Material(
-          child: CachedNetworkImage(
-            placeholder: (context, url) => Container(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          child: Hero(
+            tag: widget.msg.id,
+            child: CachedNetworkImage(
+              placeholder: (context, url) => Container(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+                width: 200.0,
+                height: 200.0,
+                padding: EdgeInsets.all(70.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8.0),
+                  ),
+                ),
               ),
-              width: 200.0,
-              height: 200.0,
-              padding: EdgeInsets.all(70.0),
-              decoration: BoxDecoration(
-                color: Colors.grey,
+              errorWidget: (context, url, error) => Material(
+                child: Image.asset(
+                  'images/img_not_available.jpg',
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.cover,
+                ),
                 borderRadius: BorderRadius.all(
                   Radius.circular(8.0),
                 ),
+                clipBehavior: Clip.hardEdge,
               ),
+              imageUrl: widget.msg.content,
+              cacheManager: CloudCacheManager(),
+              width: 200.0,
+              height: 200.0,
+              fit: BoxFit.cover,
             ),
-            errorWidget: (context, url, error) => Material(
-              child: Image.asset(
-                'images/img_not_available.jpg',
-                width: 200.0,
-                height: 200.0,
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
-              ),
-              clipBehavior: Clip.hardEdge,
-            ),
-            imageUrl: widget.msg.content,
-            cacheManager: CloudCacheManager(),
-            width: 200.0,
-            height: 200.0,
-            fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
           clipBehavior: Clip.hardEdge,
         ),
         onPressed: () {
-          List<String> photo = [widget.msg.content];
           Navigator.push(
-              context,
+              widget.context1,
               MaterialPageRoute(
                   builder: (context) => GalleryPhotoViewWrapper(
-                        photos: photo,
+                        photos: [widget.msg.content],
+                        heorID: widget.msg.id,
                       )));
         },
         padding: EdgeInsets.all(0),
       ),
-//      margin: EdgeInsets.only(
-//          bottom: widget.islast && isRight ? 20.0 : 10.0,
-//          right: 10.0,
-//          left: 10.0),
     );
   }
 

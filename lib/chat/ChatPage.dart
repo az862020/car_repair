@@ -41,7 +41,7 @@ class ChatPage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: ChatPageState(conversation),
+        body: ChatPageState(conversation, context),
       ),
     );
   }
@@ -49,8 +49,9 @@ class ChatPage extends StatelessWidget {
 
 class ChatPageState extends StatefulWidget {
   ConversationEntity conversation;
+  BuildContext buildContext;
 
-  ChatPageState(this.conversation);
+  ChatPageState(this.conversation, this.buildContext);
 
   @override
   State<StatefulWidget> createState() {
@@ -110,6 +111,7 @@ class _ChatPageState extends State<ChatPageState> {
   }
 
   Future<bool> onBackPress() {
+    print('!!! back in chat page');
     if (isShowSticker) {
       setState(() {
         isShowSticker = false;
@@ -175,7 +177,7 @@ class _ChatPageState extends State<ChatPageState> {
                 entity2.id = snapshot[i + 1].documentID;
                 if (entity.sendID != entity2.sendID) isLast = true;
               }
-              return MessageItem(entity, widget.conversation, entity2);
+              return MessageItem(entity, widget.conversation, entity2, widget.buildContext);
             }));
   }
 

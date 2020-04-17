@@ -9,14 +9,14 @@ class GalleryPhotoViewWrapper extends StatefulWidget {
     color: Colors.black,
   );
 
-  GalleryPhotoViewWrapper({
-    this.loadingBuilder,
-    this.minScale,
-    this.maxScale,
-    this.initialIndex,
-    @required this.photos,
-    this.hoerID
-  }) : pageController = PageController(initialPage: initialIndex??0);
+  GalleryPhotoViewWrapper(
+      {this.loadingBuilder,
+      this.minScale,
+      this.maxScale,
+      this.initialIndex,
+      @required this.photos,
+      this.heorID})
+      : pageController = PageController(initialPage: initialIndex ?? 0);
 
   final LoadingBuilder loadingBuilder;
   final dynamic minScale;
@@ -24,7 +24,7 @@ class GalleryPhotoViewWrapper extends StatefulWidget {
   final int initialIndex;
   final PageController pageController;
   final List<String> photos;
-  final String hoerID;
+  final String heorID;
 
   @override
   State<StatefulWidget> createState() {
@@ -37,7 +37,7 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
 
   @override
   void initState() {
-    currentIndex = widget.initialIndex??0;
+    currentIndex = widget.initialIndex ?? 0;
     super.initState();
   }
 
@@ -49,34 +49,41 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: widget.backgroundDecoration,
-        constraints: BoxConstraints.expand(
-          height: MediaQuery.of(context).size.height,
-        ),
-        child: Stack(
-          children: <Widget>[
-            PhotoViewGallery.builder(
-              scrollPhysics: const BouncingScrollPhysics(),
-              builder: _buildItem,
-              itemCount: widget.photos.length,
-              loadingBuilder: widget.loadingBuilder,
-              backgroundDecoration: widget.backgroundDecoration,
-              pageController: widget.pageController,
-              onPageChanged: onPageChanged,
-              scrollDirection: Axis.horizontal,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 30.0),
-              child: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-            ),
-          ],
+    return WillPopScope(
+        onWillPop: () {
+          print('!!! back in gallery');
+          Navigator.pop(context);
+          return Future.value(false);
+        },
+        child: Scaffold(
+          body: Container(
+          decoration: widget.backgroundDecoration,
+          constraints: BoxConstraints.expand(
+            height: MediaQuery.of(context).size.height,
+          ),
+          child: Stack(
+            children: <Widget>[
+              PhotoViewGallery.builder(
+                scrollPhysics: const BouncingScrollPhysics(),
+                builder: _buildItem,
+                itemCount: widget.photos.length,
+                loadingBuilder: widget.loadingBuilder,
+                backgroundDecoration: widget.backgroundDecoration,
+                pageController: widget.pageController,
+                onPageChanged: onPageChanged,
+                scrollDirection: Axis.horizontal,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 30.0),
+                child: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -89,7 +96,8 @@ class _GalleryPhotoViewWrapperState extends State<GalleryPhotoViewWrapper> {
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * (0.5 + index / 10),
       maxScale: PhotoViewComputedScale.covered * 2.0,
-      heroAttributes: PhotoViewHeroAttributes(tag: widget.hoerID??widget.photos[index]),
+      heroAttributes:
+          PhotoViewHeroAttributes(tag: widget.heorID ?? widget.photos[index]),
     );
   }
 }

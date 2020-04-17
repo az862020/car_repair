@@ -71,7 +71,7 @@ class SquareDetails extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => GalleryPhotoViewWrapper(
           photos: square.pics,
-          hoerID: square.id,
+          heorID: square.id,
           initialIndex: index,
         ),
       ),
