@@ -1,6 +1,6 @@
 
 
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/utils/FileUploadRecord.dart';
 import 'package:common_utils/common_utils.dart';

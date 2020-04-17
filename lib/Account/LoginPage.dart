@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:car_repair/base/FirestoreUtils.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/home.dart';

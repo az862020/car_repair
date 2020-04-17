@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:car_repair/base/FirestoreUtils.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ import 'DBHelp.dart';
 import 'package:car_repair/entity/Square.dart';
 
 import 'FileUploadRecord.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 
 import 'package:uuid/uuid.dart';
 

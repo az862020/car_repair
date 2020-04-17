@@ -1,6 +1,6 @@
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';

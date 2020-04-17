@@ -1,6 +1,6 @@
 import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/chat/ChatInputWidget.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';

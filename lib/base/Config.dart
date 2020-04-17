@@ -34,6 +34,8 @@ class Config {
   static FirebaseAuth auth;
   static Firestore store;
 
+  static double avatarWidth = 40.0;
+
   /// 初始化外部文件路径.
 
   initAppDir() {

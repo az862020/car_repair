@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:car_repair/base/CloudCacheManager.dart';
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/chat/HeadWidget.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
@@ -55,8 +55,7 @@ class _messageItemState extends State<MessageItem> {
           mainAxisAlignment:
               isRight ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: <Widget>[
-            HeadWidget(
-                widget.msg.sendID, widget.showTime && widget.msg.type == 0,
+            HeadWidget(widget.msg.sendID, widget.showTime,
                 isRight: isRight,
                 child: Padding(
                     padding: EdgeInsets.all(5.0),
@@ -80,19 +79,23 @@ class _messageItemState extends State<MessageItem> {
 
   Widget getTextWidget(bool isRight) {
     return Container(
-      child: Text(
-        widget.msg.content,
-        style: TextStyle(color: Colors.black),
-      ),
-      padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+      alignment: isRight ? Alignment.centerRight : Alignment.centerLeft,
       width: 200.0,
-      decoration: BoxDecoration(
-          color: isRight ? Colors.blue[300] : Colors.white,
-          borderRadius: BorderRadius.circular(8.0)),
-      margin: EdgeInsets.only(
-          bottom: widget.islast && isRight ? 20.0 : 10.0,
-          right: isRight ? 0 : 10.0,
-          left: isRight ? 10.0 : 0),
+      child: Container(
+        child: Text(
+          widget.msg.content,
+          style: TextStyle(color: Colors.black),
+        ),
+        padding: EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 8.0),
+
+        decoration: BoxDecoration(
+            color: isRight ? Colors.blue[300] : Colors.white,
+            borderRadius: BorderRadius.circular(8.0)),
+//      margin: EdgeInsets.only(
+//          bottom: widget.showTime ? 20.0 : 10.0,
+//          right: isRight ? 0 : 10.0,
+//          left: isRight ? 10.0 : 0),
+      ),
     );
   }
 
@@ -147,10 +150,10 @@ class _messageItemState extends State<MessageItem> {
         },
         padding: EdgeInsets.all(0),
       ),
-      margin: EdgeInsets.only(
-          bottom: widget.islast && isRight ? 20.0 : 10.0,
-          right: 10.0,
-          left: 10.0),
+//      margin: EdgeInsets.only(
+//          bottom: widget.islast && isRight ? 20.0 : 10.0,
+//          right: 10.0,
+//          left: 10.0),
     );
   }
 

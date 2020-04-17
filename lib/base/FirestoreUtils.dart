@@ -1,4 +1,4 @@
-import 'package:car_repair/base/conf.dart';
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/conversation_entity.dart';

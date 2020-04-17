@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'base/conf.dart';
+import 'base/Config.dart';
 import 'Account/LoginPage.dart';
 
 void main() async {

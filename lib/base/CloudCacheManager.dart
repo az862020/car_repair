@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'conf.dart';
+import 'Config.dart';
 
 class CloudCacheManager extends BaseCacheManager {
   static const key = "customCache";
