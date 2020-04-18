@@ -41,6 +41,7 @@ class _chatStickerWidget extends State<ChatStickerWidget>
         children: <Widget>[
           Container(
             child: TabBar(
+              labelColor: Colors.blue,
                 controller: _tabController,
                 tabs: tabs.map((e) => Tab(text: e.name, )).toList()),
           ),

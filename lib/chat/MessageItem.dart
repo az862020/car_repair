@@ -49,7 +49,7 @@ class _messageItemState extends State<MessageItem> {
                       fontSize: 12.0,
                       fontStyle: FontStyle.italic),
                 ),
-                margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
               )
             : Container(),
         Row(
@@ -156,8 +156,8 @@ class _messageItemState extends State<MessageItem> {
     return Container(
       child: new Image.asset(
         'assets/emoji/${widget.msg.content}.gif',
-        width: 100.0,
-        height: 100.0,
+        width: 80.0,
+        height: 80.0,
         fit: BoxFit.cover,
       ),
       margin: EdgeInsets.only(
