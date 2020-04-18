@@ -89,7 +89,8 @@ class _AvatarWidget extends State<AvatarWidget> {
         //private
 
         print('!!! private conversation and is not null.');
-        List<String> ids = widget.conversation.user;
+        List<String> ids = List();
+        ids.addAll(widget.conversation.user);
         print('!!! ids -- $ids');
         ids.remove(Config.user.uid);
         print('!!! ids -- $ids');

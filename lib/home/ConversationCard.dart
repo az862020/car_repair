@@ -1,3 +1,4 @@
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:common_utils/common_utils.dart';
@@ -18,11 +19,19 @@ class ConversationCard extends StatefulWidget {
 }
 
 class _ConversationCardState extends State<ConversationCard> {
-
   @override
   Widget build(BuildContext context) {
-    AvatarWidget avatar = AvatarWidget(widget.entity.id, conversation: widget.entity);
-
+    AvatarWidget avatar =
+        AvatarWidget(widget.entity.id, conversation: widget.entity);
+    String lastContent;
+    if (widget.entity.lastContent == null ||
+        widget.entity.lastContent.isEmpty) {
+      lastContent = '';
+    } else {
+      lastContent = widget.entity.lastSenderID == Config.user.uid
+          ? widget.entity.lastContent
+          : widget.entity.lastdisplayName + " : " + widget.entity.lastContent;
+    }
     return GestureDetector(
         onTap: () {
           avatar.chatToUser(context);
@@ -54,7 +63,7 @@ class _ConversationCardState extends State<ConversationCard> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 45),
                     child: Text(
-                      widget.entity.content??'',
+                      lastContent,
                       style: TextStyle(fontSize: 16),
                     ),
                   ),

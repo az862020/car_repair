@@ -41,7 +41,7 @@ class ChatPage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: ChatPageState(conversation, context),
+        body: ChatPageState(conversation, context, conversationName),
       ),
     );
   }
@@ -50,8 +50,9 @@ class ChatPage extends StatelessWidget {
 class ChatPageState extends StatefulWidget {
   ConversationEntity conversation;
   BuildContext buildContext;
+  String conversationName;
 
-  ChatPageState(this.conversation, this.buildContext);
+  ChatPageState(this.conversation, this.buildContext, this.conversationName);
 
   @override
   State<StatefulWidget> createState() {
@@ -68,6 +69,7 @@ class _ChatPageState extends State<ChatPageState> {
       new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
+  FireMessageEntity lastMsg;
 
   @override
   void initState() {
@@ -80,6 +82,12 @@ class _ChatPageState extends State<ChatPageState> {
 
   @override
   void dispose() {
+    print('!!! there is last msg check');
+    if (lastMsg != null) {
+      print('!!! there is last msg update conversation.');
+      FireStoreUtils.updateConversation(
+          widget.conversation, widget.conversationName, lastMsg);
+    }
     eventBus.fire(StartChatEvent()); //send a event to home. want show chat.
     super.dispose();
   }
@@ -187,6 +195,7 @@ class _ChatPageState extends State<ChatPageState> {
                 entity2.id = snapshot[i + 1].documentID;
                 if (entity.sendID != entity2.sendID) isLast = true;
               }
+              if (i == 0) lastMsg = entity;
               return MessageItem(
                   entity, widget.conversation, entity2, widget.buildContext);
             }));
@@ -221,6 +230,9 @@ class _ChatPageState extends State<ChatPageState> {
           .then((value) {
         listScrollController.animateTo(0.0,
             duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      }).then((value) {
+        FireStoreUtils.updateConversation(
+            widget.conversation, widget.conversationName, msg);
       });
     } else {
       Scaffold.of(context)

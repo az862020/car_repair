@@ -36,6 +36,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    print('!!! conversation size ${snapshot.length}');
     return ListView.builder(
         itemCount: snapshot.length,
         itemBuilder: (context, i) {

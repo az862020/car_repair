@@ -91,10 +91,7 @@ class FireStoreUtils {
 
   /// Userinfo 查
   static Future<DocumentSnapshot> queryUserinfo(String uid) {
-    return Firestore.instance
-        .collection('$STORE_USERINFO')
-        .document(uid)
-        .get();
+    return Firestore.instance.collection('$STORE_USERINFO').document(uid).get();
   }
 
   /**********************Square****************************/
@@ -261,7 +258,8 @@ class FireStoreUtils {
     var querySnapshot = await query.getDocuments();
     var list = querySnapshot.documents;
     for (DocumentSnapshot doc in list) {
-      ConversationEntity entity = conversationEntityFromJson(ConversationEntity(), doc.data);
+      ConversationEntity entity =
+          conversationEntityFromJson(ConversationEntity(), doc.data);
       if (entity.user.length == 2 && entity.user.contains(targetID)) {
         entity.id = doc.documentID;
         return entity;
@@ -280,18 +278,39 @@ class FireStoreUtils {
     return entity;
   }
 
-  static Stream<QuerySnapshot> getMessageList(String conversationID)  {
+  static Stream<QuerySnapshot> getMessageList(String conversationID) {
     var col = Firestore.instance
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .orderBy('time', descending: true)
         .limit(30);
 
-    return  col.snapshots();
+    return col.snapshots();
   }
 
-  static Future<DocumentReference> addMessageToConversation(String conversationID, FireMessageEntity entity) {
+  static Future<DocumentReference> addMessageToConversation(
+      String conversationID, FireMessageEntity entity) {
     Firestore.instance
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .add(entity.toJson());
+  }
+
+  static updateConversation(
+      ConversationEntity conversation, String name, FireMessageEntity msg) {
+    var document = Firestore.instance
+        .collection(STORE_CONVERSATION)
+        .document(conversation.id);
+    if (msg.type == 0) {
+      conversation.lastContent = msg.content;
+    } else if (msg.type == 1) {
+      conversation.lastContent = '图片';
+    } else if (msg.type == 2) {
+      conversation.lastContent = '表情';
+    }
+    conversation.lastSenderID = msg.sendID;
+    conversation.lastdisplayName =
+        msg.sendID == Config.user.uid ? Config.user.displayName : name;
+    conversation.updateTime = msg.time;
+
+    document.updateData(conversation.toJson());
   }
 }
