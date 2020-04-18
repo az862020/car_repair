@@ -12,9 +12,9 @@ class ChatInputWidget extends StatefulWidget{
 
   Function(String content, int type) sendMessage;
   FocusNode focusNode;
-  bool isShowSticker;
+  Function() showSticker;
 
-  ChatInputWidget(this.sendMessage, this.focusNode, this.isShowSticker);
+  ChatInputWidget(this.sendMessage, this.focusNode, this.showSticker);
 
   @override
   State<StatefulWidget> createState() {
@@ -99,7 +99,7 @@ class _chatInputWidget extends State<ChatInputWidget>{
     // Hide keyboard when sticker appear
     widget.focusNode.unfocus();
     setState(() {
-      widget.isShowSticker = !widget.isShowSticker;
+      widget.showSticker();
     });
   }
 

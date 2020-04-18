@@ -95,10 +95,12 @@ class _ChatPageState extends State<ChatPageState> {
               buildListMessage(),
 
               // Sticker
-              (isShowSticker ? ChatStickerWidget() : Container()),
+              (isShowSticker
+                  ? ChatStickerWidget(onSendMessage, focusNode, isShowSticker)
+                  : Container()),
 
               // Input content
-              ChatInputWidget(onSendMessage, focusNode, isShowSticker),
+              ChatInputWidget(onSendMessage, focusNode, getSticker),
             ],
           ),
 
@@ -129,6 +131,14 @@ class _ChatPageState extends State<ChatPageState> {
         isShowSticker = false;
       });
     }
+  }
+
+  void getSticker() {
+    // Hide keyboard when sticker appear
+    focusNode.unfocus();
+    setState(() {
+      isShowSticker = !isShowSticker;
+    });
   }
 
   buildListMessage() {
@@ -177,7 +187,8 @@ class _ChatPageState extends State<ChatPageState> {
                 entity2.id = snapshot[i + 1].documentID;
                 if (entity.sendID != entity2.sendID) isLast = true;
               }
-              return MessageItem(entity, widget.conversation, entity2, widget.buildContext);
+              return MessageItem(
+                  entity, widget.conversation, entity2, widget.buildContext);
             }));
   }
 

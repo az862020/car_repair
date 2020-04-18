@@ -155,7 +155,7 @@ class _messageItemState extends State<MessageItem> {
   Widget getStickWidget(bool isRight) {
     return Container(
       child: new Image.asset(
-        'images/${widget.msg.content}.gif',
+        'assets/emoji/${widget.msg.content}.gif',
         width: 100.0,
         height: 100.0,
         fit: BoxFit.cover,
