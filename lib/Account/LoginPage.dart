@@ -5,11 +5,12 @@ import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/home.dart';
-import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/Account/RegisterPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'RegisterPage.dart';
 
 class LoginPage extends StatelessWidget {
   @override

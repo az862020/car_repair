@@ -6,13 +6,14 @@ import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
 import 'package:car_repair/generated/json/fire_message_entity_helper.dart';
 import 'ChatStickerWidget.dart';
-import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/chat/MessageItem.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'MessageItem.dart';
 
 class ChatPage extends StatelessWidget {
   String mTitle = 'CHAT';

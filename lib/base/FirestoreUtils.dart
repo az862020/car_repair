@@ -17,6 +17,7 @@ class FireStoreUtils {
   static String STORE_COMMENTS = '/comments'; //广场记录的评论的数据位置
   static String STORE_PUBISH = 'publishList'; //广场记录的评论的数据位置
   static String STORE_FAVORATE = 'favorate'; //广场记录的评论的数据位置
+  static String STORE_RELATIONSHIP = 'relationship'; //用户的关系网
   static String STORE_CONVERSATION = 'conversation'; //会话数据位置
 
   static final int PHOTOURL = 0; //头像
@@ -209,6 +210,13 @@ class FireStoreUtils {
   //DocumentReference use get can get data, if nodata will return null.
   static DocumentReference getMyFavoratedList() {
     return getUserlistDocumentReferenece(STORE_FAVORATE);
+  }
+
+
+  static Future<QuerySnapshot> getRelationShip(){
+    String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
+    var collectionReference = Firestore.instance.collection(path);
+    return collectionReference.getDocuments();
   }
 
   /**********************Comment****************************/

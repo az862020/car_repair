@@ -30,6 +30,7 @@ class MyFavoritePage extends StatelessWidget {
             onPressed: () {
               print('float button on tip.');
               //TODO down load the favorite photo/video.
+
             }),
       ),
     );

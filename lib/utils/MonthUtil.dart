@@ -6,8 +6,8 @@ class MonthUtil {
    */
   static String getCurrentData({String date}) {
     if (date == null)
-      return DateUtil.getDateStrByDateTime(DateTime.now(),
-          format: DateFormat.YEAR_MONTH);
+      return DateUtil.formatDate(DateTime.now(),
+          format: 'yy-MM');
     else {
       List<String> time = date.split("-");
       int month = int.parse(time[1]) - 1;

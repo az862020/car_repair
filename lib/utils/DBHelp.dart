@@ -1,3 +1,4 @@
+import 'package:car_repair/utils/DBEntity/UserInfoEntity.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
@@ -14,6 +15,7 @@ final String DOWNLOADFILE = 'downloadfile';
 final String UPLOADTASK = 'uploadTask';
 final String UPLOADTEMP = 'uploadTemp';
 final String UPLOADENTITY = 'uploadEntity';
+final String USERINFO = 'userInfo';
 
 Future<Database> initDB() async {
   var path = join(await getDatabasesPath(), 'car_repair.db');
@@ -26,6 +28,8 @@ Future<Database> initDB() async {
         "CREATE TABLE $UPLOADTEMP (id INTEGER PRIMARY KEY autoincrement, tasktID INTEGER, filePath TEXT, isDone INTEGER, cloudPath TEXT)");
     await db.execute(
         "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, ext1 TEXT)");
+    await db.execute(
+        "CREATE TABLE $USERINFO (uid TEXT PRIMARY KEY, displayName TEXT, photoUrl TEXT)");
     return db;
   });
   return db;
@@ -174,3 +178,16 @@ Future<Null> updateUploadEntity(UploadEntity uploadEntity) async {
 }
 
 ///***************** UploadEntity *********************
+
+///**********************UserInfo*******************************
+Future<UserInforEntity> getUserInfor(String userID) async {
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+      await db.query(USERINFO, where: 'uid = ?', whereArgs: [userID]);
+  if (data.length > 0) {
+    return UserInforEntity.fromMap(data.first);
+  }
+  return null;
+}
+
+///**********************UserInfo*******************************

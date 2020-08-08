@@ -75,20 +75,20 @@ class _SquareState extends State<SquarePage> {
         });
   }
 
-  Widget _buildListMore(BuildContext context, List<DocumentSnapshot> snapshot) {
-    if (snapshot.length == 0) _getData();
-    snapshot.addAll(moreData);
-    return RefreshIndicator(
-        onRefresh: _onRefersh,
-        child: ListView.builder(
-            controller: _scrollController,
-            itemCount: snapshot.length == 0 ? 0 : snapshot.length + 1,
-            itemBuilder: (context, i) {
-              if (i > snapshot.length || snapshot.length == 0) return null;
-              if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
-              return _buildListItem(context, snapshot[i]);
-            }));
-  }
+//  Widget _buildListMore(BuildContext context, List<DocumentSnapshot> snapshot) {
+//    if (snapshot.length == 0) _getData();
+//    snapshot.addAll(moreData);
+//    return RefreshIndicator(
+//        onRefresh: _onRefersh,
+//        child: ListView.builder(
+//            controller: _scrollController,
+//            itemCount: snapshot.length == 0 ? 0 : snapshot.length + 1,
+//            itemBuilder: (context, i) {
+//              if (i > snapshot.length || snapshot.length == 0) return null;
+//              if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
+//              return _buildListItem(context, snapshot[i]);
+//            }));
+//  }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final square = Square.fromJson(data.data);
@@ -108,13 +108,13 @@ class _SquareState extends State<SquarePage> {
     );
   }
 
-  Future<Null> _onRefersh() async {
-    moreData.clear();
-    date = null;
-    dataSteam = null;
-    isEnd = false;
-    _getData();
-  }
+//  Future<Null> _onRefersh() async {
+//    moreData.clear();
+//    date = null;
+//    dataSteam = null;
+//    isEnd = false;
+//    _getData();
+//  }
 
   Future _getData() async {
     if (isLoading || isEnd) return;
