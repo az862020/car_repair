@@ -1,4 +1,5 @@
-import 'package:car_repair/utils/DBEntity/UserInfoEntity.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
@@ -29,7 +30,7 @@ Future<Database> initDB() async {
     await db.execute(
         "CREATE TABLE $UPLOADENTITY (localPath TEXT PRIMARY KEY , proxyPath TEXT, cloudPath TEXT, ext1 TEXT)");
     await db.execute(
-        "CREATE TABLE $USERINFO (uid TEXT PRIMARY KEY, displayName TEXT, photoUrl TEXT)");
+        "CREATE TABLE $USERINFO (uid TEXT PRIMARY KEY, displayName TEXT, remarkName TEXT, photoUrl TEXT, isFriend INTEGER, isBlack INTEGER)");
     return db;
   });
   return db;
@@ -185,7 +186,7 @@ Future<UserInforEntity> getUserInfor(String userID) async {
   List<Map<String, dynamic>> data =
       await db.query(USERINFO, where: 'uid = ?', whereArgs: [userID]);
   if (data.length > 0) {
-    return UserInforEntity.fromMap(data.first);
+    return userInforEntityFromJson(UserInforEntity(),data.first);
   }
   return null;
 }

@@ -1,4 +1,6 @@
 import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'package:car_repair/widget/MoreListWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +32,7 @@ class MyFavoritePage extends StatelessWidget {
             onPressed: () {
               print('float button on tip.');
               //TODO down load the favorite photo/video.
+
 
             }),
       ),

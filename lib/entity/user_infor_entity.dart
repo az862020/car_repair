@@ -3,8 +3,8 @@ import 'package:car_repair/generated/json/base/json_convert_content.dart';
 class UserInforEntity with JsonConvert<UserInforEntity> {
 	String photoUrl;
 	String uid;
-	bool isBlack;
+	int isBlack;
 	String displayName;
-	bool isFriend;
+	int isFriend;
 	String remarkName;
 }

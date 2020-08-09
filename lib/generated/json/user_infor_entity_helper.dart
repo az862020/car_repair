@@ -8,13 +8,13 @@ userInforEntityFromJson(UserInforEntity data, Map<String, dynamic> json) {
 		data.uid = json['uid']?.toString();
 	}
 	if (json['isBlack'] != null) {
-		data.isBlack = json['isBlack'];
+		data.isBlack = json['isBlack']?.toInt();
 	}
 	if (json['displayName'] != null) {
 		data.displayName = json['displayName']?.toString();
 	}
 	if (json['isFriend'] != null) {
-		data.isFriend = json['isFriend'];
+		data.isFriend = json['isFriend']?.toInt();
 	}
 	if (json['remarkName'] != null) {
 		data.remarkName = json['remarkName']?.toString();
