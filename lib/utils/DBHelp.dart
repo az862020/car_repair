@@ -191,4 +191,15 @@ Future<UserInforEntity> getUserInfor(String userID) async {
   return null;
 }
 
+Future<void> cacheUserInfor(UserInforEntity entity) async{
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+  await db.query(USERINFO, where: 'uid = ?', whereArgs: [entity.uid]);
+  if (data.length > 0) {
+    db.update(USERINFO, entity.toJson(), where: 'uid = ?', whereArgs: [entity.uid]);
+  }else{
+    db.insert(USERINFO, entity.toJson());
+  }
+}
+
 ///**********************UserInfo*******************************

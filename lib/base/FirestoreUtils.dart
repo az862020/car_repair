@@ -3,7 +3,9 @@ import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/conversation_entity_helper.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,6 +28,11 @@ class FireStoreUtils {
   static final int SIGNATURE = 3; //签名
   static final int BACKGROUND = 4; //头像背景
   static final int CHAT = 5; //是否显示聊天
+
+  static const int isBlack = 1; //是拉黑状态
+  static const int isFriend = 1; //是好友
+//  static final int isFriendRequest = 2; //好友申请状态
+//  static final int isBeFriendRequest = 3; //被好友申请状态
 
   static final keys = [
     'photoUrl',
@@ -212,13 +219,6 @@ class FireStoreUtils {
     return getUserlistDocumentReferenece(STORE_FAVORATE);
   }
 
-
-  static Future<QuerySnapshot> getRelationShip(){
-    String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
-    var collectionReference = Firestore.instance.collection(path);
-    return collectionReference.getDocuments();
-  }
-
   /**********************Comment****************************/
 
   static Future<DocumentReference> addComment(String path, String content) {
@@ -320,5 +320,100 @@ class FireStoreUtils {
     conversation.updateTime = msg.time;
 
     document.updateData(conversation.toJson());
+  }
+
+  static deleteConversationEachOther(ConversationEntity conversation) {
+    var document = Firestore.instance
+        .collection(STORE_CONVERSATION)
+        .document(conversation.id);
+    document.delete();
+  }
+
+  /**********************RELATIONSHIP****************************/
+
+
+  static Future<UserInforEntity> getUserInfoRelation(String uid) async {
+    String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
+    var query = Firestore.instance.collection(path).document(uid);
+    var doc = await query.get();
+    if (doc.exists) {
+      var userinfo = UserInforEntity();
+      userInforEntityFromJson(userinfo, doc.data);
+      userinfo.uid = doc.documentID;
+      return userinfo;
+    } else
+      return null;
+  }
+
+  static Future<List<UserInforEntity>> getRelationShipList(
+      {friend: bool, blacklist: bool}) async {
+    var key = '';
+    var val = 1;
+    if (friend != null) {
+      key = 'isFriend';
+      val = isFriend;
+    }
+    if (blacklist != null) {
+      key = 'isBlack';
+      val = isBlack;
+    }
+
+    String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
+    var query = Firestore.instance
+        .collection(path)
+        .where(key, isEqualTo: val)
+        .orderBy('displayName');
+    var data = await query.getDocuments();
+    var list = data.documents;
+    var result = List<UserInforEntity>();
+    for (DocumentSnapshot doc in list) {
+      var user = UserInforEntity();
+      user = userInforEntityFromJson(user, doc.data);
+      user.uid = doc.documentID;
+      result.add(user);
+    }
+    return result;
+  }
+
+  static Future<void> operatorRelationShipType(
+      UserInforEntity user, String key, dynamic value) async {
+    String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
+    var query = Firestore.instance.collection(path).document(user.uid);
+    var doc = await query.get();
+    if (doc.exists) {
+      return query.updateData({key: value});
+    } else {
+      var map = user.toJson();
+      map[key] = value;
+      return query.setData(map);
+    }
+  }
+
+  static Future<List<UserInforEntity>> getFriendList() async {
+    var list = await getRelationShipList(friend: true);
+    //if friend is in blacklist, can't show it.
+    for (var i = list.length - 1; i >= 0; i--) {
+      //todo should check this vaule if none is ok.
+      if (list[i].isBlack == 1) list.remove(i);
+    }
+    return list;
+  }
+
+  static Future<List<UserInforEntity>> getBlackList() {
+    return getRelationShipList(blacklist: true);
+  }
+
+  static Future<void> operatorFriend(
+      UserInforEntity user, bool firend) async {
+    return operatorRelationShipType(user, 'isFriend', firend ? 1 : 0);
+  }
+
+  static Future<void> operatorBlackList(UserInforEntity user, bool black) {
+    return operatorRelationShipType(user, 'isBlack', black ? 1 : 0);
+  }
+
+  static Future<void> editUserRemarkName(
+      UserInforEntity user, String remarkName) {
+    return operatorRelationShipType(user, 'remarkName', remarkName);
   }
 }

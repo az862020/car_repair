@@ -1,0 +1,50 @@
+import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
+import 'DBHelp.dart';
+
+class UserInfoManager {
+  /**
+   * get userinfo from local, if none get it from net and cache it.
+   * if isNetFirst is true, then get data from net firest and cache it later.
+   */
+  static Future<UserInforEntity> getUserInfo(String uid,
+      {bool isNetFirst}) async {
+    var localUser = getUserInfor(uid);
+    //has local cache and isnot net first.
+    if (localUser != null && !(isNetFirst ?? false)) {
+      return localUser;
+    } else {
+      var doc = await FireStoreUtils.queryUserinfo(uid);
+//      {
+//        FireUserInfoEntity userInfo =
+//        fireUserInfoEntityFromJson(FireUserInfoEntity(), doc.data);
+//        UserInforEntity entity = UserInforEntity();
+//        entity.uid = uid;
+//        entity.displayName = userInfo.displayName;
+//        entity.photoUrl = userInfo.photoUrl;
+//
+//      }
+
+      var userinfor = userInforEntityFromJson(UserInforEntity(), doc.data);
+
+      FireStoreUtils.getUserInfoRelation(uid).then((userinfo) =>
+      userinfo != null
+          ? cacheUserInfor(userinfo)
+          : cacheUserInfor(userinfor));
+
+      return userinfor;
+    }
+  }
+
+  /**
+   * opertaor user relationship,
+   * add or remove friend / blacklist, or edit remarkName
+   */
+  static operatiorUser(UserInforEntity entity,
+      {friend: bool, black: bool, remark: String}) {
+    if (friend != null) return FireStoreUtils.operatorFriend(entity, friend);
+    if (black != null) return FireStoreUtils.operatorBlackList(entity, black);
+    if (remark != null) return FireStoreUtils.editUserRemarkName(entity, remark);
+  }
+}
