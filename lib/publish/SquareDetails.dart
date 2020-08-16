@@ -1,3 +1,4 @@
+import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
@@ -108,7 +109,8 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     super.initState();
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
-        FireUserInfoEntity userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(),snapshot.data);
+        FireUserInfoEntity userInfo =
+            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
         userInfo.uid = snapshot.documentID;
         creater = userInfo;
       });
@@ -255,6 +257,11 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         commentEntityFromJson(CommentEntity(), snapshot.data);
     entity.id = snapshot.documentID;
 //    FireStoreUtils.queryUserinfo(entity.userID);
+    var avatar = AvatarWidget(entity.userID);
+    avatar.addClick(() => Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => UserDetailsPage(avatar.userInforEntity))));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
       child: Column(
@@ -262,7 +269,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              AvatarWidget(entity.userID),
+              avatar,
               Text(
                 '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(entity.time))}',
                 style: TextStyle(fontSize: 16),

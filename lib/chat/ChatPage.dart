@@ -1,3 +1,4 @@
+import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
@@ -26,26 +27,38 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var avatar = AvatarWidget(
+      conversation.id,
+      conversation: conversation,
+    );
+    avatar.addClick(() {
+      if (conversation.chattype == 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UserDetailsPage(avatar.userInforEntity)));
+      } else {
+        //todo goto group details page.
+
+      }
+    });
+
     return MaterialApp(
       title: mTitle,
       theme: ThemeData(scaffoldBackgroundColor: Colors.grey[300]),
       home: Scaffold(
         appBar: AppBar(
-          title: AvatarWidget(
-            conversation.id,
-            conversation: conversation,
-            donotClick: true,
-          ),
+          title: avatar,
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
+              onPressed: () => Navigator.pop(context)),
         ),
         body: ChatPageState(conversation, context, conversationName),
       ),
     );
   }
+
+  goDetails(BuildContext context) async {}
 }
 
 class ChatPageState extends StatefulWidget {

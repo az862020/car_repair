@@ -21,8 +21,7 @@ class ConversationCard extends StatefulWidget {
 class _ConversationCardState extends State<ConversationCard> {
   @override
   Widget build(BuildContext context) {
-    AvatarWidget avatar =
-        AvatarWidget(widget.entity.id, conversation: widget.entity);
+    var avatar = AvatarWidget(widget.entity.id, conversation: widget.entity);
     String lastContent;
     if (widget.entity.lastContent == null ||
         widget.entity.lastContent.isEmpty) {
@@ -33,44 +32,47 @@ class _ConversationCardState extends State<ConversationCard> {
           : widget.entity.lastdisplayName + " : " + widget.entity.lastContent;
     }
     return GestureDetector(
-        onTap: () {
-          avatar.chatToUser(context);
-//          Navigator.push(context,
-//              MaterialPageRoute(builder: (context) => ChatPage(widget.entity, )));
-        },
-        child: Card(
-          elevation: 10.0,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    avatar,
-                    Text(
-                      '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(widget.entity.updateTime))}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 45),
-                    child: Text(
-                      lastContent,
-                      style: TextStyle(fontSize: 16),
-                    ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ChatPage(widget.entity, avatar.name, avatar.photo)));
+      },
+      child: Card(
+        elevation: 10.0,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  avatar,
+                  Text(
+                    '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(widget.entity.updateTime))}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 45),
+                  child: Text(
+                    lastContent,
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

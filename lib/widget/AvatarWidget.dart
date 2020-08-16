@@ -1,10 +1,14 @@
+import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,42 +23,26 @@ import 'package:flutter/material.dart';
 class AvatarWidget extends StatefulWidget {
   String userID;
   ConversationEntity conversation;
-  bool donotClick = false;
+  VoidCallback click;
 
-  AvatarWidget(this.userID, {this.conversation, this.donotClick = false});
+  AvatarWidget(this.userID, {this.conversation, this.click});
+
+  addClick(VoidCallback click) => this.click = click;
 
   @override
-  State<StatefulWidget> createState() {
-    return _AvatarWidget();
-  }
+  State<StatefulWidget> createState() => _AvatarWidget();
 
   String name;
   String photo;
+  UserInforEntity userInforEntity;
 
-  chatToUser(BuildContext context) {
-    if (donotClick || userID == Config.user.uid) return;
-    if (conversation != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ChatPage(conversation, name, photo)));
-    } else {
-      //private
-      FireStoreUtils.getConversation(userID).then((entity) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(entity, name, photo)));
-      });
-    }
-  }
 }
 
 class _AvatarWidget extends State<AvatarWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => widget.chatToUser(context),
+      onTap: () => widget.click??{},
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -107,15 +95,12 @@ class _AvatarWidget extends State<AvatarWidget> {
 
   _initByUserID(String uid) {
     print('!!! uid -- $uid');
-    FireStoreUtils.queryUserinfo(uid).then((snapshot) {
-      if (snapshot.data != null) {
-        setState(() {
-          FireUserInfoEntity userInfo =
-              fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
-          widget.name = userInfo.displayName;
-          widget.photo = userInfo.photoUrl ?? '';
+    UserInfoManager.getUserInfo(uid).then((value) => {
+          setState(() {
+            widget.name = value.displayName;
+            widget.photo = value.photoUrl ?? '';
+            widget.userInforEntity = value;
+          })
         });
-      }
-    });
   }
 }
