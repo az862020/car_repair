@@ -156,6 +156,8 @@ class _RegisterState extends State<RegisterState> {
           addItem(user);
           isLoading = false;
           print(user);
+          Scaffold.of(context).showSnackBar(
+              SnackBar(content: Text('Register finish! ${user.email}')));
           Navigator.pop(context, user);
         });
       }).catchError((e) {
@@ -172,11 +174,16 @@ class _RegisterState extends State<RegisterState> {
 
   //firebase的注册
   Future<FirebaseUser> registerByFirebase() async {
-    final FirebaseUser user =
-    (await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    var result = FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: usernameController.text,
       password: passwordController.text,
-    )).user;
+    );
+    result.catchError((e) {
+      print('!!!${e.toString()}');
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text('Register failed! $e')));
+    });
+    var user = (await result).user;
     Config.user = user;
     return user;
   }
@@ -187,6 +194,6 @@ class _RegisterState extends State<RegisterState> {
 ////        .add({'favorate': new List(), 'displayName': user.email, 'photoUrl': user.photoUrl,'publish':new List()});
 //        .document(user.uid)
 //        .setData({'displayName': user.email, 'photoUrl': user.photoUrl});
-      FireStoreUtils.addUserinfo(user);
+    FireStoreUtils.addUserinfo(user);
   }
 }
