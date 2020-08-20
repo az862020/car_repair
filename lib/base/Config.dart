@@ -27,12 +27,12 @@ class Config {
   static String AppBucket =
       'gs://carrepair-16710.appspot.com/'; //google storage bucket.
 
-  static FirebaseUser user;
+  static User user;
   static FireUserInfoEntity userInfo;
 
   static FirebaseStorage storage;
   static FirebaseAuth auth;
-  static Firestore store;
+  static FirebaseFirestore fireStore;
 
   static double avatarWidth = 40.0;
 
@@ -64,24 +64,23 @@ class Config {
   }
 
   initFirebaseStorage() async {
-    final FirebaseApp app = await FirebaseApp.configure(
+    final FirebaseApp app = await Firebase.initializeApp(
       name: 'CarRepair',
       options: FirebaseOptions(
-        googleAppID: Platform.isIOS
+        appId: Platform.isIOS
             ? '1:159623150305:ios:4a213ef3dbd8997b'
             : '1:789785197992:android:2a1a64a971672b1f',
-        gcmSenderID: '789785197992',
+        messagingSenderId: '789785197992',
         apiKey: 'AIzaSyBL6o9UXLGTj5fdNcIhYvVc2qnfp58YmuQ',
-        projectID: 'carrepair-16710',
+        projectId: 'carrepair-16710',
         storageBucket: 'gs://carrepair-16710.appspot.com/',
       ),
     );
-    storage = FirebaseStorage(
-        app: app, storageBucket: AppBucket);
+    storage = FirebaseStorage(app: app, storageBucket: AppBucket);
     print('!!! init storage ${storage.storageBucket}');
 
-    auth = FirebaseAuth.fromApp(app);
-    store = Firestore(app: app);
+    auth = FirebaseAuth.instanceFor(app: app);
+    fireStore = FirebaseFirestore.instanceFor(app: app);
 //    await store.settings(timestampsInSnapshotsEnabled: true);
 
     final GoogleSignIn _gooleSingIn = GoogleSignIn();

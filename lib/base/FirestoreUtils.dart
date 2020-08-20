@@ -45,8 +45,8 @@ class FireStoreUtils {
 
   static getUserlistDocumentReferenece(String type) {
     String path = '$STORE_USERINFO/${Config.user.uid}/list';
-    var collectionReference = Firestore.instance.collection(path);
-    DocumentReference doc = collectionReference.document(type);
+    var collectionReference = Config.fireStore.collection(path);
+    DocumentReference doc = collectionReference.doc(type);
     return doc;
   }
 
@@ -58,13 +58,13 @@ class FireStoreUtils {
       List<String> ids =
           (lists[key] as List)?.map((e) => e as String)?.toList();
 
-      QuerySnapshot snapshot = await Firestore.instance
+      QuerySnapshot snapshot = await Config.fireStore
           .collection(key.substring(0, key.length - 1))
           .where(FieldPath.documentId, whereIn: ids)
-          .getDocuments();
+          .get();
 
-      datas.addAll(snapshot.documents);
-      print('!!! doc lenght :${snapshot.documents.length}');
+      datas.addAll(snapshot.docs);
+      print('!!! doc lenght :${snapshot.docs.length}');
     }
 
     return datas;
@@ -73,15 +73,15 @@ class FireStoreUtils {
   /**********************Userinfo****************************/
 
   /// Userinfo 增- 注册
-  static addUserinfo(FirebaseUser user) {
+  static addUserinfo(User user) {
     CollectionReference collectionReference =
-        Firestore.instance.collection(STORE_USERINFO);
+        Config.fireStore.collection(STORE_USERINFO);
     print('!!! CollectionReference get');
-    var documentReference = collectionReference.document(user.uid);
+    var documentReference = collectionReference.doc(user.uid);
     print('!!! DocumentReference get');
-    documentReference.setData({
+    documentReference.set({
       'displayName': user.displayName ?? user.email,
-      'photoUrl': user.photoUrl
+      'photoUrl': user.photoURL
     });
     print('!!! DocumentReference set ok ');
   }
@@ -90,16 +90,17 @@ class FireStoreUtils {
   deleteUserinfo(String path) {}
 
   /// Userinfo 改 - 修改 昵称, 头像, 签名, 性别
-  static updateUserinfo(var value, int type, FirebaseUser user) {
+  static updateUserinfo(var value, int type, User user) {
     var document =
-        Firestore.instance.collection(STORE_USERINFO).document(user.uid);
+        Config.fireStore.collection(STORE_USERINFO).doc(user.uid);
 
-    document.updateData({keys[type]: value});
+    document.update({keys[type]: value});
   }
 
   /// Userinfo 查
   static Future<DocumentSnapshot> queryUserinfo(String uid) {
-    return Firestore.instance.collection('$STORE_USERINFO').document(uid).get();
+
+    return Config.fireStore.collection('$STORE_USERINFO').doc(uid).get();
   }
 
   /**********************Square****************************/
@@ -108,12 +109,12 @@ class FireStoreUtils {
   static Future<void> addSquare(Square square) async {
     square.date = DateTime.now().millisecondsSinceEpoch;
 //    String day = MonthUtil.getCurrentData();
-    var collectionReference = Firestore.instance.collection('$STORE_SQUARE');
+    var collectionReference = Config.fireStore.collection('$STORE_SQUARE');
     var squareReference = await collectionReference.add(square.toJson());
     String listName =
-        squareReference.path.replaceAll(squareReference.documentID, '');
+        squareReference.path.replaceAll(squareReference.id, '');
     var userReference = getMySquareList();
-    Map<String, dynamic> lists = (await userReference.get()).data;
+    Map<String, dynamic> lists =  (await userReference.get()).data();
     if (lists == null) lists = Map();
     List<String> ids;
     if (lists.containsKey(listName)) {
@@ -121,9 +122,9 @@ class FireStoreUtils {
     } else
       ids = List();
 
-    ids.add(squareReference.documentID);
+    ids.add(squareReference.id);
     lists[listName] = ids;
-    return userReference.setData(lists);
+    return userReference.set(lists);
   }
 
   static DocumentReference getMySquareList() {
@@ -139,7 +140,7 @@ class FireStoreUtils {
   /// Square 查
   static Stream<QuerySnapshot> querySquareByType(
       {String type, DocumentSnapshot last, int itemCount}) {
-    var collectionReference = Firestore.instance.collection(STORE_SQUARE);
+    var collectionReference = Config.fireStore.collection(STORE_SQUARE);
     var query = collectionReference.orderBy('date', descending: true);
     if (type != null) query = query.where('type', isEqualTo: type);
     if (last != null) query = query.startAfterDocument(last);
@@ -149,27 +150,27 @@ class FireStoreUtils {
 
   static Future<List<DocumentSnapshot>> querySquareByTypeMore(
       {String type, DocumentSnapshot last, int itemCount}) async {
-    var collectionReference = Firestore.instance.collection(STORE_SQUARE);
+    var collectionReference = Config.fireStore.collection(STORE_SQUARE);
     var query = collectionReference.orderBy('date', descending: true);
     if (type != null) query = query.where('type', isEqualTo: type);
     if (last != null) query = query.startAfterDocument(last);
     if (itemCount != null) query.limit(itemCount);
 
-    return (await query.getDocuments()).documents;
+    return (await query.get()).docs;
   }
 
 //  static querySquareByUser(String userID, String path) {
 //    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
 //        format: DateFormat.YEAR_MONTH);
 //    var collectionReference =
-//        Firestore.instance.collection('$STORE_SQUARE/$path/$day');
+//        Config.fireStore.collection('$STORE_SQUARE/$path/$day');
 //    collectionReference.orderBy('date', descending: true).snapshots();
 //  }
 
 //  static Future<QuerySnapshot> getMyPublishList() {
 //    String day = DateUtil.getDateStrByDateTime(DateTime.now(),
 //        format: DateFormat.YEAR_MONTH);
-//    return Firestore.instance
+//    return Config.fireStore
 //        .collection('$STORE_SQUARE/default/$day')
 //        .where('userID', isEqualTo: Config.user.uid)
 //        .getDocuments();
@@ -198,8 +199,8 @@ class FireStoreUtils {
       ids.add(squareID);
     }
     lists[listName] = ids;
-    await documentReference.setData(lists);
-    return squareReference.updateData(//ture, make false; remove
+    await documentReference.set(lists);
+    return squareReference.update(//ture, make false; remove
         {'favorate': FieldValue.increment(currentFavoStatae ? -1 : 1)});
   }
 
@@ -224,7 +225,7 @@ class FireStoreUtils {
   static Future<DocumentReference> addComment(String path, String content) {
     String compath = path + STORE_COMMENTS;
     CollectionReference collectionReference =
-        Firestore.instance.collection('$compath');
+        Config.fireStore.collection('$compath');
     var com = CommentEntity(
         content: content,
         userID: Config.user.uid,
@@ -238,18 +239,18 @@ class FireStoreUtils {
     String compath = path + STORE_COMMENTS;
     print('!!! compath $compath');
     CollectionReference collectionReference =
-        Firestore.instance.collection('$compath');
+        Config.fireStore.collection('$compath');
     var query = collectionReference.orderBy('time', descending: true);
     if (last != null) query = query.startAfterDocument(last);
     print('!!! request itemCount is ${itemCount ?? 20}');
     query.limit(itemCount ?? 20);
-    return query.getDocuments();
+    return query.get();
   }
 
   /**********************CHAT****************************/
 
   static Stream<QuerySnapshot> getConversationList() {
-    var query = Firestore.instance
+    var query = Config.fireStore
         .collection(STORE_CONVERSATION)
         .where('user', arrayContains: Config.user.uid)
         .orderBy('updateTime', descending: true);
@@ -258,18 +259,18 @@ class FireStoreUtils {
 
   /// get conversation by targetID, if none will create one.
   static Future<ConversationEntity> getConversation(String targetID) async {
-    var query = Firestore.instance
+    var query = Config.fireStore
         .collection(STORE_CONVERSATION)
         .where('user', arrayContains: Config.user.uid)
         .orderBy('updateTime', descending: true);
 
-    var querySnapshot = await query.getDocuments();
-    var list = querySnapshot.documents;
+    var querySnapshot = await query.get();
+    var list = querySnapshot.docs;
     for (DocumentSnapshot doc in list) {
       ConversationEntity entity =
-          conversationEntityFromJson(ConversationEntity(), doc.data);
+          conversationEntityFromJson(ConversationEntity(), doc.data());
       if (entity.user.length == 2 && entity.user.contains(targetID)) {
-        entity.id = doc.documentID;
+        entity.id = doc.id;
         return entity;
       }
     }
@@ -280,14 +281,14 @@ class FireStoreUtils {
     ids.add(Config.user.uid);
     ids.add(targetID);
     entity.user = ids;
-    var doc = Firestore.instance.collection(STORE_CONVERSATION).document();
-    await doc.setData(entity.toJson());
-    entity.id = doc.documentID;
+    var doc = Config.fireStore.collection(STORE_CONVERSATION).doc();
+    await doc.set(entity.toJson());
+    entity.id = doc.id;
     return entity;
   }
 
   static Stream<QuerySnapshot> getMessageList(String conversationID) {
-    var col = Firestore.instance
+    var col = Config.fireStore
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .orderBy('time', descending: true)
         .limit(30);
@@ -297,16 +298,16 @@ class FireStoreUtils {
 
   static Future<DocumentReference> addMessageToConversation(
       String conversationID, FireMessageEntity entity) {
-    Firestore.instance
+    Config.fireStore
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .add(entity.toJson());
   }
 
   static updateConversation(
       ConversationEntity conversation, String name, FireMessageEntity msg) {
-    var document = Firestore.instance
+    var document = Config.fireStore
         .collection(STORE_CONVERSATION)
-        .document(conversation.id);
+        .doc(conversation.id);
     if (msg.type == 0) {
       conversation.lastContent = msg.content;
     } else if (msg.type == 1) {
@@ -319,27 +320,26 @@ class FireStoreUtils {
         msg.sendID == Config.user.uid ? Config.user.displayName : name;
     conversation.updateTime = msg.time;
 
-    document.updateData(conversation.toJson());
+    document.update(conversation.toJson());
   }
 
   static deleteConversationEachOther(ConversationEntity conversation) {
-    var document = Firestore.instance
+    var document = Config.fireStore
         .collection(STORE_CONVERSATION)
-        .document(conversation.id);
+        .doc(conversation.id);
     document.delete();
   }
 
   /**********************RELATIONSHIP****************************/
 
-
   static Future<UserInforEntity> getUserInfoRelation(String uid) async {
     String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
-    var query = Firestore.instance.collection(path).document(uid);
+    var query = Config.fireStore.collection(path).doc(uid);
     var doc = await query.get();
     if (doc.exists) {
       var userinfo = UserInforEntity();
-      userInforEntityFromJson(userinfo, doc.data);
-      userinfo.uid = doc.documentID;
+      userInforEntityFromJson(userinfo, doc.data());
+      userinfo.uid = doc.id;
       return userinfo;
     } else
       return null;
@@ -359,17 +359,17 @@ class FireStoreUtils {
     }
 
     String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
-    var query = Firestore.instance
+    var query = Config.fireStore
         .collection(path)
         .where(key, isEqualTo: val)
         .orderBy('displayName');
-    var data = await query.getDocuments();
-    var list = data.documents;
+    var data = await query.get();
+    var list = data.docs;
     var result = List<UserInforEntity>();
     for (DocumentSnapshot doc in list) {
       var user = UserInforEntity();
-      user = userInforEntityFromJson(user, doc.data);
-      user.uid = doc.documentID;
+      user = userInforEntityFromJson(user, doc.data());
+      user.uid = doc.id;
       result.add(user);
     }
     return result;
@@ -378,14 +378,14 @@ class FireStoreUtils {
   static Future<void> operatorRelationShipType(
       UserInforEntity user, String key, dynamic value) async {
     String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
-    var query = Firestore.instance.collection(path).document(user.uid);
+    var query = Config.fireStore.collection(path).doc(user.uid);
     var doc = await query.get();
     if (doc.exists) {
-      return query.updateData({key: value});
+      return query.update({key: value});
     } else {
       var map = user.toJson();
       map[key] = value;
-      return query.setData(map);
+      return query.set(map);
     }
   }
 
@@ -403,8 +403,7 @@ class FireStoreUtils {
     return getRelationShipList(blacklist: true);
   }
 
-  static Future<void> operatorFriend(
-      UserInforEntity user, bool firend) async {
+  static Future<void> operatorFriend(UserInforEntity user, bool firend) async {
     return operatorRelationShipType(user, 'isFriend', firend ? 1 : 0);
   }
 

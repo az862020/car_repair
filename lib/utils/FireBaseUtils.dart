@@ -51,7 +51,8 @@ class FireBaseUtils {
         if (event.type == StorageTaskEventType.success) {
           if (CouldPath == STORAGE_PHOTOURL_PATH) {
             //photoUrl
-            updateUserInfo(Config.storage.storageBucket + reference.path, PHOTOURL)
+            updateUserInfo(
+                    photoURL: Config.storage.storageBucket + reference.path)
                 .then((user) {
               Navigator.of(context, rootNavigator: true).pop();
               Navigator.pop(context);
@@ -74,45 +75,44 @@ class FireBaseUtils {
   }
 
   /// 更新用户信息. Auth 上的.
-  static Future<FirebaseUser> updateUserInfo(String updateInfo, int type,
-      {BuildContext dialogContext}) async {
-    print('!!! update type $type to user $updateInfo');
+  static Future<User> updateUserInfo(
+      {BuildContext dialogContext, String displayName, String photoURL}) async {
     if (dialogContext != null) Config.showLoadingDialog(dialogContext);
-    UserUpdateInfo info = UserUpdateInfo();
-    if (type == PHOTOURL) {
-      info.photoUrl = updateInfo;
-      info.displayName = Config.user.displayName ?? Config.user.email;
-    } else if (type == DISPLAYName) {
-      info.photoUrl = Config.user.photoUrl;
-      info.displayName = updateInfo;
-    }
+
     if (dialogContext == null)
-      return await _updateUserInfo(info, type);
+      return await _updateUserInfo(
+          displayName: displayName, photoURL: photoURL);
     else
-      await _updateUserInfo(info, type);
+      await _updateUserInfo(displayName: displayName, photoURL: photoURL);
     Navigator.of(dialogContext, rootNavigator: true).pop();
     Navigator.of(dialogContext).pop();
   }
 
   /// 更新用户信息. FireStore上的. 如果是头像, 删除老头像, 重新加载用户信息, 赋值到公共变量.
-  static Future<FirebaseUser> _updateUserInfo(
-      UserUpdateInfo info, int type) async {
+  static Future<User> _updateUserInfo(
+      {String displayName, String photoURL}) async {
     if (Config.user == null) return null;
-    await Config.user.updateProfile(info);
-    if (type == PHOTOURL && Config.user.photoUrl != null)
+
+    await Config.user.updateProfile(
+        displayName: displayName ?? Config.user.email,
+        photoURL: photoURL ?? Config.user.photoURL);
+    if (photoURL != null)
       FirebaseStorage.instance
           .ref()
-          .child(Config.user.photoUrl.replaceAll(RegExp(Config.AppBucket), ''))
+          .child(Config.user.photoURL.replaceAll(RegExp(Config.AppBucket), ''))
           .delete();
     await Config.user.reload();
-    Config.user = await FirebaseAuth.instance.currentUser();
+    Config.user = Config.auth.currentUser;
     //update firestore data.
-    FireStoreUtils.updateUserinfo(type == PHOTOURL? info.photoUrl : info.displayName , type,  Config.user);
+    int type = photoURL != null ? PHOTOURL : DISPLAYName;
+    FireStoreUtils.updateUserinfo(
+        displayName ?? displayName, type, Config.user);
     return Config.user;
   }
 
   ///文件已上传, 开始更新广场信息.
-  static Future<Null> updateFireStore(int taskID, String squarePath, {Function(bool) done}) async {
+  static Future<Null> updateFireStore(int taskID, String squarePath,
+      {Function(bool) done}) async {
     //all file had uploaded, update the data.
     List<UploadTemp> temps = await getUploadTemps(taskID);
     print('!!! ${temps.first.toMap().toString()}');
@@ -122,8 +122,9 @@ class FireBaseUtils {
     for (int i = 0; i < temps.length; i++) {
       res.add(temps[i].cloudPath);
     }
-    Square square =
-        Square(uploadtask.title, uploadtask.describe, Config.user.uid, type: squarePath);
+    Square square = Square(
+        uploadtask.title, uploadtask.describe, Config.user.uid,
+        type: squarePath);
     if (res.length > 0) {
       if (uploadtask.type == FileUploadRecord.mediaType_video) {
         square.video = res.first;
@@ -140,16 +141,5 @@ class FireBaseUtils {
     }).catchError((err) {
       if (done != null) done(false);
     });
-
-//    Config.store
-//        .collection(FileUploadRecord.STOR_SQUARE_PATH)
-//        .document()
-//        .setData(square.toJson())
-////        .add(square.toJson())
-//        .whenComplete(() {
-//      if (done != null) done(true);
-//    }).catchError(() {
-//      if (done != null) done(false);
-//    });
   }
 }

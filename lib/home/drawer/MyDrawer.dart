@@ -28,14 +28,14 @@ class _MyDrawerState extends State<MyDrawer> {
               accountEmail: Text('${Config.user.email}'),
               currentAccountPicture: GestureDetector(
                 onTap: () {
-                  print('!!! photoUrl : ${Config.user.photoUrl}');
+                  print('!!! photoUrl : ${Config.user.photoURL}');
                   gotoPickHead(context);
                 },
                 child: CircleAvatar(
-                  backgroundImage: Config.user.photoUrl == null
+                  backgroundImage: Config.user.photoURL == null
                       ? AssetImage('assets/images/account_box.png')
 //                      ? Image.file(File(''))
-                      : CloudImageProvider(Config.user.photoUrl),
+                      : CloudImageProvider(Config.user.photoURL),
                 ),
               ),
               decoration: BoxDecoration(

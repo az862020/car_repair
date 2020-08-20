@@ -206,6 +206,7 @@ class _MyNewPublishState extends State<MyNewPublish> {
                         onPressed: () {
                           setState(() {
                             photoPathList.removeAt(index);
+                            _getpicNameToTitle();
                             Navigator.pop(context);
                           });
                         },
@@ -268,7 +269,17 @@ class _MyNewPublishState extends State<MyNewPublish> {
     if (result.length > 0) {
       setState(() {
         photoPathList = result;
+        _getpicNameToTitle();
       });
+    }
+  }
+
+  _getpicNameToTitle() async {
+    if (photoPathList.length == 0) {
+      titleControl.text = '';
+    } else {
+      var filename = photoPathList.first.id.split('/').last.split(".").first;
+      titleControl.text = filename;
     }
   }
 }

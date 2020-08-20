@@ -142,8 +142,8 @@ class _CardBottomIcon extends State<CardBottomIcon> {
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
         FireUserInfoEntity userInfo =
-            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
-        userInfo.uid = snapshot.documentID;
+            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data());
+        userInfo.uid = snapshot.id;
         creater = userInfo;
       });
     });
@@ -156,7 +156,7 @@ class _CardBottomIcon extends State<CardBottomIcon> {
       if (value.data == null) {
         dataMap = Map();
       } else {
-        dataMap = value.data;
+        dataMap = value.data();
       }
       setState(() {
         isFavorate = FireStoreUtils.isSquareFavorate(dataMap, widget.square.id);

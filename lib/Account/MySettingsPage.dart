@@ -6,7 +6,7 @@ import 'package:car_repair/widget/MySwitch.dart';
 
 class MySettingsPage extends StatelessWidget{
   final String mTitle = 'MySettings';
-  final FirebaseUser _user;
+  final User _user;
 
   MySettingsPage(this._user);
 
@@ -24,7 +24,7 @@ class MySettingsPage extends StatelessWidget{
 }
 
 class MySettings extends StatefulWidget {
-  final FirebaseUser _user;
+  final User _user;
 
   MySettings(this._user);
 

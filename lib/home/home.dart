@@ -15,7 +15,7 @@ import 'SquarePage.dart';
 import 'drawer/MyDrawer.dart';
 
 class HomePage extends StatelessWidget {
-  final FirebaseUser user;
+  final User user;
 
   const HomePage({Key key, @required this.user}) : super(key: key);
 
@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _HomePage extends StatefulWidget {
-  final FirebaseUser user;
+  final User user;
 
   const _HomePage({Key key, this.user}) : super(key: key);
 
@@ -144,7 +144,7 @@ class _HomePageState extends State<_HomePage>
   _refreshHomeState() {
     FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
       setState(() {
-        userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
+        userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
         Config.userInfo = userInfo;
         tabs.clear();
         tabViews.clear();

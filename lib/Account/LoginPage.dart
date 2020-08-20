@@ -215,24 +215,24 @@ class _LoginPageFormState extends State<LoginPageForm> {
     });
   }
 
-  Future<FirebaseUser> login(BuildContext context) async {
+  Future<User> login(BuildContext context) async {
     Config.showLoadingDialog(context);
 
-    final AuthCredential credential = EmailAuthProvider.getCredential(
+    final AuthCredential credential = EmailAuthProvider.credential(
         email: usernameController.text, password: passwordController.text);
 
-    final FirebaseUser user =
+    final User user =
         (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.email);
 
-    Config.user = await FirebaseAuth.instance.currentUser();
+    Config.user = FirebaseAuth.instance.currentUser;
     print('!!! userD = user ${Config.user.uid == user.uid}');
     print('!!! uid ${user.uid}');
 
     return user;
   }
 
-  Future<FirebaseUser> loginGoogle(BuildContext context) async {
+  Future<User> loginGoogle(BuildContext context) async {
 //    Dialog();
     Config.showLoadingDialog(context);
 
@@ -240,13 +240,13 @@ class _LoginPageFormState extends State<LoginPageForm> {
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
 
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
+    final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
-    final FirebaseUser user =
+    final User user =
         (await FirebaseAuth.instance.signInWithCredential(credential)).user;
     print('signed in ' + user.displayName);
-    FirebaseUser userD = await FirebaseAuth.instance.currentUser();
+    User userD = FirebaseAuth.instance.currentUser;
     print('!!! userD = user ${userD.uid == user.uid}');
     Config.user = user;
     return user;
@@ -261,7 +261,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
         print('!!! get user in loginpage  $user');
         FireStoreUtils.queryUserinfo(user.uid).then((value) {
           FireUserInfoEntity userInfo =
-              fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
+              fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
           Config.userInfo = userInfo;
           Navigator.pushAndRemoveUntil(
               context,
@@ -275,10 +275,10 @@ class _LoginPageFormState extends State<LoginPageForm> {
   }
 
   //登录成功,获取到了用户信息,携带user跳转home.
-  gotoHome(FirebaseUser user, BuildContext context) {
+  gotoHome(User user, BuildContext context) {
     FireStoreUtils.queryUserinfo(user.uid).then((value) {
       FireUserInfoEntity userInfo =
-          fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data);
+          fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
       Config.userInfo = userInfo;
       Navigator.pop(context);
 

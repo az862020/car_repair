@@ -25,7 +25,7 @@ abstract class MoreListWidget extends State {
   void initState() {
     super.initState();
     getListMap().get().then((value){
-      lists = value.data;
+      lists = value.data();
       if (lists == null) {
         lists = Map();
       }
@@ -75,8 +75,8 @@ abstract class MoreListWidget extends State {
 
   Widget _buildListItem({BuildContext context, int index}) {
     var data = dataList[index];
-    final square = Square.fromJson(data.data);
-    square.id = data.documentID;
+    final square = Square.fromJson(data.data());
+    square.id = data.id;
 
     return Padding(
       key: ValueKey(square.id),
@@ -84,7 +84,7 @@ abstract class MoreListWidget extends State {
       child: SquareCard(square, (square) {
         square.click += 1;
         Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square, data.reference)));
-        data.reference.updateData({'click': FieldValue.increment(1)});
+        data.reference.update({'click': FieldValue.increment(1)});
       }),
     );
   }

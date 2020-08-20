@@ -64,8 +64,8 @@ class FileUploadRecord {
     });
   }
 
-  static uploadFile(BuildContext context, UploadTemp temp, String square, int type,
-      Function(UploadTemp) callback) async {
+  static uploadFile(BuildContext context, UploadTemp temp, String square,
+      int type, Function(UploadTemp) callback) async {
     // single upload task
     print('!!! ready to upload file ${temp.filePath}');
     UploadEntity entity = await getUploadEntity(temp.filePath);
@@ -107,14 +107,18 @@ class FileUploadRecord {
       print('!!! 需要上传, 新建云端文件!');
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
-
-      var reference = FirebaseStorage.instance
-          .ref();
-      if(type == type_square){
-          reference.child(STORAGE_SQUARE_PATH + '$square/' + filename);
-      }else if (type == type_chat){
-          reference.child(STORAGE_CHAT_PATH + '$square/' + filename);
+      print('!!! filename $filename');
+      var reference = FirebaseStorage().ref();
+      if (type == type_square) {
+        reference.child(STORAGE_SQUARE_PATH);
+      } else if (type == type_chat) {
+        reference.child(STORAGE_CHAT_PATH);
       }
+      print('!!! reference ${await reference.getPath()}');
+      reference.child(square);
+      print('!!! reference ${await reference.getPath()}');
+      reference.child(filename);
+      print('!!! reference ${await reference.getPath()}');
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {

@@ -11,7 +11,7 @@ import 'package:car_repair/Account/MyImagePick/MyCropPage.dart';
 
 class MyImagePickerPage extends StatelessWidget {
   final String mTitle = 'ImagePicker';
-  final FirebaseUser user;
+  final User user;
 
   const MyImagePickerPage({Key key, this.user}) : super(key: key);
 
@@ -25,7 +25,7 @@ class MyImagePickerPage extends StatelessWidget {
 
 class ImagePickerPage extends StatefulWidget {
   final String mTitle;
-  final FirebaseUser user;
+  final User user;
 
   ImagePickerPage(this.mTitle, this.user);
 

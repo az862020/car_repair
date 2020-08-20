@@ -110,8 +110,8 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     FireStoreUtils.queryUserinfo(widget.square.userID).then((snapshot) {
       setState(() {
         FireUserInfoEntity userInfo =
-            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data);
-        userInfo.uid = snapshot.documentID;
+            fireUserInfoEntityFromJson(FireUserInfoEntity(), snapshot.data());
+        userInfo.uid = snapshot.id;
         creater = userInfo;
       });
     });
@@ -162,7 +162,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
           isSend = false;
           widget.square.comment += 1;
         });
-        widget.squareReference.updateData({'comment': FieldValue.increment(1)});
+        widget.squareReference.update({'comment': FieldValue.increment(1)});
         _refreshData();
       });
     }
@@ -182,7 +182,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     var query = await FireStoreUtils.getCommentsByPath(
         widget.squareReference.path, dataList.length > 0 ? dataList.last : null,
         itemCount: commentStep);
-    List<DocumentSnapshot> list = query.documents;
+    List<DocumentSnapshot> list = query.docs;
     print('!!! documents size ${list.length}');
     setState(() {
       isLoading = false;
@@ -204,9 +204,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                  backgroundImage: Config.user.photoUrl == null
+                  backgroundImage: Config.user.photoURL == null
                       ? AssetImage('assets/images/account_box.png')
-                      : CloudImageProvider(Config.user.photoUrl)),
+                      : CloudImageProvider(Config.user.photoURL)),
             ),
             Expanded(
               flex: 1,
@@ -254,8 +254,8 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
   Widget buildItem({BuildContext context, int index}) {
     DocumentSnapshot snapshot = dataList[index];
     CommentEntity entity =
-        commentEntityFromJson(CommentEntity(), snapshot.data);
-    entity.id = snapshot.documentID;
+        commentEntityFromJson(CommentEntity(), snapshot.data());
+    entity.id = snapshot.id;
 //    FireStoreUtils.queryUserinfo(entity.userID);
     var avatar = AvatarWidget(entity.userID);
     avatar.addClick(() => Navigator.push(

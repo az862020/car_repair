@@ -178,7 +178,7 @@ class _ChatPageState extends State<ChatPageState> {
                 'No data!',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
               ));
-            return _buildList(context, snapshot.data.documents);
+            return _buildList(context, snapshot.data.docs);
           }),
     ));
   }
@@ -198,15 +198,15 @@ class _ChatPageState extends State<ChatPageState> {
               if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
               FireMessageEntity entity = fireMessageEntityFromJson(
-                  FireMessageEntity(), snapshot[i].data);
-              entity.id = snapshot[i].documentID;
+                  FireMessageEntity(), snapshot[i].data());
+              entity.id = snapshot[i].id;
               FireMessageEntity entity2 = null;
 
               bool isLast = (i == snapshot.length - 1);
               if (!isLast) {
                 entity2 = fireMessageEntityFromJson(
-                    FireMessageEntity(), snapshot[i + 1].data);
-                entity2.id = snapshot[i + 1].documentID;
+                    FireMessageEntity(), snapshot[i + 1].data());
+                entity2.id = snapshot[i + 1].id;
                 if (entity.sendID != entity2.sendID) isLast = true;
               }
               if (i == 0) lastMsg = entity;

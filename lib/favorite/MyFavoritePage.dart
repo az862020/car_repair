@@ -9,7 +9,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MyFavoritePage extends StatelessWidget {
   final String mTitle = 'MyFavorite';
-  final FirebaseUser _user;
+  final User _user;
 
   MyFavoritePage(this._user);
 
@@ -41,7 +41,7 @@ class MyFavoritePage extends StatelessWidget {
 }
 
 class FavoritePage extends StatefulWidget {
-  final FirebaseUser _user;
+  final User _user;
 
   FavoritePage(this._user);
 

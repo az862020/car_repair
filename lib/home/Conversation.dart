@@ -30,7 +30,7 @@ class _ConversationPageState extends State<ConversationPage> {
             'No data!',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ));
-        return _buildList(context, snapshot.data.documents);
+        return _buildList(context, snapshot.data.docs);
       },
     );
   }
@@ -44,8 +44,8 @@ class _ConversationPageState extends State<ConversationPage> {
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
           DocumentSnapshot doc = snapshot[i];
           ConversationEntity entity = conversationEntityFromJson(
-              ConversationEntity(), doc.data);
-          entity.id = doc.documentID;
+              ConversationEntity(), doc.data());
+          entity.id = doc.id;
           return ConversationCard(entity);
         });
 

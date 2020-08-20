@@ -10,28 +10,25 @@ class UserInfoManager {
    */
   static Future<UserInforEntity> getUserInfo(String uid,
       {bool isNetFirst}) async {
-    var localUser = getUserInfor(uid);
+    var localUser = await getUserInfor(uid);
     //has local cache and isnot net first.
     if (localUser != null && !(isNetFirst ?? false)) {
+      print('!!! get data from local ${localUser.uid}');
       return localUser;
     } else {
       var doc = await FireStoreUtils.queryUserinfo(uid);
-//      {
-//        FireUserInfoEntity userInfo =
-//        fireUserInfoEntityFromJson(FireUserInfoEntity(), doc.data);
-//        UserInforEntity entity = UserInforEntity();
-//        entity.uid = uid;
-//        entity.displayName = userInfo.displayName;
-//        entity.photoUrl = userInfo.photoUrl;
-//
-//      }
+      print('!!! get data from net ${doc.id}');
+      var userinfor = UserInforEntity();
+      userInforEntityFromJson(userinfor, doc.data());
+      userinfor.uid = doc.id;
 
-      var userinfor = userInforEntityFromJson(UserInforEntity(), doc.data);
-
-      FireStoreUtils.getUserInfoRelation(uid).then((userinfo) =>
+      var userinfo = await FireStoreUtils.getUserInfoRelation(uid);
+      if(userinfo != null)
+        print('!!! get data from relationship ${userinfo.uid}');
       userinfo != null
           ? cacheUserInfor(userinfo)
-          : cacheUserInfor(userinfor));
+          : cacheUserInfor(userinfor);
+
 
       return userinfor;
     }

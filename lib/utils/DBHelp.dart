@@ -32,6 +32,11 @@ Future<Database> initDB() async {
     await db.execute(
         "CREATE TABLE $USERINFO (uid TEXT PRIMARY KEY, displayName TEXT, remarkName TEXT, photoUrl TEXT, isFriend INTEGER, isBlack INTEGER)");
     return db;
+  }, onUpgrade: (db, oldVersion, newVersion) async {
+//    if (oldVersion == 2) {
+//      await db.execute(
+//          "CREATE TABLE $USERINFO (uid TEXT PRIMARY KEY, displayName TEXT, remarkName TEXT, photoUrl TEXT, isFriend INTEGER, isBlack INTEGER)");
+//    }
   });
   return db;
 }
@@ -186,18 +191,19 @@ Future<UserInforEntity> getUserInfor(String userID) async {
   List<Map<String, dynamic>> data =
       await db.query(USERINFO, where: 'uid = ?', whereArgs: [userID]);
   if (data.length > 0) {
-    return userInforEntityFromJson(UserInforEntity(),data.first);
+    return userInforEntityFromJson(UserInforEntity(), data.first);
   }
   return null;
 }
 
-Future<void> cacheUserInfor(UserInforEntity entity) async{
+Future<void> cacheUserInfor(UserInforEntity entity) async {
   final Database db = await database;
   List<Map<String, dynamic>> data =
-  await db.query(USERINFO, where: 'uid = ?', whereArgs: [entity.uid]);
+      await db.query(USERINFO, where: 'uid = ?', whereArgs: [entity.uid]);
   if (data.length > 0) {
-    db.update(USERINFO, entity.toJson(), where: 'uid = ?', whereArgs: [entity.uid]);
-  }else{
+    db.update(USERINFO, entity.toJson(),
+        where: 'uid = ?', whereArgs: [entity.uid]);
+  } else {
     db.insert(USERINFO, entity.toJson());
   }
 }

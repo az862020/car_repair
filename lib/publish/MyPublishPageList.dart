@@ -8,7 +8,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MyPublishListPage extends StatelessWidget {
   final String mTitle = 'MyPublished';
-  final FirebaseUser _user;
+  final User _user;
 
   MyPublishListPage(this._user);
 
@@ -39,7 +39,7 @@ class MyPublishListPage extends StatelessWidget {
 }
 
 class PublishListPage extends StatefulWidget {
-  final FirebaseUser _user;
+  final User _user;
 
   PublishListPage(this._user);
 

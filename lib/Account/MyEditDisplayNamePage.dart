@@ -23,8 +23,7 @@ class MyEditDisplayNamePage extends StatelessWidget {
 updateDisPlayName(BuildContext context) {
   if (_formKey.currentState.validate()) {
     FireBaseUtils.updateUserInfo(
-        displayNameControler.text, FireBaseUtils.DISPLAYName,
-        dialogContext: context);
+        displayName: displayNameControler.text, dialogContext: context);
   }
 }
 
@@ -51,7 +50,8 @@ class _EditDisplayName extends State<EditDisplayNamePage> {
           autofocus: true,
           controller: displayNameControler,
           validator: (string) {
-            if (string.isEmpty) return 'displayName can\'t be empty.'; return null;
+            if (string.isEmpty) return 'displayName can\'t be empty.';
+            return null;
           },
           decoration: InputDecoration(
               labelText: 'Enter your displayName',

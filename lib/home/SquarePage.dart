@@ -60,7 +60,7 @@ class _SquareState extends State<SquarePage> {
             'No data!',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ));
-        return _buildList(context, snapshot.data.documents);
+        return _buildList(context, snapshot.data.docs);
       },
     );
   }
@@ -91,8 +91,8 @@ class _SquareState extends State<SquarePage> {
 //  }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final square = Square.fromJson(data.data);
-    square.id = data.documentID;
+    final square = Square.fromJson(data.data());
+    square.id = data.id;
 
     return Padding(
       key: ValueKey(square.id),
@@ -103,7 +103,7 @@ class _SquareState extends State<SquarePage> {
             context,
             MaterialPageRoute(
                 builder: (context) => SquareDetails(square, data.reference)));
-        data.reference.updateData({'click': FieldValue.increment(1)});
+        data.reference.update({'click': FieldValue.increment(1)});
       }),
     );
   }
