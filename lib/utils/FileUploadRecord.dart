@@ -18,6 +18,7 @@ import 'FireBaseUtils.dart';
 class FileUploadRecord {
   static String STORAGE_SQUARE_PATH = 'square/'; //云端广场文件存放路径
   static String STORAGE_CHAT_PATH = 'chat/'; //云端聊天文件存放路径
+  static List<String> STORAGE_SOURCE = [STORAGE_SQUARE_PATH, STORAGE_CHAT_PATH];
   static String STOR_SQUARE_PATH = 'Square'; //云端广场文档记录路径
   static int type_square = 0;
   static int type_chat = 1;
@@ -75,11 +76,18 @@ class FileUploadRecord {
       await insertUploadEntity(entity);
     }
     //1. encodejpeg
-    if (entity.proxyPath == null) {
+    bool has = (entity.proxyPath == null || entity.proxyPath.isEmpty)
+        ? false
+        : await File(entity.proxyPath).exists();
+
+    print('!!! entity ${entity.proxyPath}');
+    print('!!! entity ${entity.proxyPath == null}');
+    print('!!! entity ${entity.proxyPath == 'null'}');
+    if (entity.proxyPath == null || !has) {
       print('!!! 需要压缩, 新建压缩文件!');
       var name =
           Uuid().v1() + (temp.filePath.endsWith('.gif') ? '.gif' : '.jpg');
-      String target = '${Config.AppDirCache}$name';
+      String target = '${Config.AppDirCache}$square/$name';
       String path = target;
       if (temp.filePath.endsWith('.gif')) {
         //gif
@@ -107,18 +115,13 @@ class FileUploadRecord {
       print('!!! 需要上传, 新建云端文件!');
       File file = File(entity.proxyPath);
       var filename = entity.proxyPath.split('/').last;
-      print('!!! filename $filename');
-      var reference = FirebaseStorage().ref();
-      if (type == type_square) {
-        reference.child(STORAGE_SQUARE_PATH);
-      } else if (type == type_chat) {
-        reference.child(STORAGE_CHAT_PATH);
-      }
-      print('!!! reference ${await reference.getPath()}');
-      reference.child(square);
-      print('!!! reference ${await reference.getPath()}');
-      reference.child(filename);
-      print('!!! reference ${await reference.getPath()}');
+      print('!!! fileName $filename');
+      print('!!! filePath ${file.path}');
+
+      var reference = Config.storage
+          .ref()
+          .child('${STORAGE_SOURCE[type]}$square/$filename');
+      print('!!! reference ${reference.path}');
 
       reference.putFile(file).events.listen((event) {
         if (event.type == StorageTaskEventType.success) {

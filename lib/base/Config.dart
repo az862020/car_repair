@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/widget/MyLoadingDialog.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -24,8 +24,18 @@ class Config {
   static String AppDirCache = ''; //应用外部存储路径-缓存文件夹.
   ///storage/emulated/0/Android/data/com.cndota2.car_repair/files/
 
+  static String appName = 'CarRepair';
+
   static String AppBucket =
       'gs://carrepair-16710.appspot.com/'; //google storage bucket.
+
+  static final FirebaseOptions options = FirebaseOptions(
+    appId: '1:789785197992:android:2a1a64a971672b1f',
+    messagingSenderId: '789785197992',
+    apiKey: 'AIzaSyBL6o9UXLGTj5fdNcIhYvVc2qnfp58YmuQ',
+    projectId: 'carrepair-16710',
+    storageBucket: AppBucket,
+  );
 
   static User user;
   static FireUserInfoEntity userInfo;
@@ -51,6 +61,8 @@ class Config {
       });
     });
     print('${Config.AppDir}');
+
+    initFirebaseStorage();
   }
 
   Future<String> checkFileExist(String dir) async {
@@ -64,27 +76,30 @@ class Config {
   }
 
   initFirebaseStorage() async {
-    final FirebaseApp app = await Firebase.initializeApp(
-      name: 'CarRepair',
-      options: FirebaseOptions(
-        appId: Platform.isIOS
-            ? '1:159623150305:ios:4a213ef3dbd8997b'
-            : '1:789785197992:android:2a1a64a971672b1f',
-        messagingSenderId: '789785197992',
-        apiKey: 'AIzaSyBL6o9UXLGTj5fdNcIhYvVc2qnfp58YmuQ',
-        projectId: 'carrepair-16710',
-        storageBucket: 'gs://carrepair-16710.appspot.com/',
-      ),
-    );
-    storage = FirebaseStorage(app: app, storageBucket: AppBucket);
-    print('!!! init storage ${storage.storageBucket}');
+    var app;
+    app = await Firebase.initializeApp(name: appName, options: options)
+        .catchError((e) {
+      if (Firebase.apps.isNotEmpty && Firebase.apps.length > 0) {
+        print('!!! ${Firebase.apps.length}');
+        for (FirebaseApp item in Firebase.apps) {
+          print('!!! app name ${item.name}');
+          if (item.name == appName) {
+            app = item;
+            break;
+          }
+        }
+      }
+    });
 
-    auth = FirebaseAuth.instanceFor(app: app);
-    fireStore = FirebaseFirestore.instanceFor(app: app);
-//    await store.settings(timestampsInSnapshotsEnabled: true);
+    auth = FirebaseAuth.instance;
+    fireStore = FirebaseFirestore.instance;
+    storage = FirebaseStorage.instance;
 
-    final GoogleSignIn _gooleSingIn = GoogleSignIn();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
+    if (fireStore.app.name == null) {
+      auth = FirebaseAuth.instanceFor(app: app);
+      fireStore = FirebaseFirestore.instanceFor(app: app);
+      storage = FirebaseStorage(app: app, storageBucket: AppBucket);
+    }
   }
 
   static Future<BuildContext> showLoadingDialog(BuildContext context) async {

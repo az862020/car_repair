@@ -5,7 +5,9 @@ import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -50,6 +52,13 @@ class _LoginPageFormState extends State<LoginPageForm> {
   void initState() {
     super.initState();
     getRemberSet();
+
+//    if(FirebaseAuth.instance.currentUser!=null ){
+//      setState(() {
+//        Config.user = FirebaseAuth.instance.currentUser;
+//        gotoHome(Config.user, context);
+//      });
+//    }
   }
 
   @override
@@ -192,7 +201,7 @@ class _LoginPageFormState extends State<LoginPageForm> {
       setState(() {
         isLoading = false;
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('Logined!')));
-        setRemberSet();
+
 
         gotoHome(user, context);
       });
@@ -217,19 +226,23 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   Future<User> login(BuildContext context) async {
     Config.showLoadingDialog(context);
+    setRemberSet();
+    if(FirebaseAuth.instance.currentUser==null ){
 
-    final AuthCredential credential = EmailAuthProvider.credential(
-        email: usernameController.text, password: passwordController.text);
+      final AuthCredential credential = EmailAuthProvider.credential(
+          email: usernameController.text, password: passwordController.text);
 
-    final User user =
-        (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-    print('signed in ' + user.email);
+      final User user =
+          (await Config.auth.signInWithCredential(credential)).user;
+      print('signed in ' + user.email);
+
+      print('!!! uid ${user.uid}');
+    }
+
 
     Config.user = FirebaseAuth.instance.currentUser;
-    print('!!! userD = user ${Config.user.uid == user.uid}');
-    print('!!! uid ${user.uid}');
 
-    return user;
+    return Config.user;
   }
 
   Future<User> loginGoogle(BuildContext context) async {
@@ -277,8 +290,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
   //登录成功,获取到了用户信息,携带user跳转home.
   gotoHome(User user, BuildContext context) {
     FireStoreUtils.queryUserinfo(user.uid).then((value) {
-      FireUserInfoEntity userInfo =
-          fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
+      var userInfo = FireUserInfoEntity();
+      fireUserInfoEntityFromJson(userInfo, value.data());
+      userInfo.uid = user.uid;
       Config.userInfo = userInfo;
       Navigator.pop(context);
 
@@ -286,6 +300,12 @@ class _LoginPageFormState extends State<LoginPageForm> {
           context,
           MaterialPageRoute(builder: (context) => HomePage(user: user)),
           (route) => route == null);
+    }).catchError((e){
+      Navigator.pop(context);
+      print('!!! error: $e');
+      Scaffold.of(context)
+          .showSnackBar(SnackBar(content: Text('Get userinfo failed! $e')));
+
     });
   }
 

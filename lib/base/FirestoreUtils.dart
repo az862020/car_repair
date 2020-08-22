@@ -99,8 +99,9 @@ class FireStoreUtils {
 
   /// Userinfo 查
   static Future<DocumentSnapshot> queryUserinfo(String uid) {
-
-    return Config.fireStore.collection('$STORE_USERINFO').doc(uid).get();
+    var collection = Config.fireStore.collection(STORE_USERINFO);
+    var doc = collection.doc(uid).get();
+    return doc;
   }
 
   /**********************Square****************************/

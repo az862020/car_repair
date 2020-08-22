@@ -88,7 +88,7 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+//    implementation 'com.google.firebase:firebase-core:17.2.1'
 //    implementation 'com.google.firebase:firebase-firestore:15.0.0'
 //    testImplementation 'junit:junit:4.12'
 //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
