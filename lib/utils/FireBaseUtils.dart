@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +43,7 @@ class FireBaseUtils {
     print('!!! url $url');
     print('!!! img $_image');
 
-    var reference = FirebaseStorage.instance.ref().child(url).child(name);
+    var reference = FirebaseStorage.instance.ref().child('$url/$name');
     reference.putFile(_image).events.listen((event) {
       print('!!! event ${event.type}');
       if (event.type == StorageTaskEventType.success ||
@@ -51,9 +54,11 @@ class FireBaseUtils {
         if (event.type == StorageTaskEventType.success) {
           if (CouldPath == STORAGE_PHOTOURL_PATH) {
             //photoUrl
-            updateUserInfo(
-                    photoURL: Config.storage.storageBucket + reference.path)
-                .then((user) {
+            var path = event.snapshot.ref.path;
+            print('!!! upload finish path $path');
+            String photoURL = '${Config.AppBucket}$url/$name';
+            print('!!! upload finish photoURL $photoURL');
+            updateUserInfo(photoURL: photoURL).then((user) {
               Navigator.of(context, rootNavigator: true).pop();
               Navigator.pop(context);
             });
@@ -93,20 +98,33 @@ class FireBaseUtils {
       {String displayName, String photoURL}) async {
     if (Config.user == null) return null;
 
+    //1.upload file
     await Config.user.updateProfile(
-        displayName: displayName ?? Config.user.email,
+        displayName: displayName ?? Config.user.displayName,
         photoURL: photoURL ?? Config.user.photoURL);
-    if (photoURL != null)
-      FirebaseStorage.instance
-          .ref()
-          .child(Config.user.photoURL.replaceAll(RegExp(Config.AppBucket), ''))
-          .delete();
+
+    //2.update firestore data.
+    int type = photoURL != null ? PHOTOURL : DISPLAYName;
+    FireStoreUtils.updateUserinfo(displayName ?? photoURL, type, Config.user);
+
+    //3.delete old file
+    if (Config.user.photoURL != null && photoURL != null){
+      var lastphoto = Config.user.photoURL.replaceAll(RegExp(Config.AppBucket), '');
+      print('!!! lastphoto : $lastphoto');
+      var old = Config.storage.ref().child(lastphoto);
+      old.delete().catchError((e)=>print('!!! $e'));
+    }
+
+    //4.refresh user info
     await Config.user.reload();
     Config.user = Config.auth.currentUser;
-    //update firestore data.
-    int type = photoURL != null ? PHOTOURL : DISPLAYName;
-    FireStoreUtils.updateUserinfo(
-        displayName ?? displayName, type, Config.user);
+    print('!!! User --- ${Config.user}');
+
+    //5.cache new user data
+    if(displayName != null) Config.userInfo.displayName = displayName;
+    else Config.userInfo.photoUrl = photoURL;
+    UserInfoManager.refreshSelf();
+
     return Config.user;
   }
 

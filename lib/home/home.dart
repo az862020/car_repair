@@ -8,7 +8,7 @@ import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/Conversation.dart';
 import 'package:car_repair/home/MapPage.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
-import 'package:event_bus/event_bus.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'SquarePage.dart';
@@ -146,6 +146,7 @@ class _HomePageState extends State<_HomePage>
       setState(() {
         userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
         Config.userInfo = userInfo;
+        UserInfoManager.refreshSelf();
         tabs.clear();
         tabViews.clear();
         initTabs();

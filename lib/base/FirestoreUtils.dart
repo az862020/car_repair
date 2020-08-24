@@ -206,7 +206,7 @@ class FireStoreUtils {
   }
 
   static bool isSquareFavorate(Map<String, dynamic> lists, String squareID) {
-    if (lists.isEmpty || lists.length == 0) return false;
+    if (lists==null || lists.length == 0) return false;
     List<String> keys = lists.keys.toList();
     for (String key in keys) {
       List<String> ids =

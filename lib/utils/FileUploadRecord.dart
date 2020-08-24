@@ -32,7 +32,7 @@ class FileUploadRecord {
       int mediaType, String title, String describe, String square,
       {Function(bool) done, Function(String) done2}) {
     // multi file upload task.
-    if (paths.isEmpty || paths.length == 0)
+    if (paths==null || paths.length == 0)
       throw Exception('Can not find files to upload.');
     bool hasCallBack = false;
     DBUtil.addTask(paths, type, mediaType, title, describe, (temps) {

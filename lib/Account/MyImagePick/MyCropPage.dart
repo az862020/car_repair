@@ -7,14 +7,15 @@ BuildContext _context;
 class MyCropPage extends StatelessWidget {
   final String mTitle = 'Crop';
 
-  File imgFile;
+  String imgFilePath;
 
-  MyCropPage(this.imgFile);
+  MyCropPage(this.imgFilePath);
 
   @override
   Widget build(BuildContext context) {
     _context = context;
-    return CropPage(mTitle, imgFile);
+
+    return CropPage(mTitle, File(imgFilePath));
   }
 }
 
@@ -79,6 +80,7 @@ class _CropPageState extends State<CropPage> {
             startCrop().then((file) {
               Navigator.pop(_context, file);
             }).catchError((e) {
+              print('!!! err : $e');
               Scaffold.of(context).showSnackBar(SnackBar(content: Text(e)));
             });
           }),
@@ -115,6 +117,7 @@ class _CropPageState extends State<CropPage> {
       file: _sample,
       area: area,
     );
+
     _sample.delete();
     debugPrint('!!! crop $file');
     return file;

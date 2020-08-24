@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
+import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'package:car_repair/home/home.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:car_repair/utils/DBHelp.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -276,6 +278,8 @@ class _LoginPageFormState extends State<LoginPageForm> {
           FireUserInfoEntity userInfo =
               fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
           Config.userInfo = userInfo;
+
+          UserInfoManager.refreshSelf();
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -294,6 +298,9 @@ class _LoginPageFormState extends State<LoginPageForm> {
       fireUserInfoEntityFromJson(userInfo, value.data());
       userInfo.uid = user.uid;
       Config.userInfo = userInfo;
+
+      UserInfoManager.refreshSelf();
+
       Navigator.pop(context);
 
       Navigator.pushAndRemoveUntil(

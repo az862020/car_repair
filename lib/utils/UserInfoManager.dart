@@ -1,3 +1,4 @@
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
@@ -13,7 +14,7 @@ class UserInfoManager {
     var localUser = await getUserInfor(uid);
     //has local cache and isnot net first.
     if (localUser != null && !(isNetFirst ?? false)) {
-      print('!!! get data from local ${localUser.uid}');
+      print('!!! get data from local ${localUser.displayName}');
       return localUser;
     } else {
       var doc = await FireStoreUtils.queryUserinfo(uid);
@@ -24,7 +25,7 @@ class UserInfoManager {
 
       var userinfo = await FireStoreUtils.getUserInfoRelation(uid);
       if(userinfo != null)
-        print('!!! get data from relationship ${userinfo.uid}');
+        print('!!! get data from relationship ${userinfo.displayName}');
       userinfo != null
           ? cacheUserInfor(userinfo)
           : cacheUserInfor(userinfor);
@@ -32,6 +33,14 @@ class UserInfoManager {
 
       return userinfor;
     }
+  }
+
+  static refreshSelf(){
+    UserInforEntity entity = UserInforEntity();
+    entity = userInforEntityFromJson(entity, Config.userInfo.toJson());
+    print('!!! self name ${Config.userInfo.displayName}');
+    print('!!! self name ${Config.userInfo.photoUrl}');
+    cacheUserInfor(entity);
   }
 
   /**

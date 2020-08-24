@@ -24,7 +24,7 @@ class _MyDrawerState extends State<MyDrawer> {
           DrawerHeader(
             child: UserAccountsDrawerHeader(
               accountName:
-                  Text('${Config.user.displayName ?? Config.user.email}'),
+                  Text('${Config.user.displayName??Config.user.email}'),
               accountEmail: Text('${Config.user.email}'),
               currentAccountPicture: GestureDetector(
                 onTap: () {

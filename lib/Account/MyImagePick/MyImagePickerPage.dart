@@ -8,7 +8,6 @@ import 'package:car_repair/utils/FireBaseUtils.dart';
 
 import 'package:car_repair/Account/MyImagePick/MyCropPage.dart';
 
-
 class MyImagePickerPage extends StatelessWidget {
   final String mTitle = 'ImagePicker';
   final User user;
@@ -36,6 +35,10 @@ class ImagePickerPage extends StatefulWidget {
 }
 
 class _MyImagePick extends State<ImagePickerPage> {
+
+  File _image;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,34 +92,38 @@ class _MyImagePick extends State<ImagePickerPage> {
     _image = null;
     super.dispose();
   }
-}
 
-File _image;
+  pickImage(BuildContext context) async {
+    ImagePicker().getImage(source: ImageSource.gallery).then((file) {
+      if (file != null) {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => MyCropPage(file.path)))
+            .then((cropfile) async {
+          debugPrint('!!! pick crop $cropfile ');
+          _image?.delete();
+          _image = null;
+          _image = cropfile;
+          String path = _image.absolute.path;
+          path = path.substring(0, path.lastIndexOf('/') + 1);
+          print('!!! get path $path');
 
-pickImage(BuildContext context) async {
-  ImagePicker.pickImage(source: ImageSource.gallery).then((file) {
-    if (file != null) {
-      Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MyCropPage(file)))
-          .then((cropfile) async {
-        debugPrint('!!! pick crop $cropfile ');
-        _image?.delete();
-        _image = null;
-        _image = cropfile;
-        String path = _image.absolute.path;
-        path = path.substring(0, path.lastIndexOf('/') + 1);
-        print('!!! get path $path');
-        String newPath = '$path${DateTime.now().millisecondsSinceEpoch}.jpg';
-        bool exists = await File(newPath).exists();
-        if (!exists) {
-          await File(newPath).create(recursive: true);
-        }
-        _image.rename(newPath).then((file) {
-          _image = file;
-        }).catchError((e) {
-          print('!!! rename faile  $_image');
+          String newPath = '$path${DateTime.now().millisecondsSinceEpoch}.jpg';
+          bool exists = await File(newPath).exists();
+          if (!exists) {
+            await File(newPath).create(recursive: true);
+          }
+          _image.rename(newPath).then((file) {
+            setState(() {
+              _image = file;
+            });
+          }).catchError((e) {
+            print('!!! rename faile  $_image');
+          });
         });
-      });
-    }
-  });
+      }
+    });
+  }
 }
+
+
+
