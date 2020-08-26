@@ -117,7 +117,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
+          _scrollController.position.maxScrollExtent && !isEnd) {
         _getCommentList();
       }
     });
@@ -140,9 +140,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
       child: RefreshIndicator(
         onRefresh: _refreshData,
         child: ListView.builder(
-          itemBuilder: _renderRow,
+          itemBuilder: (context, position)=>_renderRow(context, position),
           itemCount:
-              dataList.length == 0 ? 1 : dataList.length + (isEnd ? 1 : 2),
+              dataList.length == 0 ? 1 : dataList.length + 2,
           controller: _scrollController,
         ),
       ),
@@ -172,7 +172,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     dataList.clear();
     isLoading = false;
     isEnd = false;
-    _getCommentList();
+    await _getCommentList();
   }
 
   Future _getCommentList() async {
@@ -189,7 +189,9 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
       if (list.length < commentStep) {
         isEnd = true;
       }
-      dataList.addAll(list);
+      if(list.isNotEmpty)
+        dataList.addAll(list);
+      print('!!! comments count ${dataList.length}');
     });
   }
 
@@ -256,12 +258,7 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
     CommentEntity entity =
         commentEntityFromJson(CommentEntity(), snapshot.data());
     entity.id = snapshot.id;
-//    FireStoreUtils.queryUserinfo(entity.userID);
-    var avatar = AvatarWidget(entity.userID);
-    avatar.addClick(() => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => UserDetailsPage(avatar.userInforEntity))));
+    print('!!! build item');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
       child: Column(
@@ -269,10 +266,10 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              avatar,
+              AvatarWidget(entity.userID, click: true),
               Text(
                 '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(entity.time))}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 12),
               ),
             ],
           ),

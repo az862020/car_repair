@@ -107,7 +107,8 @@ abstract class MoreListWidget extends State {
   }
 
   Future<Null> _refreshData() async{
-    lists = null;
+    lists?.clear();
+
     dataList.clear();
     isLoading = false;
     isEnd = false;

@@ -27,28 +27,17 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var avatar = AvatarWidget(
-      conversation.id,
-      conversation: conversation,
-    );
-    avatar.addClick(() {
-      if (conversation.chattype == 0) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserDetailsPage(avatar.userInforEntity)));
-      } else {
-        //todo goto group details page.
-
-      }
-    });
 
     return MaterialApp(
       title: mTitle,
       theme: ThemeData(scaffoldBackgroundColor: Colors.grey[300]),
       home: Scaffold(
         appBar: AppBar(
-          title: avatar,
+          title: AvatarWidget(
+            conversation.id,
+            conversation: conversation,
+            click: true,
+          ),
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context)),

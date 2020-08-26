@@ -1,13 +1,8 @@
 import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
-import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
-import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
-import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
-import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
-import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,26 +18,38 @@ import 'package:flutter/material.dart';
 class AvatarWidget extends StatefulWidget {
   String userID;
   ConversationEntity conversation;
-  VoidCallback click;
-
-  AvatarWidget(this.userID, {this.conversation, this.click});
-
-  addClick(VoidCallback click) => this.click = click;
-
-  @override
-  State<StatefulWidget> createState() => _AvatarWidget();
+  bool click;
 
   String name;
   String photo;
   UserInforEntity userInforEntity;
 
+  AvatarWidget(this.userID, {this.conversation, this.click});
+
+  @override
+  State<StatefulWidget> createState() => _AvatarWidgetState();
+
+
 }
 
-class _AvatarWidget extends State<AvatarWidget> {
+class _AvatarWidgetState extends State<AvatarWidget> {
   @override
   Widget build(BuildContext context) {
+    print('!!! avatar new data');
+    _initDisplay();
     return GestureDetector(
-      onTap: () => widget.click??{},
+      onTap: ()  {
+        if(widget.click){
+          if(widget.conversation==null || widget.conversation.chattype == 0){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserDetailsPage(widget.userInforEntity)));
+          }else{
+
+          }
+        }
+      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -63,8 +70,8 @@ class _AvatarWidget extends State<AvatarWidget> {
     );
   }
 
-  @override
-  void initState() {
+
+  _initDisplay(){
     if (widget.conversation == null) {
       //private
 
