@@ -72,120 +72,122 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding: EdgeInsets.all(18.0),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              controller: usernameController,
-              validator: (string) {
-                if (string.isEmpty) return 'Username can\'t be empty.';
-                return null;
-              },
-              decoration: InputDecoration(
-                  labelText: 'Enter your username',
-                  hintText: 'Just can not be empty',
-                  icon: Icon(Icons.account_box)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24.0),
-              child: TextFormField(
-                controller: passwordController,
-                obscureText: true,
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.all(18.0),
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: usernameController,
                 validator: (string) {
-                  if (string.isEmpty) return 'Password can\'t be empty.';
+                  if (string.isEmpty) return 'Username can\'t be empty.';
                   return null;
                 },
                 decoration: InputDecoration(
-                    labelText: 'Enter your password',
+                    labelText: 'Enter your username',
                     hintText: 'Just can not be empty',
-                    icon: Icon(Icons.lock)),
+                    icon: Icon(Icons.account_box)),
               ),
-            ),
-            Container(
-              height: 1.0,
-            ),
-            CheckboxListTile(
-              title: Text('Rember your account.'),
-              value: rember,
-              onChanged: (check) {
-                setState(() {
-                  rember = check;
-                });
-              },
-            ),
-            Container(
-              height: 1.0,
-            ),
-            RaisedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24.0),
+                child: TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  validator: (string) {
+                    if (string.isEmpty) return 'Password can\'t be empty.';
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                      labelText: 'Enter your password',
+                      hintText: 'Just can not be empty',
+                      icon: Icon(Icons.lock)),
+                ),
+              ),
+              Container(
+                height: 1.0,
+              ),
+              CheckboxListTile(
+                title: Text('Rember your account.'),
+                value: rember,
+                onChanged: (check) {
+                  setState(() {
+                    rember = check;
+                  });
+                },
+              ),
+              Container(
+                height: 1.0,
+              ),
+              RaisedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
 //                    crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Offstage(
-                    offstage: !isLoading,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 12.0,
-                        height: 12.0,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-                          strokeWidth: 2.0,
+                  children: <Widget>[
+                    Offstage(
+                      offstage: !isLoading,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 12.0,
+                          height: 12.0,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                            strokeWidth: 2.0,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              onPressed: () {
-                //如果验证通过
-                if (_formKey.currentState.validate()) {
-                  if (!isLoading) {
-                    falseHttp(context);
-                  } else {
+                    Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  //如果验证通过
+                  if (_formKey.currentState.validate()) {
+                    if (!isLoading) {
+                      falseHttp(context);
+                    } else {
 //                    Scaffold.of(context).showSnackBar(SnackBar(
 //                      content: Text(' you are loading, plz wait.'),
 //                    ));
-                    print('catch click event when loging... ');
+                      print('catch click event when loging... ');
+                    }
                   }
-                }
-              },
-              color: Colors.blue[400],
-            ),
-            RaisedButton(
-              child: Text(
-                'Register',
-                style: TextStyle(color: Colors.white),
+                },
+                color: Colors.blue[400],
               ),
-              color: Colors.blue[700],
-              onPressed: () {
-                gotoRegister(context);
-              },
-            ),
-            GestureDetector(
-              onTap: () {
-                print('tap');
-                loginGoogle(context).then((user) {
-                  gotoHome(user, context);
-                }).catchError((e) {
-                  Navigator.pop(context);
-                  Scaffold.of(context).showSnackBar(
-                      SnackBar(content: Text('Login failed! $e')));
-                });
-              },
-              child: Image.asset(
-                'assets/images/signin_google.png',
-                height: 40.0,
+              RaisedButton(
+                child: Text(
+                  'Register',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.blue[700],
+                onPressed: () {
+                  gotoRegister(context);
+                },
               ),
-            ),
-          ],
+              GestureDetector(
+                onTap: () {
+                  print('tap');
+                  loginGoogle(context).then((user) {
+                    gotoHome(user, context);
+                  }).catchError((e) {
+                    Navigator.pop(context);
+                    Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text('Login failed! $e')));
+                  });
+                },
+                child: Image.asset(
+                  'assets/images/signin_google.png',
+                  height: 40.0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
