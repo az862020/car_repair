@@ -7,6 +7,7 @@ import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/comment_entity_helper.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
+import 'package:car_repair/home/CommentWidget.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:car_repair/widget/BottomMore.dart';
 import 'package:car_repair/widget/CardBottomIcon.dart';
@@ -259,32 +260,6 @@ class _SquareDetailsPage extends State<SquareDetailsPage> {
         commentEntityFromJson(CommentEntity(), snapshot.data());
     entity.id = snapshot.id;
     print('!!! build item');
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              AvatarWidget(entity.userID, click: true),
-              Text(
-                '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(entity.time))}',
-                style: TextStyle(fontSize: 12),
-              ),
-            ],
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 45),
-              child: Text(
-                entity.content,
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return CommentWidget(entity);
   }
 }

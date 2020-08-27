@@ -40,12 +40,14 @@ class _ConversationPageState extends State<ConversationPage> {
     return ListView.builder(
         itemCount: snapshot.length,
         itemBuilder: (context, i) {
+          print('!!! listview build in conversation, position is $i');
           if (i > snapshot.length || snapshot.length == 0) return null;
 //          if (i == snapshot.length) return BottomMore.getMoreWidget(isEnd);
           DocumentSnapshot doc = snapshot[i];
           ConversationEntity entity = conversationEntityFromJson(
               ConversationEntity(), doc.data());
           entity.id = doc.id;
+          print('!!! creat conversation card, position is $i');
           return ConversationCard(entity);
         });
 

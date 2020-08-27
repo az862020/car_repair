@@ -1,6 +1,8 @@
+
 import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/Config.dart';
+import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
@@ -23,31 +25,34 @@ class AvatarWidget extends StatefulWidget {
   String name;
   String photo;
   UserInforEntity userInforEntity;
+  GlobalKey key;
 
-  AvatarWidget(this.userID, {this.conversation, this.click});
+  AvatarWidget(this.userID, {this.conversation, this.click, this.key});
 
   @override
-  State<StatefulWidget> createState() => _AvatarWidgetState();
-
+  State<StatefulWidget> createState() {
+    print('!!! create avatar state.');
+    return AvatarWidgetState(key:key);
+  }
 
 }
 
-class _AvatarWidgetState extends State<AvatarWidget> {
+class AvatarWidgetState extends State<AvatarWidget> {
+  GlobalKey key;
+
+  AvatarWidgetState({this.key});
+
   @override
   Widget build(BuildContext context) {
     print('!!! avatar new data');
-    _initDisplay();
+    if(widget.name == null ){
+      print('!!! init data in avatar state.');
+      _initDisplay();
+    }
     return GestureDetector(
-      onTap: ()  {
-        if(widget.click){
-          if(widget.conversation==null || widget.conversation.chattype == 0){
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => UserDetailsPage(widget.userInforEntity)));
-          }else{
-
-          }
+      onTap: () {
+        if (widget.click) {
+          onClick(context);
         }
       },
       child: Row(
@@ -70,8 +75,24 @@ class _AvatarWidgetState extends State<AvatarWidget> {
     );
   }
 
+  onClick(BuildContext context){
+    if (widget.conversation == null) {
+      Navigator.push(context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  UserDetailsPage(widget.userInforEntity)));
+    } else if(widget.conversation.chattype == 0){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ChatPage(widget.conversation, widget.name, widget.photo)));
+    }else{
 
-  _initDisplay(){
+    }
+  }
+
+  _initDisplay() {
     if (widget.conversation == null) {
       //private
 

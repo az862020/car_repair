@@ -19,9 +19,11 @@ class ConversationCard extends StatefulWidget {
 }
 
 class _ConversationCardState extends State<ConversationCard> {
+  var key = GlobalKey<AvatarWidgetState>();
+
   @override
   Widget build(BuildContext context) {
-    var avatar = AvatarWidget(widget.entity.id, conversation: widget.entity);
+    print('!!! card widget build.');
     String lastContent;
     if (widget.entity.lastContent == null ||
         widget.entity.lastContent.isEmpty) {
@@ -31,13 +33,10 @@ class _ConversationCardState extends State<ConversationCard> {
           ? widget.entity.lastContent
           : widget.entity.lastdisplayName + " : " + widget.entity.lastContent;
     }
+    print('!!! conversation is null ${widget.entity == null}');
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ChatPage(widget.entity, avatar.name, avatar.photo)));
+        key.currentState.onClick(context);
       },
       child: Card(
         elevation: 10.0,
@@ -52,7 +51,7 @@ class _ConversationCardState extends State<ConversationCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  avatar,
+                  AvatarWidget(widget.entity.id, conversation: widget.entity, key: key),
                   Text(
                     '${DateUtil.formatDate(DateTime.fromMillisecondsSinceEpoch(widget.entity.updateTime))}',
                     style: TextStyle(fontSize: 16),
