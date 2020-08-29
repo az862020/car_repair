@@ -16,6 +16,15 @@ fireUserInfoEntityFromJson(FireUserInfoEntity data, Map<String, dynamic> json) {
 	if (json['signature'] != null) {
 		data.signature = json['signature']?.toString();
 	}
+	if (json['backgroundPhoto'] != null) {
+		data.backgroundPhoto = json['backgroundPhoto']?.toString();
+	}
+	if (json['country'] != null) {
+		data.country = json['country']?.toString();
+	}
+	if (json['province'] != null) {
+		data.province = json['province']?.toString();
+	}
 	if (json['chat'] != null) {
 		data.chat = json['chat'];
 	}
@@ -35,6 +44,9 @@ Map<String, dynamic> fireUserInfoEntityToJson(FireUserInfoEntity entity) {
 	data['displayName'] = entity.displayName;
 	data['sex'] = entity.sex;
 	data['signature'] = entity.signature;
+	data['backgroundPhoto'] = entity.backgroundPhoto;
+	data['country'] = entity.country;
+	data['province'] = entity.province;
 	data['chat'] = entity.chat;
 	data['map'] = entity.map;
 	data['square'] = entity.square;

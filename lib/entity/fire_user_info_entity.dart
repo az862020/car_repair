@@ -6,6 +6,9 @@ class FireUserInfoEntity with JsonConvert<FireUserInfoEntity> {
 	String displayName;
 	String sex;
 	String signature;
+	String backgroundPhoto;
+	String country;
+	String province;
 	bool chat;
 	bool map;
 	bool square;
