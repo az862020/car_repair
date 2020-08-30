@@ -35,9 +35,7 @@ class ImagePickerPage extends StatefulWidget {
 }
 
 class _MyImagePick extends State<ImagePickerPage> {
-
   File _image;
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +94,11 @@ class _MyImagePick extends State<ImagePickerPage> {
   pickImage(BuildContext context) async {
     ImagePicker().getImage(source: ImageSource.gallery).then((file) {
       if (file != null) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => MyCropPage(file.path)))
+        Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        MyCropPage(file.path, rectangel: true)))
             .then((cropfile) async {
           debugPrint('!!! pick crop $cropfile ');
           _image?.delete();
@@ -124,6 +125,3 @@ class _MyImagePick extends State<ImagePickerPage> {
     });
   }
 }
-
-
-

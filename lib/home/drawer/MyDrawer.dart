@@ -4,7 +4,7 @@ import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/favorite/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';
-import 'package:car_repair/Account/MyEditDisplayNamePage.dart';
+import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/UserDetails/MyEditDisplayNamePage.dart';
 import 'package:flutter/material.dart';
 
 class MyDrawer extends StatefulWidget {
@@ -24,7 +24,7 @@ class _MyDrawerState extends State<MyDrawer> {
           DrawerHeader(
             child: UserAccountsDrawerHeader(
               accountName:
-                  Text('${Config.user.displayName??Config.user.email}'),
+                  Text('${Config.user.displayName ?? Config.user.email}'),
               accountEmail: Text('${Config.user.email}'),
               currentAccountPicture: GestureDetector(
                 onTap: () {
@@ -39,8 +39,12 @@ class _MyDrawerState extends State<MyDrawer> {
                 ),
               ),
               decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+                  color: Colors.blue,
+                  image: Config.userInfo.backgroundPhoto == null
+                      ? null
+                      : DecorationImage(
+                          image: CloudImageProvider(
+                              Config.userInfo.backgroundPhoto))),
               onDetailsPressed: () {
                 print('!!! user account tip.');
                 gotoAccountSet(context);
@@ -116,35 +120,5 @@ class _MyDrawerState extends State<MyDrawer> {
       setState(() {});
     });
 
-//    UserUpdateInfo info = UserUpdateInfo();
-//    info.displayName = 'test123';
-//    widget._user.updateProfile(info).then((result) {
-//      print('!!! updateProfile success.');
-//    });
-//    //  userinfo/***uid/doc 进行修改.
-//    Firestore.instance
-//        .collection('userinfo')
-//        .document('${widget._user.uid}')
-//        .setData({'testdata': 'test111'});
-//
-//    // 尝试连接任意目录.
-//    Firestore.instance.collection('userinfo');
-//
-//    //任意目录下添加文档.
-//    Firestore.instance.collection('userinfo').add({
-//      'test': {'1111': '2222'}
-//    });
-//
-//    // 尝试增量更新.
-//    Firestore.instance
-//        .document('userinfo/${widget._user.uid}')
-//        .get()
-//        .then((doc) {
-//      doc.data.update('add', (string) {
-//        return 'old';
-//      }, ifAbsent: () {
-//        return 'new';
-//      });
-//    });
   }
 }

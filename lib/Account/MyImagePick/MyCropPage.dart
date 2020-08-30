@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_crop/image_crop.dart';
 
@@ -8,8 +9,9 @@ class MyCropPage extends StatelessWidget {
   final String mTitle = 'Crop';
 
   String imgFilePath;
+  bool rectangel;
 
-  MyCropPage(this.imgFilePath);
+  MyCropPage(this.imgFilePath, {this.rectangel = false});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,9 @@ class MyCropPage extends StatelessWidget {
 class CropPage extends StatefulWidget {
   String mTitle = 'Crop';
   File imgFile;
+  bool rectangel;
 
-  CropPage(this.mTitle, this.imgFile);
+  CropPage(this.mTitle, this.imgFile, {this.rectangel = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -49,6 +52,10 @@ class _CropPageState extends State<CropPage> {
 
   @override
   Widget build(BuildContext context) {
+    double devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    double screenWidth = window.physicalSize.width;
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.mTitle),
@@ -65,13 +72,17 @@ class _CropPageState extends State<CropPage> {
                 key: cropKey,
                 maximumScale: 5.0,
                 image: FileImage(widget.imgFile),
-                aspectRatio: 3.0 / 3.0,
+                aspectRatio: widget.rectangel
+                    ? 3.0 / 3.0
+                    : screenWidth / 250 / devicePixelRatio,
               )
             : Crop.file(
                 _sample,
                 key: cropKey,
                 maximumScale: 5.0,
-                aspectRatio: 3.0 / 3.0,
+                aspectRatio: widget.rectangel
+                    ? 3.0 / 3.0
+                    : screenWidth / 250 / devicePixelRatio,
               ),
       ),
       floatingActionButton: FloatingActionButton(
