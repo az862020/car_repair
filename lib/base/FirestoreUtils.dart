@@ -3,6 +3,7 @@ import 'package:car_repair/entity/Square.dart';
 import 'package:car_repair/entity/comment_entity.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/conversation_entity_helper.dart';
 import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
@@ -89,12 +90,20 @@ class FireStoreUtils {
   /// Userinfo 删
   deleteUserinfo(String path) {}
 
-  /// Userinfo 改 - 修改 昵称, 头像, 签名, 性别
+  /// Userinfo 改 - 修改 昵称, 头像
   static updateUserinfo(var value, int type, User user) {
     var document =
         Config.fireStore.collection(STORE_USERINFO).doc(user.uid);
 
     document.update({keys[type]: value});
+  }
+
+  /// Userinfo 改 - 修改 昵称, 头像, 签名, 性别,及其他信息
+  static Future<void> updateUserinfoByUser(FireUserInfoEntity user) async{
+    var document =
+        Config.fireStore.collection(STORE_USERINFO).doc(user.uid);
+
+    return document.update(user.toJson());
   }
 
   /// Userinfo 查

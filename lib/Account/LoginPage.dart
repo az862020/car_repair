@@ -320,19 +320,21 @@ class _LoginPageFormState extends State<LoginPageForm> {
 
   //获取是否记住账号密码.
   void getRemberSet() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    final remberV = (sharedPreferences.getBool(Config.RemberSet) ?? false);
-    username = (sharedPreferences.getString(Config.UsernameSet) ?? '');
-    password = (sharedPreferences.getString(Config.PasswordSet) ?? '');
-    setState(() {
-      rember = remberV;
-      print('!!!!! rember $rember');
-      if (rember) {
-        usernameController.text = username;
-        passwordController.text = password;
-        print('!!!!  username:$username  password:$password');
-      }
+    final sharedPreferences = SharedPreferences.getInstance().then((sp) {
+      final remberV = (sp.getBool(Config.RemberSet) ?? false);
+      username = (sp.getString(Config.UsernameSet) ?? '');
+      password = (sp.getString(Config.PasswordSet) ?? '');
+      setState(() {
+        rember = remberV;
+        print('!!!!! rember $rember');
+        if (rember) {
+          usernameController.text = username;
+          passwordController.text = password;
+          print('!!!!  username:$username  password:$password');
+        }
+      });
     });
+
   }
 
   //登录成功之后,保存

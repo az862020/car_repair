@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:car_repair/Account/MyImagePick/MyCropPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/Config.dart';
+import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/utils/FireBaseUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -21,7 +23,7 @@ class MyEditDisplayNamePage extends StatelessWidget {
       body: edit,
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.cloud_done),
-          onPressed: () => edit.updateDisPlayName(context)),
+          onPressed: () => edit.updateUserDetails(context)),
     );
   }
 }
@@ -41,11 +43,58 @@ class EditDisplayNamePage extends StatefulWidget {
     return _EditDisplayName();
   }
 
-  updateDisPlayName(BuildContext context) {
-    if (formKey.currentState.validate()) {
-      FireBaseUtils.updateUserInfo(
-          displayName: displayNameControler.text, dialogContext: context);
+  uploadBackgroundPhoto(BuildContext context) {
+    FireBaseUtils.uploadPhotoUrl(
+        context, _image, FireBaseUtils.STORAGE_BACKGROUND_PATH,
+        done: (isOK, {String url}) {
+      if (isOK) {
+        updateUserDetails(context, bg: url);
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text('Upload background photo failed! try later plz.')));
+      }
+    });
+  }
+
+  updateUserDetails(BuildContext context, {String bg}) async {
+    //1.write data in firestore
+    if (!formKey.currentState.validate()) {
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('displayName can\'t be empty.')));
+      return;
     }
+
+    //check and make sure backgroud photo has a url.
+    if (_image != null && bg == null) {
+      uploadBackgroundPhoto(context);
+      return;
+    }
+
+    Config.showLoadingDialog(context);
+    FireUserInfoEntity info =
+        FireUserInfoEntity().fromJson(Config.userInfo.toJson());
+    info.displayName = displayNameControler.text;
+    info.sex = sexControler.text;
+    info.country = countryControler.text;
+    info.province = provinceControler.text;
+    info.signature = signatureControler.text;
+    if (bg != null) info.backgroundPhoto = bg;
+
+    await FireStoreUtils.updateUserinfoByUser(info).catchError((e) {
+      Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('Update failed! try later plz.')));
+      Navigator.of(context, rootNavigator: true).pop();
+      return;
+    });
+
+    //2.write data in fireAuth if need.
+    if (Config.userInfo.displayName != displayNameControler.text) {
+      await Config.user.updateProfile(displayName: displayNameControler.text);
+    }
+
+    await FireBaseUtils.updateUserInfoDetails(info);
+    Navigator.of(context, rootNavigator: true).pop();
+    Navigator.pop(context);
   }
 }
 
@@ -66,6 +115,11 @@ class _EditDisplayName extends State<EditDisplayNamePage> {
   void dispose() {
     widget._image?.delete();
     widget._image = null;
+    widget.displayNameControler.dispose();
+    widget.sexControler.dispose();
+    widget.countryControler.dispose();
+    widget.provinceControler.dispose();
+    widget.signatureControler.dispose();
     super.dispose();
   }
 
@@ -78,7 +132,6 @@ class _EditDisplayName extends State<EditDisplayNamePage> {
           children: [
             GestureDetector(
               onTap: () {
-                //todo chose back ground
                 pickImage(context);
                 print('!!! change background image.');
               },
@@ -86,13 +139,21 @@ class _EditDisplayName extends State<EditDisplayNamePage> {
                   height: 250,
                   color: Colors.blue,
                   child: widget._image == null
-                      ? (Config.userInfo.backgroundPhoto == null || Config.userInfo.backgroundPhoto.isEmpty
-                      ? Container()
-                      : Image(image: CloudImageProvider(Config.userInfo.backgroundPhoto)))
-                      : Image.file(widget._image)
-              ),
+                      ? (Config.userInfo.backgroundPhoto == null ||
+                              Config.userInfo.backgroundPhoto.isEmpty
+                          ? Container()
+                          : Image(
+                              image: CloudImageProvider(
+                                  Config.userInfo.backgroundPhoto)))
+                      : Image.file(widget._image)),
             ),
-            Text('Background photo'),
+            GestureDetector(
+              onTap: () {
+                pickImage(context);
+                print('!!! change background image.');
+              },
+              child: Text('Background photo')
+            ),
             Container(height: 15),
             TextFormField(
               controller: widget.displayNameControler,

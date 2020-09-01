@@ -44,7 +44,8 @@ class _MyDrawerState extends State<MyDrawer> {
                       ? null
                       : DecorationImage(
                           image: CloudImageProvider(
-                              Config.userInfo.backgroundPhoto))),
+                              Config.userInfo.backgroundPhoto),
+                          fit: BoxFit.fitWidth)),
               onDetailsPressed: () {
                 print('!!! user account tip.');
                 gotoAccountSet(context);
@@ -119,6 +120,5 @@ class _MyDrawerState extends State<MyDrawer> {
         .then((any) {
       setState(() {});
     });
-
   }
 }

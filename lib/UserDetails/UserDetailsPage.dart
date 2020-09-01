@@ -77,11 +77,11 @@ class UserDetailsState extends State<UserDetails> {
                           Text(widget.name)
                         ],
                       ),
-                      background: widget.userInforEntity.photoUrl == null
+                      background: fireuser == null || fireuser.backgroundPhoto == null
                           ? Container(color: Colors.blue[300])
                           : Image(
                               image: CloudImageProvider(
-                                  widget.userInforEntity.photoUrl),
+                                  fireuser.backgroundPhoto),
                               fit: BoxFit.cover)),
                   backgroundColor: Colors.blue,
                 ),
