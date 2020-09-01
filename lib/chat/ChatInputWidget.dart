@@ -1,5 +1,3 @@
-
-
 import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/utils/FileUploadRecord.dart';
@@ -8,8 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo/photo.dart';
 
-class ChatInputWidget extends StatefulWidget{
-
+class ChatInputWidget extends StatefulWidget {
   Function(String content, int type) sendMessage;
   FocusNode focusNode;
   Function() showSticker;
@@ -20,13 +17,10 @@ class ChatInputWidget extends StatefulWidget{
   State<StatefulWidget> createState() {
     return _chatInputWidget();
   }
-
 }
 
-class _chatInputWidget extends State<ChatInputWidget>{
-
+class _chatInputWidget extends State<ChatInputWidget> {
   final TextEditingController textEditingController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +33,7 @@ class _chatInputWidget extends State<ChatInputWidget>{
               margin: new EdgeInsets.symmetric(horizontal: 1.0),
               child: new IconButton(
                 icon: new Icon(Icons.image),
-                onPressed: ()=>getImage(context),
+                onPressed: () => getImage(context),
 //                color: primaryColor,
               ),
             ),
@@ -78,7 +72,10 @@ class _chatInputWidget extends State<ChatInputWidget>{
               margin: new EdgeInsets.symmetric(horizontal: 8.0),
               child: new IconButton(
                 icon: new Icon(Icons.send),
-                onPressed: () => widget.sendMessage(textEditingController.text, 0),
+                onPressed: () {
+                  widget.sendMessage(textEditingController.text, 0);
+                  textEditingController.clear();
+                },
 //                color: primaryColor,
               ),
             ),
@@ -90,7 +87,7 @@ class _chatInputWidget extends State<ChatInputWidget>{
       height: 50.0,
       decoration: new BoxDecoration(
           border:
-          new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
+              new Border(top: new BorderSide(color: Colors.grey, width: 0.5)),
           color: Colors.white),
     );
   }
@@ -103,7 +100,7 @@ class _chatInputWidget extends State<ChatInputWidget>{
     });
   }
 
-   getImage(BuildContext context) async{
+  getImage(BuildContext context) async {
     var result = await PhotoPicker.pickAsset(
       context: context,
       rowCount: 3,
@@ -124,15 +121,16 @@ class _chatInputWidget extends State<ChatInputWidget>{
       pickType: PickType.all,
     );
     if (result.length > 0) {
-      for(int i = 0; i<result.length; i++){
+      for (int i = 0; i < result.length; i++) {
         print('!!! IMG MSG ${result[i]}');
         List<String> photos = List();
         photos.add(result[i].id);
-        FileUploadRecord.uploadFiles(context, photos, 1, 0, '', result[i].id, Config.user.uid, done2: (coludPath){
+        FileUploadRecord.uploadFiles(
+            context, photos, 1, 0, '', result[i].id, Config.user.uid,
+            done2: (coludPath) {
           widget.sendMessage(coludPath, 1);
         });
       }
     }
   }
-
 }

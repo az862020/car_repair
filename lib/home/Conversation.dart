@@ -14,7 +14,7 @@ class ConversationPage extends StatefulWidget {
   }
 }
 
-class _ConversationPageState extends State<ConversationPage> {
+class _ConversationPageState extends State<ConversationPage> with AutomaticKeepAliveClientMixin{
 
   @override
   Widget build(BuildContext context) {
@@ -52,5 +52,9 @@ class _ConversationPageState extends State<ConversationPage> {
         });
 
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 
 }

@@ -16,7 +16,7 @@ class SquarePage extends StatefulWidget {
   }
 }
 
-class _SquareState extends State<SquarePage> {
+class _SquareState extends State<SquarePage>  with AutomaticKeepAliveClientMixin{
   Stream<QuerySnapshot> dataSteam;
   ScrollController _scrollController = ScrollController();
   String date;
@@ -24,6 +24,8 @@ class _SquareState extends State<SquarePage> {
 
   bool isEnd = false;
   bool isLoading = false;
+
+
 
   @override
   void initState() {
@@ -135,4 +137,8 @@ class _SquareState extends State<SquarePage> {
 
     print('!!! 加载数据.$date');
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

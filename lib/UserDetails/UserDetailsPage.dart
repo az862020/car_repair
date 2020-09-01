@@ -77,11 +77,12 @@ class UserDetailsState extends State<UserDetails> {
                           Text(widget.name)
                         ],
                       ),
-                      background: fireuser == null || fireuser.backgroundPhoto == null
+                      background: fireuser == null ||
+                              fireuser.backgroundPhoto == null
                           ? Container(color: Colors.blue[300])
                           : Image(
-                              image: CloudImageProvider(
-                                  fireuser.backgroundPhoto),
+                              image:
+                                  CloudImageProvider(fireuser.backgroundPhoto),
                               fit: BoxFit.cover)),
                   backgroundColor: Colors.blue,
                 ),
@@ -103,7 +104,10 @@ class UserDetailsState extends State<UserDetails> {
                           Text(
                               'Gender is ${fireuser == null || fireuser.sex == null || fireuser.sex.isEmpty ? 'a secret' : fireuser.sex}'),
                           IconButton(
-                              icon: Icon(Icons.chat), onPressed: () => _goChat),
+                              icon: Icon(Icons.chat), onPressed: () {
+                            print('!!! chat button click ');
+                            _goChat();
+                          } ),
                         ],
                       ),
                     ),
@@ -115,7 +119,7 @@ class UserDetailsState extends State<UserDetails> {
                       child: Container(
                         padding: EdgeInsets.all(15),
                         child: Text(
-                            'Come From ${fireuser == null || fireuser.country == null ? 'the future!' : fireuser.country + fireuser.province}'),
+                            'Come From ${fireuser == null || fireuser.country == null ? 'the future!' : fireuser.country + ' ' + fireuser.province}'),
                       ),
                     ),
                   ),
@@ -142,7 +146,10 @@ class UserDetailsState extends State<UserDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Go to look what has published.'),
-                              IconButton(icon: Icon(Icons.keyboard_arrow_right),color: Colors.blue,)
+                              IconButton(
+                                icon: Icon(Icons.keyboard_arrow_right),
+                                color: Colors.blue,
+                              )
                             ],
                           )),
                     ),

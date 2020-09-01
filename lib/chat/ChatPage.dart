@@ -27,7 +27,6 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: mTitle,
       theme: ThemeData(scaffoldBackgroundColor: Colors.grey[300]),
@@ -68,8 +67,6 @@ class _ChatPageState extends State<ChatPageState> {
 
   bool isShowSticker = false;
   bool isLoading = false;
-  final TextEditingController textEditingController =
-      new TextEditingController();
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
   FireMessageEntity lastMsg;
@@ -189,7 +186,7 @@ class _ChatPageState extends State<ChatPageState> {
               FireMessageEntity entity = fireMessageEntityFromJson(
                   FireMessageEntity(), snapshot[i].data());
               entity.id = snapshot[i].id;
-              FireMessageEntity entity2 = null;
+              FireMessageEntity entity2;
 
               bool isLast = (i == snapshot.length - 1);
               if (!isLast) {
@@ -218,25 +215,21 @@ class _ChatPageState extends State<ChatPageState> {
     );
   }
 
-  onSendMessage(String content, int type) {
+  onSendMessage(String content, int type) async {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
-      textEditingController.clear();
-
       FireMessageEntity msg = FireMessageEntity();
       msg.sendID = Config.user.uid;
       msg.content = content;
       msg.type = type;
       msg.time = DateUtil.getNowDateMs();
 
-      FireStoreUtils.addMessageToConversation(widget.conversation.id, msg)
-          .then((value) {
-        listScrollController.animateTo(0.0,
-            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      }).then((value) {
-        FireStoreUtils.updateConversation(
-            widget.conversation, widget.conversationName, msg);
-      });
+      await FireStoreUtils.addMessageToConversation(
+          widget.conversation.id, msg);
+      await listScrollController.animateTo(0.0,
+          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+      await FireStoreUtils.updateConversation(
+          widget.conversation, widget.conversationName, msg);
     } else {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Nothing to send...')));

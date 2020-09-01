@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+
+import 'package:flutter/material.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -7,9 +8,13 @@ class MapPage extends StatefulWidget {
   }
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
     return Center(child: Text('Map!'),);
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

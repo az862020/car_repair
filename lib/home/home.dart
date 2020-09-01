@@ -39,7 +39,7 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final String mTitle = 'home';
   FireUserInfoEntity userInfo;
   static final String squareString = 'Funny mud pee';
@@ -159,12 +159,12 @@ class _HomePageState extends State<_HomePage>
     print('!!! start show chat in home. ${userInfo.chat ?? false}');
     if (!tabs.contains(chatString)) {
       await setState(() {
-        userInfo.chat = true;
-        tabs.clear();
-        tabViews.clear();
-        initTabs();
-        var chatIndex = tabs.indexOf(chatString);
-        print('!!! $chatIndex');
+      userInfo.chat = true;
+      tabs.clear();
+      tabViews.clear();
+      initTabs();
+      var chatIndex = tabs.indexOf(chatString);
+      print('!!! $chatIndex');
         _tabController = TabController(
             vsync: this, length: tabs.length, initialIndex: chatIndex>=0?chatIndex:0);
         FireStoreUtils.updateUserinfo(true, FireStoreUtils.CHAT, Config.user);

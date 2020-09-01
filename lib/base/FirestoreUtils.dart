@@ -279,7 +279,7 @@ class FireStoreUtils {
     for (DocumentSnapshot doc in list) {
       ConversationEntity entity =
           conversationEntityFromJson(ConversationEntity(), doc.data());
-      if (entity.user.length == 2 && entity.user.contains(targetID)) {
+      if (entity.user.length == 2 && entity.user.contains(targetID) && entity.user.contains(Config.userInfo.uid)) {
         entity.id = doc.id;
         return entity;
       }
@@ -308,7 +308,7 @@ class FireStoreUtils {
 
   static Future<DocumentReference> addMessageToConversation(
       String conversationID, FireMessageEntity entity) {
-    Config.fireStore
+    return Config.fireStore
         .collection('$STORE_CONVERSATION/$conversationID/contentlist')
         .add(entity.toJson());
   }
