@@ -1,4 +1,4 @@
-
+import 'package:car_repair/UserDetails/MyEditDisplayNamePage.dart';
 import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/Config.dart';
@@ -32,9 +32,8 @@ class AvatarWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     print('!!! create avatar state.');
-    return AvatarWidgetState(key:key);
+    return AvatarWidgetState(key: key);
   }
-
 }
 
 class AvatarWidgetState extends State<AvatarWidget> {
@@ -45,7 +44,7 @@ class AvatarWidgetState extends State<AvatarWidget> {
   @override
   Widget build(BuildContext context) {
     print('!!! avatar new data');
-    if(widget.name == null ){
+    if (widget.name == null) {
       print('!!! init data in avatar state.');
       _initDisplay();
     }
@@ -75,21 +74,22 @@ class AvatarWidgetState extends State<AvatarWidget> {
     );
   }
 
-  onClick(BuildContext context){
+  onClick(BuildContext context) {
     if (widget.conversation == null) {
-      Navigator.push(context,
+      Navigator.push(
+          context,
           MaterialPageRoute(
               builder: (context) =>
-                  UserDetailsPage(widget.userInforEntity)));
-    } else if(widget.conversation.chattype == 0){
+                  widget.userInforEntity.uid == Config.userInfo.uid
+                      ? MyEditDisplayNamePage()
+                      : UserDetailsPage(widget.userInforEntity)));
+    } else if (widget.conversation.chattype == 0) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
                   ChatPage(widget.conversation, widget.name, widget.photo)));
-    }else{
-
-    }
+    } else {}
   }
 
   _initDisplay() {
