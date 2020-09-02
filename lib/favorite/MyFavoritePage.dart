@@ -9,9 +9,9 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MyFavoritePage extends StatelessWidget {
   final String mTitle = 'MyFavorite';
-  final User _user;
+  final String uid;
 
-  MyFavoritePage(this._user);
+  MyFavoritePage(this.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class MyFavoritePage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: FavoritePage(_user),
+        body: FavoritePage(uid),
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.cloud_download),
             onPressed: () {
@@ -41,21 +41,26 @@ class MyFavoritePage extends StatelessWidget {
 }
 
 class FavoritePage extends StatefulWidget {
-  final User _user;
+  String uid;
 
-  FavoritePage(this._user);
+  FavoritePage(this.uid);
 
   @override
   State<StatefulWidget> createState() {
-    return MyFavorateList();
+    return MyFavorateList(uid);
 //    return MoreListWidget();
   }
 }
 
 class MyFavorateList extends MoreListWidget {
+  String uid;
+
+
+  MyFavorateList(this.uid);
+
   @override
   DocumentReference getListMap() {
-    return FireStoreUtils.getMyFavoratedList();
+    return FireStoreUtils.getMyFavoratedList(uid);
   }
 }
 

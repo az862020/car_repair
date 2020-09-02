@@ -6,6 +6,8 @@ import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
+import 'package:car_repair/publish/MyNewPublishPage.dart';
+import 'package:car_repair/publish/MyPublishPageList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -136,8 +138,11 @@ class UserDetailsState extends State<UserDetails> {
                   Container(height: 20),
                   GestureDetector(
                     onTap: () {
-                      //todo goto the user's published page.
                       print('!!! go to user\'s published page.');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyPublishListPage(fireuser.uid)));
                     },
                     child: Card(
                       child: Container(

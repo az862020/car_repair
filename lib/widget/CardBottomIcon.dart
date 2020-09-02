@@ -151,7 +151,7 @@ class _CardBottomIcon extends State<CardBottomIcon> {
   }
 
   _getFavorateState() {
-    reference = FireStoreUtils.getMyFavoratedList();
+    reference = FireStoreUtils.getMyFavoratedList(Config.userInfo.uid);
     reference.get().then((value) {
       if (value.data == null) {
         dataMap = Map();

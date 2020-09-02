@@ -1,16 +1,16 @@
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/widget/MoreListWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class MyPublishListPage extends StatelessWidget {
-  final String mTitle = 'MyPublished';
-  final User _user;
+  final String mTitle = 'Published List';
+  final String uid;
 
-  MyPublishListPage(this._user);
+  MyPublishListPage(this.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -25,38 +25,43 @@ class MyPublishListPage extends StatelessWidget {
                 Navigator.pop(context);
               }),
         ),
-        body: PublishListPage(_user),
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.cloud_upload),
-            onPressed: () {
-              print('float button on tip.');
-              //TODO XO up load and publish photo/video.
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> MyNewPublish()));
-            }),
+        body: PublishListPage(uid),
+        floatingActionButton: uid != Config.userInfo.uid
+            ? null
+            : FloatingActionButton(
+                child: Icon(Icons.cloud_upload),
+                onPressed: () {
+                  print('float button on tip.');
+                  //TODO XO up load and publish photo/video.
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => MyNewPublish()));
+                }),
       ),
     );
   }
 }
 
 class PublishListPage extends StatefulWidget {
-  final User _user;
+  final String uid;
 
-  PublishListPage(this._user);
+  PublishListPage(this.uid);
 
   @override
   State<StatefulWidget> createState() {
-    return MyPublishList();
+    return MyPublishList(uid);
   }
 }
 
-class MyPublishList extends MoreListWidget{
+class MyPublishList extends MoreListWidget {
+  final String uid;
+
+  MyPublishList(this.uid);
+
   @override
   DocumentReference getListMap() {
-    return FireStoreUtils.getMySquareList();
+    return FireStoreUtils.getMySquareList(uid);
   }
-
 }
-
 
 class _PublisthListState extends State<PublishListPage> {
   @override

@@ -44,8 +44,8 @@ class FireStoreUtils {
     'chat'
   ];
 
-  static getUserlistDocumentReferenece(String type) {
-    String path = '$STORE_USERINFO/${Config.user.uid}/list';
+  static getUserlistDocumentReferenece(String type, String uid) {
+    String path = '$STORE_USERINFO/$uid/list';
     var collectionReference = Config.fireStore.collection(path);
     DocumentReference doc = collectionReference.doc(type);
     return doc;
@@ -123,7 +123,7 @@ class FireStoreUtils {
     var squareReference = await collectionReference.add(square.toJson());
     String listName =
         squareReference.path.replaceAll(squareReference.id, '');
-    var userReference = getMySquareList();
+    var userReference = getMySquareList(Config.userInfo.uid);
     Map<String, dynamic> lists =  (await userReference.get()).data();
     if (lists == null) lists = Map();
     List<String> ids;
@@ -137,8 +137,8 @@ class FireStoreUtils {
     return userReference.set(lists);
   }
 
-  static DocumentReference getMySquareList() {
-    return getUserlistDocumentReferenece(STORE_PUBISH);
+  static DocumentReference getMySquareList(String uid) {
+    return getUserlistDocumentReferenece(STORE_PUBISH, uid);
   }
 
   /// Square 删
@@ -226,8 +226,8 @@ class FireStoreUtils {
   }
 
   //DocumentReference use get can get data, if nodata will return null.
-  static DocumentReference getMyFavoratedList() {
-    return getUserlistDocumentReferenece(STORE_FAVORATE);
+  static DocumentReference getMyFavoratedList(String uid) {
+    return getUserlistDocumentReferenece(STORE_FAVORATE, uid);
   }
 
   /**********************Comment****************************/

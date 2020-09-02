@@ -63,7 +63,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyFavoritePage(Config.user)));
+                      builder: (context) => MyFavoritePage(Config.user.uid)));
             },
           ),
           ListTile(
@@ -75,7 +75,7 @@ class _MyDrawerState extends State<MyDrawer> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyPublishListPage(Config.user)));
+                      builder: (context) => MyPublishListPage(Config.user.uid)));
             },
           ),
           ListTile(
