@@ -70,6 +70,7 @@ class _ChatPageState extends State<ChatPageState> {
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
   FireMessageEntity lastMsg;
+  ChatInputWidget chatInputWidget;
 
   @override
   void initState() {
@@ -78,6 +79,7 @@ class _ChatPageState extends State<ChatPageState> {
     isShowSticker = false;
     focusNode.addListener(onFocusChange);
     dataStream = FireStoreUtils.getMessageList(widget.conversation.id);
+    chatInputWidget = ChatInputWidget(onSendMessage, focusNode, getSticker);
   }
 
   @override
@@ -108,7 +110,7 @@ class _ChatPageState extends State<ChatPageState> {
                   : Container()),
 
               // Input content
-              ChatInputWidget(onSendMessage, focusNode, getSticker),
+              chatInputWidget,
             ],
           ),
 
@@ -215,7 +217,7 @@ class _ChatPageState extends State<ChatPageState> {
     );
   }
 
-  onSendMessage(String content, int type) async {
+  onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       FireMessageEntity msg = FireMessageEntity();
@@ -224,12 +226,15 @@ class _ChatPageState extends State<ChatPageState> {
       msg.type = type;
       msg.time = DateUtil.getNowDateMs();
 
-      await FireStoreUtils.addMessageToConversation(
-          widget.conversation.id, msg);
-      await listScrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      await FireStoreUtils.updateConversation(
-          widget.conversation, widget.conversationName, msg);
+      FireStoreUtils.addMessageToConversation(widget.conversation.id, msg)
+          .catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))))
+          .then((value) {
+        chatInputWidget.cleanText();
+        listScrollController.animateTo(0.0,
+            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+        FireStoreUtils.updateConversation(
+            widget.conversation, widget.conversationName, msg);
+      });
     } else {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Nothing to send...')));

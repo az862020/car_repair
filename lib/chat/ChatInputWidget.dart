@@ -13,14 +13,20 @@ class ChatInputWidget extends StatefulWidget {
 
   ChatInputWidget(this.sendMessage, this.focusNode, this.showSticker);
 
+  final TextEditingController textEditingController = TextEditingController();
+
   @override
   State<StatefulWidget> createState() {
     return _chatInputWidget();
   }
+
+  cleanText(){
+    textEditingController.clear();
+  }
 }
 
 class _chatInputWidget extends State<ChatInputWidget> {
-  final TextEditingController textEditingController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +62,7 @@ class _chatInputWidget extends State<ChatInputWidget> {
             child: Container(
               child: TextField(
                 style: TextStyle(fontSize: 15.0),
-                controller: textEditingController,
+                controller: widget.textEditingController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type your message...',
 //                  hintStyle: TextStyle(color: greyColor),
@@ -73,8 +79,9 @@ class _chatInputWidget extends State<ChatInputWidget> {
               child: new IconButton(
                 icon: new Icon(Icons.send),
                 onPressed: () {
-                  widget.sendMessage(textEditingController.text, 0);
-                  textEditingController.clear();
+                  if(widget.textEditingController.text.isNotEmpty){
+                    widget.sendMessage(widget.textEditingController.text, 0);
+                  }
                 },
 //                color: primaryColor,
               ),

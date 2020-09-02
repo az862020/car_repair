@@ -16,11 +16,11 @@ class MessageItem extends StatefulWidget {
   BuildContext context1;
   bool islast = false;
   bool showTime = false;
-  int timeStep = 30 * 60 * 1000;
+  int timeStep = 5 * 60 * 1000;
 
   MessageItem(this.msg, this.conversation, this.lastMsg, this.context1) {
     if (lastMsg == null || lastMsg.sendID != msg.sendID) islast = true;
-    if (lastMsg == null || msg.time - lastMsg.time > timeStep) showTime = true;
+    if (islast || msg.time - lastMsg.time > timeStep) showTime = true;
   }
 
   @override
@@ -39,19 +39,7 @@ class _messageItemState extends State<MessageItem> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        widget.showTime
-            ? Container(
-                child: Text(
-                  DateUtil.formatDate(
-                      DateTime.fromMillisecondsSinceEpoch(widget.msg.time)),
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12.0,
-                      fontStyle: FontStyle.italic),
-                ),
-                margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
-              )
-            : Container(),
+        getTimeWidget(),
         Row(
           mainAxisAlignment:
               isRight ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -65,6 +53,34 @@ class _messageItemState extends State<MessageItem> {
         )
       ],
     );
+  }
+
+  Widget getTimeWidget(){
+    //  yyyy/MM/dd HH:mm:ss
+    String format = 'HH:mm';
+    int lastTime = widget.lastMsg == null ? DateUtil.getNowDateMs(): widget.lastMsg.time;
+    var lastmsg = DateTime.fromMillisecondsSinceEpoch(lastTime);
+    var msg = DateTime.fromMillisecondsSinceEpoch(widget.msg.time);
+
+    if(msg.day != lastmsg.day){
+      widget.showTime = true;
+      if(msg.year != lastmsg.year) format = 'yyyy-MM-dd HH:mm';
+      else format = 'MM-dd HH:mm';
+    }
+
+    return widget.showTime || widget.islast
+        ? Container(
+      child: Text(
+        DateUtil.formatDate(
+            DateTime.fromMillisecondsSinceEpoch(widget.msg.time), format: format),
+        style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12.0,
+            fontStyle: FontStyle.italic),
+      ),
+      margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
+    )
+        : Container();
   }
 
   Widget getMessageContentWidget(bool isRight, BuildContext context) {
