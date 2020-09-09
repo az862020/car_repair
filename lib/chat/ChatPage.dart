@@ -1,18 +1,19 @@
-import 'package:car_repair/UserDetails/UserDetailsPage.dart';
 import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/chat/ChatInputWidget.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/fire_message_entity.dart';
+import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/fire_message_entity_helper.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'ChatStickerWidget.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:car_repair/utils/DBHelp.dart';
 
 import 'MessageItem.dart';
 
@@ -30,23 +31,9 @@ class ChatPage extends StatelessWidget {
     return MaterialApp(
       title: mTitle,
       theme: ThemeData(scaffoldBackgroundColor: Colors.grey[300]),
-      home: Scaffold(
-        appBar: AppBar(
-          title: AvatarWidget(
-            conversation.id,
-            conversation: conversation,
-            click: true,
-          ),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context)),
-        ),
-        body: ChatPageState(conversation, context, conversationName),
-      ),
+      home: ChatPageState(conversation, context, conversationName),
     );
   }
-
-  goDetails(BuildContext context) async {}
 }
 
 class ChatPageState extends StatefulWidget {
@@ -71,6 +58,7 @@ class _ChatPageState extends State<ChatPageState> {
   final FocusNode focusNode = new FocusNode();
   FireMessageEntity lastMsg;
   ChatInputWidget chatInputWidget;
+  UserInforEntity userInforEntity;
 
   @override
   void initState() {
@@ -80,6 +68,7 @@ class _ChatPageState extends State<ChatPageState> {
     focusNode.addListener(onFocusChange);
     dataStream = FireStoreUtils.getMessageList(widget.conversation.id);
     chatInputWidget = ChatInputWidget(onSendMessage, focusNode, getSticker);
+    _loadUserShip();
   }
 
   @override
@@ -96,50 +85,72 @@ class _ChatPageState extends State<ChatPageState> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              // List of messages
-              buildListMessage(),
-
-              // Sticker
-              (isShowSticker
-                  ? ChatStickerWidget(onSendMessage, focusNode, isShowSticker)
-                  : Container()),
-
-              // Input content
-              chatInputWidget,
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title:
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          AvatarWidget(
+            widget.conversation.id,
+            conversation: widget.conversation,
+//                click: true,
           ),
-
-          // Loading
-          buildLoading()
-        ],
+          IconButton(
+            icon: Icon(Icons.more_horiz),
+            onPressed: () => goDetails(context),
+          )
+        ]),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(widget.buildContext)),
       ),
-      onWillPop: onBackPress,
+      body: WillPopScope(
+        child: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                // List of messages
+                buildListMessage(),
+
+                // Sticker
+                (isShowSticker
+                    ? ChatStickerWidget(onSendMessage, focusNode, isShowSticker)
+                    : Container()),
+
+                // Input content
+                chatInputWidget,
+              ],
+            ),
+            buildLoading(),
+            buildAddFriendTip()
+          ],
+        ),
+        onWillPop: onBackPress,
+      ),
     );
+  }
+
+  goDetails(BuildContext context) async {
+    if (widget.conversation.chattype == 0) {
+      if (userInforEntity != null) {
+        //todo goto user ship set page. remove friend or remark display name.
+        print('!!! here should goto details.');
+      }
+    } else {}
   }
 
   Future<bool> onBackPress() {
     print('!!! back in chat page');
-    if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
-      });
-    } else {
+    if (isShowSticker)
+      setState(() => isShowSticker = false);
+    else
       Navigator.pop(context);
-    }
     return Future.value(false);
   }
 
   void onFocusChange() {
     if (focusNode.hasFocus) {
       // Hide sticker when keyboard appear
-      setState(() {
-        isShowSticker = false;
-      });
+      setState(() => isShowSticker = false);
     }
   }
 
@@ -217,6 +228,56 @@ class _ChatPageState extends State<ChatPageState> {
     );
   }
 
+  buildAddFriendTip() {
+    return Positioned(
+      child: (userInforEntity != null && userInforEntity.isFriend != 0)
+          ? Container(
+              padding: EdgeInsets.only(left: 20.0, right: 10.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Add Friend'),
+                    IconButton(
+                        icon: Icon(Icons.person_add),
+                        onPressed: () => _sendAddFriend())
+                  ]),
+              color: Colors.white,
+            )
+          : Container(),
+    );
+  }
+
+  _loadUserShip() {
+    if (widget.conversation.chattype == 0) {
+      List<String> ids = List();
+      ids.addAll(widget.conversation.user);
+      ids.remove(Config.user.uid);
+      UserInfoManager.getUserInfo(ids.first).then((userShip) {
+        if (userShip.isFriend != 1) {
+          setState(() {
+            userInforEntity = userShip;
+          });
+        }
+      });
+    }
+  }
+
+  _sendAddFriend() {
+    print('!!! here send add friend request.');
+    Config.showLoadingDialog(context);
+    UserInfoManager.operatiorUser(userInforEntity, friend: true).then((value) {
+      Navigator.of(context).pop();
+      setState(() {
+        print('!!! add friend ok  ');
+        userInforEntity.isFriend = 1;
+      });
+      cacheUserInfor(userInforEntity);
+    }).catchError((e) {
+      Navigator.of(context).pop();
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e)));
+    });
+  }
+
   onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
@@ -227,7 +288,8 @@ class _ChatPageState extends State<ChatPageState> {
       msg.time = DateUtil.getNowDateMs();
 
       FireStoreUtils.addMessageToConversation(widget.conversation.id, msg)
-          .catchError((e) => Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))))
+          .catchError((e) =>
+              Scaffold.of(context).showSnackBar(SnackBar(content: Text(e))))
           .then((value) {
         chatInputWidget.cleanText();
         listScrollController.animateTo(0.0,

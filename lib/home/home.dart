@@ -6,6 +6,7 @@ import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/home/Conversation.dart';
+import 'package:car_repair/home/FriendsPage.dart';
 import 'package:car_repair/home/MapPage.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
@@ -44,6 +45,7 @@ class _HomePageState extends State<_HomePage>
   FireUserInfoEntity userInfo;
   static final String squareString = 'Funny mud pee';
   static final String chatString = 'Balabala';
+  static final String friendsString = 'bromance';
   static final String mapString = 'Map';
 
   List<String> tabs = [];
@@ -100,6 +102,11 @@ class _HomePageState extends State<_HomePage>
       print('!!! add chat');
       tabs.add(chatString);
       tabViews.add(ConversationPage());
+    }
+    if ((userInfo.friends ?? false)) {
+      print('!!! add friends');
+      tabs.add(friendsString);
+      tabViews.add(FriendsPage());
     }
     if ((userInfo.map ?? false)) {
       print('!!! add map');

@@ -34,6 +34,9 @@ fireUserInfoEntityFromJson(FireUserInfoEntity data, Map<String, dynamic> json) {
 	if (json['square'] != null) {
 		data.square = json['square'];
 	}
+	if (json['friends'] != null) {
+		data.friends = json['friends'];
+	}
 	return data;
 }
 
@@ -50,5 +53,6 @@ Map<String, dynamic> fireUserInfoEntityToJson(FireUserInfoEntity entity) {
 	data['chat'] = entity.chat;
 	data['map'] = entity.map;
 	data['square'] = entity.square;
+	data['friends'] = entity.friends;
 	return data;
 }

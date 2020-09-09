@@ -6,7 +6,6 @@ import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/conversation_entity.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// when conversation is null, userID just can be single user's id.

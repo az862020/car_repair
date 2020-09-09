@@ -12,4 +12,5 @@ class FireUserInfoEntity with JsonConvert<FireUserInfoEntity> {
 	bool chat;
 	bool map;
 	bool square;
+	bool friends;
 }

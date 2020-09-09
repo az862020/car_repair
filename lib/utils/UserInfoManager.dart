@@ -47,7 +47,7 @@ class UserInfoManager {
    * opertaor user relationship,
    * add or remove friend / blacklist, or edit remarkName
    */
-  static operatiorUser(UserInforEntity entity,
+  static Future<void> operatiorUser(UserInforEntity entity,
       {friend: bool, black: bool, remark: String}) {
     if (friend != null) return FireStoreUtils.operatorFriend(entity, friend);
     if (black != null) return FireStoreUtils.operatorBlackList(entity, black);
