@@ -8,40 +8,16 @@ import 'package:flutter/material.dart';
 import 'BottomMore.dart';
 import '../home/SquareCard.dart';
 
-class MyFavorateList extends MoreListWidget {
-  String uid;
-  MyFavorateList(this.uid);
-
-  @override
-  DocumentReference getListMap() {
-    return FireStoreUtils.getMyFavoratedList(uid);
-  }
-}
-
-class MyPublishList extends MoreListWidget {
-  final String uid;
-  MyPublishList(this.uid);
-
-  @override
-  DocumentReference getListMap() {
-    return FireStoreUtils.getMySquareList(uid);
-  }
-}
-
-abstract class MoreListWidget extends StatefulWidget{
+abstract class MoreListWidget extends StatefulWidget {
   DocumentReference getListMap();
 
   @override
   State<StatefulWidget> createState() {
     return MoreListState();
   }
-
-
 }
 
-
- class MoreListState extends State<MoreListWidget> {
-
+class MoreListState extends State<MoreListWidget> {
   int commentStep = 20;
   bool isLoading = false;
   bool isEnd = false;
@@ -50,12 +26,10 @@ abstract class MoreListWidget extends StatefulWidget{
 
   Map<String, dynamic> lists;
 
-
-
   @override
   void initState() {
     super.initState();
-    widget.getListMap().get().then((value){
+    widget.getListMap().get().then((value) {
       lists = value.data();
       if (lists == null) {
         lists = Map();
@@ -89,16 +63,15 @@ abstract class MoreListWidget extends StatefulWidget{
         child: ListView.builder(
           itemBuilder: _renderItem,
           itemCount:
-          dataList.length == 0 ? 1 : dataList.length + (isEnd ? 1 : 2),
+              dataList.length == 0 ? 1 : dataList.length + (isEnd ? 1 : 2),
           controller: _scrollController,
         ),
       ),
     );
   }
 
-
   Widget _renderItem(BuildContext context, int index) {
-    if (index < dataList.length ) {
+    if (index < dataList.length) {
       return _buildListItem(context: context, index: index);
     }
     return BottomMore.getMoreWidget(isEnd);
@@ -114,13 +87,16 @@ abstract class MoreListWidget extends StatefulWidget{
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: SquareCard(square, (square) {
         square.click += 1;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SquareDetails(square, data.reference)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SquareDetails(square, data.reference)));
         data.reference.update({'click': FieldValue.increment(1)});
       }),
     );
   }
 
-  Future _getData() async{
+  Future _getData() async {
     if (isLoading || lists == null || isEnd) return;
     isLoading = true;
 
@@ -132,12 +108,12 @@ abstract class MoreListWidget extends StatefulWidget{
 //      if (list.length < commentStep) {
 //        isEnd = true;
 //      }
-        isEnd = true;
+      isEnd = true;
       dataList.addAll(list);
     });
   }
 
-  Future<Null> _refreshData() async{
+  Future<Null> _refreshData() async {
     lists?.clear();
 
     dataList.clear();

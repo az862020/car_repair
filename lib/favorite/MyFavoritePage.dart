@@ -55,8 +55,18 @@ class FavoriteState extends State<FavoritePage>{
   Widget build(BuildContext context) {
     return MyFavorateList(widget.uid);
   }
-
 }
+
+class MyFavorateList extends MoreListWidget {
+  String uid;
+  MyFavorateList(this.uid);
+
+  @override
+  DocumentReference getListMap() {
+    return FireStoreUtils.getMyFavoratedList(uid);
+  }
+}
+
 
 
 class _FavoriteState extends State<FavoritePage> {

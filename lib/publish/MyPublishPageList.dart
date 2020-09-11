@@ -56,7 +56,16 @@ class PublishListState extends State<PublishListPage>{
   Widget build(BuildContext context) {
     return MyPublishList(widget.uid);
   }
+}
 
+class MyPublishList extends MoreListWidget {
+  final String uid;
+  MyPublishList(this.uid);
+
+  @override
+  DocumentReference getListMap() {
+    return FireStoreUtils.getMySquareList(uid);
+  }
 }
 
 
