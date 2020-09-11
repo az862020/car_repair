@@ -43,25 +43,23 @@ class MyPublishListPage extends StatelessWidget {
 
 class PublishListPage extends StatefulWidget {
   final String uid;
-
   PublishListPage(this.uid);
 
   @override
   State<StatefulWidget> createState() {
-    return MyPublishList(uid);
+    return PublishListState();
   }
 }
 
-class MyPublishList extends MoreListWidget {
-  final String uid;
-
-  MyPublishList(this.uid);
-
+class PublishListState extends State<PublishListPage>{
   @override
-  DocumentReference getListMap() {
-    return FireStoreUtils.getMySquareList(uid);
+  Widget build(BuildContext context) {
+    return MyPublishList(widget.uid);
   }
+
 }
+
+
 
 class _PublisthListState extends State<PublishListPage> {
   @override

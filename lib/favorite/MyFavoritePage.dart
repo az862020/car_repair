@@ -42,27 +42,22 @@ class MyFavoritePage extends StatelessWidget {
 
 class FavoritePage extends StatefulWidget {
   String uid;
-
   FavoritePage(this.uid);
 
   @override
   State<StatefulWidget> createState() {
-    return MyFavorateList(uid);
-//    return MoreListWidget();
+    return FavoriteState();
   }
 }
 
-class MyFavorateList extends MoreListWidget {
-  String uid;
-
-
-  MyFavorateList(this.uid);
-
+class FavoriteState extends State<FavoritePage>{
   @override
-  DocumentReference getListMap() {
-    return FireStoreUtils.getMyFavoratedList(uid);
+  Widget build(BuildContext context) {
+    return MyFavorateList(widget.uid);
   }
+
 }
+
 
 class _FavoriteState extends State<FavoritePage> {
   @override

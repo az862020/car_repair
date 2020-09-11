@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/entity/Square.dart';

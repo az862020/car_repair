@@ -8,10 +8,41 @@ import 'package:flutter/material.dart';
 import 'BottomMore.dart';
 import '../home/SquareCard.dart';
 
-abstract class MoreListWidget extends State {
+class MyFavorateList extends MoreListWidget {
+  String uid;
+  MyFavorateList(this.uid);
+
+  @override
+  DocumentReference getListMap() {
+    return FireStoreUtils.getMyFavoratedList(uid);
+  }
+}
+
+class MyPublishList extends MoreListWidget {
+  final String uid;
+  MyPublishList(this.uid);
+
+  @override
+  DocumentReference getListMap() {
+    return FireStoreUtils.getMySquareList(uid);
+  }
+}
+
+abstract class MoreListWidget extends StatefulWidget{
+  DocumentReference getListMap();
+
+  @override
+  State<StatefulWidget> createState() {
+    return MoreListState();
+  }
+
+
+}
+
+
+ class MoreListState extends State<MoreListWidget> {
 
   int commentStep = 20;
-  bool isSend = false;
   bool isLoading = false;
   bool isEnd = false;
   List<DocumentSnapshot> dataList = List();
@@ -19,12 +50,12 @@ abstract class MoreListWidget extends State {
 
   Map<String, dynamic> lists;
 
-  DocumentReference getListMap();
+
 
   @override
   void initState() {
     super.initState();
-    getListMap().get().then((value){
+    widget.getListMap().get().then((value){
       lists = value.data();
       if (lists == null) {
         lists = Map();
