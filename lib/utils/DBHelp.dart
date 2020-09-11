@@ -186,6 +186,7 @@ Future<Null> updateUploadEntity(UploadEntity uploadEntity) async {
 ///***************** UploadEntity *********************
 
 ///**********************UserInfo*******************************
+
 Future<UserInforEntity> getUserInfor(String userID) async {
   final Database db = await database;
   List<Map<String, dynamic>> data =
@@ -206,6 +207,28 @@ Future<void> cacheUserInfor(UserInforEntity entity) async {
   } else {
     db.insert(USERINFO, entity.toJson());
   }
+}
+
+Future<List<UserInforEntity>> queryFriends() async{
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+  await db.query(USERINFO, where: 'isFriend = ?', whereArgs: [1]);
+  List<UserInforEntity> result = List();
+  for(Map<String, dynamic> value in data){
+    result.add(userInforEntityFromJson(UserInforEntity(), value));
+  }
+  return result;
+}
+
+Future<List<UserInforEntity>> queryBlackList() async{
+  final Database db = await database;
+  List<Map<String, dynamic>> data =
+  await db.query(USERINFO, where: 'isBlack = ?', whereArgs: [1]);
+  List<UserInforEntity> result = List();
+  for(Map<String, dynamic> value in data){
+    result.add(userInforEntityFromJson(UserInforEntity(), value));
+  }
+  return result;
 }
 
 ///**********************UserInfo*******************************

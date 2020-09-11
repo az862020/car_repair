@@ -5,10 +5,10 @@ import 'package:car_repair/generated/json/user_infor_entity_helper.dart';
 import 'DBHelp.dart';
 
 class UserInfoManager {
-  /**
-   * get userinfo from local, if none get it from net and cache it.
-   * if isNetFirst is true, then get data from net firest and cache it later.
-   */
+  /// get userinfo from local, if none get it from net and cache it.
+
+  /// if isNetFirst is true, then get data from net firest and cache it later.
+
   static Future<UserInforEntity> getUserInfo(String uid,
       {bool isNetFirst}) async {
     var localUser = await getUserInfor(uid);
@@ -43,14 +43,40 @@ class UserInfoManager {
     cacheUserInfor(entity);
   }
 
-  /**
-   * opertaor user relationship,
-   * add or remove friend / blacklist, or edit remarkName
-   */
+  /// opertaor user relationship,
+  /// add or remove friend / blacklist, or edit remarkName
   static Future<void> operatiorUser(UserInforEntity entity,
       {friend: bool, black: bool, remark: String}) {
     if (friend != null) return FireStoreUtils.operatorFriend(entity, friend);
     if (black != null) return FireStoreUtils.operatorBlackList(entity, black);
     if (remark != null) return FireStoreUtils.editUserRemarkName(entity, remark);
   }
+
+  /// get friends list from local
+  static Future<List<UserInforEntity>> getFriendList() async{
+    var friends = await queryFriends();
+    return friends;
+  }
+
+  /// get friends list from local
+  static Future<List<UserInforEntity>> getBlackList() async{
+    var blacklist = await queryBlackList();
+    return blacklist;
+  }
+
+  /// get relation ship list from net, and cache it.
+  static Future<bool> RefreshShip() {
+    FireStoreUtils.getFriendList().then((shiplist) {
+      for(var user in shiplist){
+        cacheUserInfor(user);
+      }
+      print('!!! ship list cache finish.');
+      return true;
+    }).catchError((e){
+      print('!!! $e');
+      return false;
+    });
+
+  }
+
 }
