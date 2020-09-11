@@ -26,7 +26,12 @@ class AvatarWidget extends StatefulWidget {
   UserInforEntity userInforEntity;
   GlobalKey key;
 
-  AvatarWidget(this.userID, {this.conversation, this.click, this.key});
+  AvatarWidget(this.userID, {this.conversation, this.click, this.key, this.userInforEntity}){
+    if(userInforEntity != null){
+      name = userInforEntity.remarkName ?? userInforEntity.displayName;
+      photo = userInforEntity.photoUrl ?? '';
+    }
+  }
 
   @override
   State<StatefulWidget> createState() {

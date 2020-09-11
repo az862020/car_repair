@@ -65,17 +65,18 @@ class UserInfoManager {
   }
 
   /// get relation ship list from net, and cache it.
-  static Future<bool> RefreshShip() {
-    FireStoreUtils.getFriendList().then((shiplist) {
+  static Future<bool> RefreshShip() async{
+    try {
+      var shiplist = await FireStoreUtils.getFriendList();
       for(var user in shiplist){
-        cacheUserInfor(user);
-      }
+            cacheUserInfor(user);
+          }
       print('!!! ship list cache finish.');
       return true;
-    }).catchError((e){
-      print('!!! $e');
+    } catch (e) {
+      print(e);
       return false;
-    });
+    }
 
   }
 
