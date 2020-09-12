@@ -103,12 +103,9 @@ class Config {
   }
 
   static Future<BuildContext> showLoadingDialog(BuildContext context) async {
-    MyLoadingDialog dialog = MyLoadingDialog();
     return showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) {
-          return dialog;
-        });
+        builder: (context) => MyLoadingDialog());
   }
 }

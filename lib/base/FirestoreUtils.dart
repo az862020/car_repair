@@ -29,6 +29,7 @@ class FireStoreUtils {
   static final int SIGNATURE = 3; //签名
   static final int BACKGROUND = 4; //头像背景
   static final int CHAT = 5; //是否显示聊天
+  static final int FRIENDS = 6; //是否显示好友列表
 
   static const int isBlack = 1; //是拉黑状态
   static const int isFriend = 1; //是好友
@@ -41,7 +42,8 @@ class FireStoreUtils {
     'sex',
     'signature',
     'background',
-    'chat'
+    'chat',
+    'friends'
   ];
 
   static getUserlistDocumentReferenece(String type, String uid) {
@@ -385,7 +387,7 @@ class FireStoreUtils {
     return result;
   }
 
-  static Future<void> operatorRelationShipType(
+  static operatorRelationShipType(
       UserInforEntity user, String key, dynamic value) async {
     String path = '$STORE_USERINFO/${Config.user.uid}/$STORE_RELATIONSHIP';
     var query = Config.fireStore.collection(path).doc(user.uid);
@@ -413,15 +415,15 @@ class FireStoreUtils {
     return getRelationShipList(blacklist: true);
   }
 
-  static Future<void> operatorFriend(UserInforEntity user, bool firend) async {
-    return operatorRelationShipType(user, 'isFriend', firend ? 1 : 0);
+  static operatorFriend(UserInforEntity user, bool firend){
+    return operatorRelationShipType(user, 'isFriend', (firend ? 1 : 0));
   }
 
-  static Future<void> operatorBlackList(UserInforEntity user, bool black) {
-    return operatorRelationShipType(user, 'isBlack', black ? 1 : 0);
+  static operatorBlackList(UserInforEntity user, bool black) {
+    return operatorRelationShipType(user, 'isBlack', (black ? 1 : 0));
   }
 
-  static Future<void> editUserRemarkName(
+  static editUserRemarkName(
       UserInforEntity user, String remarkName) {
     return operatorRelationShipType(user, 'remarkName', remarkName);
   }

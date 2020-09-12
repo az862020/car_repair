@@ -39,8 +39,7 @@ class _HomePage extends StatefulWidget {
   }
 }
 
-class _HomePageState extends State<_HomePage>
-    with TickerProviderStateMixin {
+class _HomePageState extends State<_HomePage> with TickerProviderStateMixin {
   final String mTitle = 'home';
   FireUserInfoEntity userInfo;
   static final String squareString = 'Funny mud pee';
@@ -52,6 +51,7 @@ class _HomePageState extends State<_HomePage>
   List<Widget> tabViews = [];
   TabController _tabController;
   StreamSubscription startChat;
+  StreamSubscription startFriends;
 
   @override
   void initState() {
@@ -59,16 +59,16 @@ class _HomePageState extends State<_HomePage>
     userInfo = Config.userInfo;
     initTabs();
     _tabController = TabController(length: tabs.length, vsync: this);
-    startChat = eventBus.on<StartChatEvent>().listen((event) {
-      print('!!! here listen event.');
-      _startChat();
-    });
+    startChat = eventBus.on<StartChatEvent>().listen((event) => _startChat());
+    startFriends =
+        eventBus.on<FriendEvent>().listen((event) => _startFriends(event));
     if (userInfo == null) _refreshHomeState();
   }
 
   @override
   void dispose() {
     startChat?.cancel();
+    startFriends?.cancel();
     super.dispose();
   }
 
@@ -151,7 +151,8 @@ class _HomePageState extends State<_HomePage>
   _refreshHomeState() {
     FireStoreUtils.queryUserinfo(widget.user.uid).then((value) {
       setState(() {
-        userInfo = fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
+        userInfo =
+            fireUserInfoEntityFromJson(FireUserInfoEntity(), value.data());
         Config.userInfo = userInfo;
         UserInfoManager.refreshSelf();
         tabs.clear();
@@ -162,23 +163,46 @@ class _HomePageState extends State<_HomePage>
     });
   }
 
-  _startChat() async {
+  _startChat() {
     print('!!! start show chat in home. ${userInfo.chat ?? false}');
     if (!tabs.contains(chatString)) {
-      await setState(() {
-      userInfo.chat = true;
-      tabs.clear();
-      tabViews.clear();
-      initTabs();
-      var chatIndex = tabs.indexOf(chatString);
-      print('!!! $chatIndex');
+      setState(() {
+        userInfo.chat = true;
+        tabs.clear();
+        tabViews.clear();
+        initTabs();
+        var chatIndex = tabs.indexOf(chatString);
+        print('!!! $chatIndex');
         _tabController = TabController(
-            vsync: this, length: tabs.length, initialIndex: chatIndex>=0?chatIndex:0);
+            vsync: this,
+            length: tabs.length,
+            initialIndex: chatIndex >= 0 ? chatIndex : 0);
         FireStoreUtils.updateUserinfo(true, FireStoreUtils.CHAT, Config.user);
       });
-    } else {
-      if (_tabController.index != tabs.indexOf(chatString))
-        _tabController.animateTo(tabs.indexOf(chatString));
+    }
+    // else {
+    //   if (_tabController.index != tabs.indexOf(chatString))
+    //     _tabController.animateTo(tabs.indexOf(chatString));
+    // }
+  }
+
+  _startFriends(FriendEvent event) {
+    print('!!! start show friend in home. ${userInfo.friends ?? false}');
+    if (!tabs.contains(friendsString)) {
+      setState(() {
+        userInfo.friends = true;
+        tabs.clear();
+        tabViews.clear();
+        initTabs();
+        var friendsIndex = tabs.indexOf(friendsString);
+        print('!!! $friendsIndex');
+        _tabController = TabController(
+            vsync: this,
+            length: tabs.length,
+            initialIndex: friendsIndex >= 0 ? friendsIndex : 0);
+        FireStoreUtils.updateUserinfo(
+            true, FireStoreUtils.FRIENDS, Config.user);
+      });
     }
   }
 }

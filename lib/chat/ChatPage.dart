@@ -230,7 +230,7 @@ class _ChatPageState extends State<ChatPageState> {
 
   buildAddFriendTip() {
     return Positioned(
-      child: (userInforEntity != null && userInforEntity.isFriend != 0)
+      child: (userInforEntity != null && userInforEntity.isFriend != 1)
           ? Container(
               padding: EdgeInsets.only(left: 20.0, right: 10.0),
               child: Row(
@@ -266,14 +266,13 @@ class _ChatPageState extends State<ChatPageState> {
     print('!!! here send add friend request.');
     Config.showLoadingDialog(context);
     UserInfoManager.operatiorUser(userInforEntity, friend: true).then((value) {
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       setState(() {
         print('!!! add friend ok  ');
         userInforEntity.isFriend = 1;
       });
-      cacheUserInfor(userInforEntity);
     }).catchError((e) {
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(e)));
     });
   }

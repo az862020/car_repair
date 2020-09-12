@@ -1,5 +1,6 @@
-
 import 'package:car_repair/base/CloudImageProvider.dart';
+import 'package:car_repair/base/Config.dart';
+import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/base/FirestoreUtils.dart';
 import 'package:car_repair/chat/ChatPage.dart';
 import 'package:car_repair/entity/fire_user_info_entity.dart';
@@ -7,6 +8,8 @@ import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/generated/json/fire_user_info_entity_helper.dart';
 import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';
+import 'package:car_repair/utils/DBHelp.dart';
+import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -104,11 +107,14 @@ class UserDetailsState extends State<UserDetails> {
                         children: [
                           Text(
                               'Gender is ${fireuser == null || fireuser.sex == null || fireuser.sex.isEmpty ? 'a secret' : fireuser.sex}'),
+                          (widget.userInforEntity.isFriend == 1
+                              ? Container()
+                              : IconButton(
+                                  icon: Icon(Icons.person_add),
+                                  onPressed: () => _sendAddFriend())),
                           IconButton(
-                              icon: Icon(Icons.chat), onPressed: () {
-                            print('!!! chat button click ');
-                            _goChat();
-                          } ),
+                              icon: Icon(Icons.chat),
+                              onPressed: () => _goChat()),
                         ],
                       ),
                     ),
@@ -141,7 +147,8 @@ class UserDetailsState extends State<UserDetails> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => MyPublishListPage(fireuser.uid)));
+                              builder: (context) =>
+                                  MyPublishListPage(fireuser.uid)));
                     },
                     child: Card(
                       child: Container(
@@ -172,6 +179,23 @@ class UserDetailsState extends State<UserDetails> {
           MaterialPageRoute(
               builder: (context) => ChatPage(
                   entity, widget.name, widget.userInforEntity.photoUrl)));
+    });
+  }
+
+  void _sendAddFriend() {
+    print('!!! here send add friend request.');
+    Config.showLoadingDialog(context);
+    UserInfoManager.operatiorUser(widget.userInforEntity, friend: true)
+        .then((v) {
+      print('!!! add friend ok  ');
+      Navigator.of(context, rootNavigator: true).pop();
+      setState(() {
+        widget.userInforEntity.isFriend = 1;
+      });
+    }).catchError((e) {
+      print('!!! userDetail add friend $e');
+      Navigator.of(context, rootNavigator: true).pop();
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e)));
     });
   }
 

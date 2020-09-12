@@ -1,4 +1,4 @@
-import 'package:car_repair/base/FirestoreUtils.dart';
+import 'package:car_repair/utils/DBHelp.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:car_repair/widget/UserListWidget.dart';
@@ -49,7 +49,7 @@ class FriendsListState extends State<FriendsPage>
 
 class FriendsList extends UserListWidget{
   @override
-  Future<bool> UndoRemove(UserInforEntity user) async{
+  Future<void>  UndoRemove(UserInforEntity user) {
     return _operator(user, true);
   }
 
@@ -59,18 +59,12 @@ class FriendsList extends UserListWidget{
   }
 
   @override
-  Future<bool> removeItem(UserInforEntity user) {
+  Future<void> removeItem(UserInforEntity user) {
     return _operator(user, false);
   }
 
-  Future<bool> _operator(UserInforEntity user, bool isFriend) async{
-    try {
-      await UserInfoManager.operatiorUser(user, friend: isFriend);
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
-    }
+  Future<void> _operator(UserInforEntity user, bool isFriend) {
+    return UserInfoManager.operatiorUser(user, friend: isFriend, event: false);
   }
 
 }
