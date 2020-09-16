@@ -44,7 +44,7 @@ class UserInfoManager {
   /// opertaor user relationship,
   /// add or remove friend / blacklist, or edit remarkName
   static Future<void> operatiorUser(UserInforEntity entity,
-      {friend: bool, black: bool, remark: String, event: true}) async {
+      {bool friend, bool black, String remark, event: true}) async {
     if (friend != null) {
       await FireStoreUtils.operatorFriend(entity, friend);
       entity.isFriend = friend ? 1 : 0;
@@ -71,6 +71,12 @@ class UserInfoManager {
   /// get friends list from local
   static Future<List<UserInforEntity>> getFriendList() async {
     var friends = await queryFriends();
+    for (int i = friends.length - 1; i >= 0; i--) {
+      var user = friends[i];
+      if (user != null && user.isBlack == 1) {
+        friends.removeAt(i);
+      }
+    }
     return friends;
   }
 

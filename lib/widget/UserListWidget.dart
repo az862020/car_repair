@@ -1,11 +1,17 @@
 import 'dart:async';
 
+import 'package:car_repair/base/Config.dart';
 import 'package:car_repair/base/Events.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/widget/AvatarWidget.dart';
 import 'package:flutter/material.dart';
 
 abstract class UserListWidget extends StatefulWidget {
+  bool isNotifyBlack;
+  bool isNotifyFriend;
+
+  UserListWidget({this.isNotifyBlack, this.isNotifyFriend});
+
   @override
   State<StatefulWidget> createState() {
     return UserListState();
@@ -21,12 +27,18 @@ abstract class UserListWidget extends StatefulWidget {
 class UserListState extends State<UserListWidget> {
   List<UserInforEntity> dataList = List();
   StreamSubscription startFriends;
+  StreamSubscription blackChange;
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    startFriends = eventBus.on<FriendEvent>().listen((event) => _refreshData());
+    if (widget.isNotifyFriend ?? true)
+      startFriends =
+          eventBus.on<FriendEvent>().listen((event) => _refreshData());
+    if (widget.isNotifyBlack ?? true)
+      blackChange =
+          eventBus.on<BlackListEvent>().listen((event) => _refreshData());
     _getData();
   }
 
@@ -34,6 +46,7 @@ class UserListState extends State<UserListWidget> {
   void dispose() {
     super.dispose();
     startFriends?.cancel();
+    blackChange?.cancel();
     dataList.clear();
   }
 
@@ -48,17 +61,17 @@ class UserListState extends State<UserListWidget> {
     );
   }
 
-  void _getData({clear:false}){
+  void _getData({clear: false}) {
     if (isLoading) return;
     isLoading = true;
     widget.getListData().then((list) {
-      if(clear)dataList.clear();
+      if (clear) dataList.clear();
       dataList.addAll(list);
       setState(() => isLoading = false);
     });
   }
 
-  Future<void> _refreshData() async{
+  Future<void> _refreshData() async {
     print('!!! refreshData');
     _getData(clear: true);
   }
@@ -100,31 +113,37 @@ class UserListState extends State<UserListWidget> {
   }
 
   _remove(int index, UserInforEntity item, BuildContext context) {
+    Config.showLoadingDialog(context);
     widget.removeItem(item).then((v) {
       setState(() {
         bool val = dataList.remove(item);
         print('!!! remove friend $val');
-        if(!val) dataList.removeAt(index);
+        if (!val) dataList.removeAt(index);
       });
+      Navigator.of(context, rootNavigator: true).pop();
       Scaffold.of(context).showSnackBar(SnackBar(
           content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("${item.displayName} removed"),
-              IconButton(
-                icon: Icon(Icons.autorenew),
-                onPressed: () {
-                  widget.UndoRemove(item).then((v) {
-                      _refreshData();
-                  }).catchError((e){
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('undo failed...')));
-                  });
-                },
-              )
-            ],
-          )));
-    }).catchError((e){
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("${item.displayName} removed"),
+          IconButton(
+            icon: Icon(Icons.autorenew),
+            onPressed: () {
+              Config.showLoadingDialog(context);
+              widget.UndoRemove(item).then((v) {
+                Navigator.of(context, rootNavigator: true).pop();
+                _refreshData();
+              }).catchError((e) {
+                Navigator.of(context, rootNavigator: true).pop();
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text('undo failed...')));
+              });
+            },
+          )
+        ],
+      )));
+    }).catchError((e) {
+      Navigator.of(context, rootNavigator: true).pop();
       print('!!! $e');
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Remove failed...')));

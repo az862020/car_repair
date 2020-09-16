@@ -1,4 +1,3 @@
-import 'package:car_repair/utils/DBHelp.dart';
 import 'package:car_repair/entity/user_infor_entity.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
 import 'package:car_repair/widget/UserListWidget.dart';
@@ -47,7 +46,9 @@ class FriendsListState extends State<FriendsPage>
 
 }
 
+/// friends list just receiver , do not send event.
 class FriendsList extends UserListWidget{
+
   @override
   Future<void>  UndoRemove(UserInforEntity user) {
     return _operator(user, true);
@@ -66,5 +67,6 @@ class FriendsList extends UserListWidget{
   Future<void> _operator(UserInforEntity user, bool isFriend) {
     return UserInfoManager.operatiorUser(user, friend: isFriend, event: false);
   }
+
 
 }

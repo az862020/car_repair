@@ -10,7 +10,6 @@ import 'package:car_repair/publish/MyNewPublishPage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';
 import 'package:car_repair/utils/DBHelp.dart';
 import 'package:car_repair/utils/UserInfoManager.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserDetailsPage extends StatelessWidget {
@@ -111,11 +110,32 @@ class UserDetailsState extends State<UserDetails> {
                               ? Container()
                               : IconButton(
                                   icon: Icon(Icons.person_add),
-                                  onPressed: () => _sendAddFriend())),
+                                  onPressed: () => _sendAddFriend(context))),
                           IconButton(
                               icon: Icon(Icons.chat),
                               onPressed: () => _goChat()),
                         ],
+                      ),
+                    ),
+                  ),
+                  Container(height: 20),
+                  Card(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 15, right: 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Is in your black list'),
+                            widget.userInforEntity == null
+                                ? Container()
+                                : Switch(
+                                    value: widget.userInforEntity.isBlack == 1,
+                                    onChanged: (check) =>
+                                        _blackListOper(check, context)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -182,7 +202,16 @@ class UserDetailsState extends State<UserDetails> {
     });
   }
 
-  void _sendAddFriend() {
+  void _queryFireuserInfo() {
+    FireStoreUtils.queryUserinfo(widget.userInforEntity.uid).then((doc) {
+      setState(() {
+        fireuser = fireUserInfoEntityFromJson(FireUserInfoEntity(), doc.data());
+        fireuser.uid = doc.id;
+      });
+    });
+  }
+
+  void _sendAddFriend(BuildContext context) {
     print('!!! here send add friend request.');
     Config.showLoadingDialog(context);
     UserInfoManager.operatiorUser(widget.userInforEntity, friend: true)
@@ -199,12 +228,21 @@ class UserDetailsState extends State<UserDetails> {
     });
   }
 
-  void _queryFireuserInfo() {
-    FireStoreUtils.queryUserinfo(widget.userInforEntity.uid).then((doc) {
+  void _blackListOper(bool check, BuildContext context) {
+    print('!!! here operator black list $check');
+    Config.showLoadingDialog(context);
+    UserInfoManager.operatiorUser(widget.userInforEntity, black: check)
+        .then((v) {
+      print('!!! black list operator ok  ');
+      Navigator.of(context, rootNavigator: true).pop();
       setState(() {
-        fireuser = fireUserInfoEntityFromJson(FireUserInfoEntity(), doc.data());
-        fireuser.uid = doc.id;
+        widget.userInforEntity.isBlack = check ? 1 : 0;
       });
+    }).catchError((e) {
+      print('!!! userDetail black list $e');
+      Navigator.of(context, rootNavigator: true).pop();
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(e)));
+      setState(() {});
     });
   }
 }

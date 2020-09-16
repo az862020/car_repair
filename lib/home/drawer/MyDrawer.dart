@@ -2,7 +2,8 @@ import 'package:car_repair/Account/MyImagePick/MyImagePickerPage.dart';
 import 'package:car_repair/Account/MySettingsPage.dart';
 import 'package:car_repair/base/CloudImageProvider.dart';
 import 'package:car_repair/base/Config.dart';
-import 'package:car_repair/favorite/MyFavoritePage.dart';
+import 'package:car_repair/settings/BlackListPage.dart';
+import 'package:car_repair/settings/MyFavoritePage.dart';
 import 'package:car_repair/publish/MyPublishPageList.dart';
 import 'file:///C:/Users/admin/StudioProjects/car_repair/lib/UserDetails/MyEditDisplayNamePage.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +65,18 @@ class _MyDrawerState extends State<MyDrawer> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => MyFavoritePage(Config.user.uid)));
+            },
+          ),
+          ListTile(
+            title: Text('BlackList'),
+            leading: new CircleAvatar(
+              child: new Icon(Icons.list_alt),
+            ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BlackListPage()));
             },
           ),
           ListTile(
