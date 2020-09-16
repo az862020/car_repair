@@ -55,31 +55,36 @@ class _messageItemState extends State<MessageItem> {
     );
   }
 
-  Widget getTimeWidget(){
+  Widget getTimeWidget() {
     //  yyyy/MM/dd HH:mm:ss
-    String format = 'HH:mm';
-    int lastTime = widget.lastMsg == null ? DateUtil.getNowDateMs(): widget.lastMsg.time;
-    var lastmsg = DateTime.fromMillisecondsSinceEpoch(lastTime);
+    var now = DateTime.fromMillisecondsSinceEpoch(DateUtil.getNowDateMs());
+    var lastmsg = widget.lastMsg == null
+        ? now
+        : DateTime.fromMillisecondsSinceEpoch(widget.lastMsg.time);
     var msg = DateTime.fromMillisecondsSinceEpoch(widget.msg.time);
 
-    if(msg.day != lastmsg.day){
+    if (msg.day != lastmsg.day) {
       widget.showTime = true;
-      if(msg.year != lastmsg.year) format = 'yyyy-MM-dd HH:mm';
-      else format = 'MM-dd HH:mm';
     }
+    String format = 'HH:mm';
+    if (msg.year != lastmsg.year)
+      format = 'yyyy-MM-dd HH:mm';
+    else if(msg.day != now.day)
+      format = 'MM-dd HH:mm';
 
     return widget.showTime || widget.islast
         ? Container(
-      child: Text(
-        DateUtil.formatDate(
-            DateTime.fromMillisecondsSinceEpoch(widget.msg.time), format: format),
-        style: TextStyle(
-            color: Colors.grey,
-            fontSize: 12.0,
-            fontStyle: FontStyle.italic),
-      ),
-      margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
-    )
+            child: Text(
+              DateUtil.formatDate(
+                  DateTime.fromMillisecondsSinceEpoch(widget.msg.time),
+                  format: format),
+              style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 13.0,
+                  fontStyle: FontStyle.italic),
+            ),
+            margin: EdgeInsets.only(top: 20.0, bottom: 5.0),
+          )
         : Container();
   }
 
